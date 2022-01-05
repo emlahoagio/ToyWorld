@@ -1,6 +1,9 @@
 ﻿using Contracts;
+using Entities.Models;
 using LoggerService;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -11,6 +14,7 @@ namespace ToyWorldSystem.Extensions
 {
     public static class ServiceExtensions
     {
+        //Cors services
         public static void ConfigureCors(this IServiceCollection services)
             => services.AddCors(option =>
             {
@@ -20,10 +24,17 @@ namespace ToyWorldSystem.Extensions
                 .AllowAnyHeader());
             });
 
+        //IIS services
         public static void ConfigureIISIntegration(this IServiceCollection services)
             => services.Configure<IISOptions>(option => { });
 
+        //Logger services
         public static void ConfigureLoggerServices(this IServiceCollection services)
             => services.AddScoped<ILoggerManager, LoggerManager>();
+
+        //SQL services
+        public static void ConfigureSqlServices(this IServiceCollection services, IConfiguration configuration)
+            => services.AddDbContext<DataContext>(opts =>
+                opts.UseSqlServer(configuration.GetConnectionString("sqlConnection")));
     }
 }

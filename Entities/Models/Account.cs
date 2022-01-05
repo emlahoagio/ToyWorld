@@ -1,0 +1,53 @@
+﻿using System;
+using System.Collections.Generic;
+
+#nullable disable
+
+namespace Entities.Models
+{
+    public partial class Account
+    {
+        public Account()
+        {
+            Comments = new HashSet<Comment>();
+            Evaluates = new HashSet<Evaluate>();
+            FeedbackAccountReplies = new HashSet<Feedback>();
+            FeedbackAccounts = new HashSet<Feedback>();
+            FeedbackSenders = new HashSet<Feedback>();
+            FollowAccountAccountFollows = new HashSet<FollowAccount>();
+            FollowAccountAccounts = new HashSet<FollowAccount>();
+            FollowGroups = new HashSet<FollowGroup>();
+            ManageGroups = new HashSet<ManageGroup>();
+            Posts = new HashSet<Post>();
+            Proposals = new HashSet<Proposal>();
+            ReactComments = new HashSet<ReactComment>();
+            ReactPosts = new HashSet<ReactPost>();
+            TradingPosts = new HashSet<TradingPost>();
+        }
+
+        public int Id { get; set; }
+        public string Uid { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
+        public string Password { get; set; }
+        public string Avatar { get; set; }
+        public bool? Status { get; set; }
+        public int? Role { get; set; }
+
+        public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<Evaluate> Evaluates { get; set; }
+        public virtual ICollection<Feedback> FeedbackAccountReplies { get; set; }
+        public virtual ICollection<Feedback> FeedbackAccounts { get; set; }
+        public virtual ICollection<Feedback> FeedbackSenders { get; set; }
+        public virtual ICollection<FollowAccount> FollowAccountAccountFollows { get; set; }
+        public virtual ICollection<FollowAccount> FollowAccountAccounts { get; set; }
+        public virtual ICollection<FollowGroup> FollowGroups { get; set; }
+        public virtual ICollection<ManageGroup> ManageGroups { get; set; }
+        public virtual ICollection<Post> Posts { get; set; }
+        public virtual ICollection<Proposal> Proposals { get; set; }
+        public virtual ICollection<ReactComment> ReactComments { get; set; }
+        public virtual ICollection<ReactPost> ReactPosts { get; set; }
+        public virtual ICollection<TradingPost> TradingPosts { get; set; }
+    }
+}

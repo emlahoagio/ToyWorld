@@ -34,6 +34,7 @@ namespace ToyWorldSystem
             services.ConfigureCors();
             services.ConfigureIISIntegration();
             services.ConfigureLoggerServices();
+            services.ConfigureSqlServices(Configuration);
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
