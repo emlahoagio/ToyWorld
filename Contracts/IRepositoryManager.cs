@@ -9,6 +9,7 @@ namespace Contracts
         IToyRepository Toy { get; }
         ITypeRepository Type { get; }
         IBrandRepository Brand { get; }
+        IAccountRepository Account { get; }
         void Save();
     }
 }

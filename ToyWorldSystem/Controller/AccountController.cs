@@ -1,33 +1,30 @@
 ﻿using Contracts;
-using Entities.DataTransferObject;
-using Entities.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace ToyWorldSystem.Controller
 {
-    [Route("api/toys")]
+    [Route("api/accounts")]
     [ApiController]
-    public class ToyController : ControllerBase
+    public class AccountController : ControllerBase
     {
         private readonly IRepositoryManager _repository;
 
-        public ToyController(IRepositoryManager repository)
+        public AccountController(IRepositoryManager repository)
         {
             _repository = repository;
         }
 
-        [HttpGet]
-        public IActionResult GetToys()
+        [HttpPost("loginbyemail")]
+        public IActionResult loginByEmail(string firebaseToken)
         {
-            var toys = _repository.Toy.GetAllToys(trackChanges: false);
+            var account = _repository.Account.loginByEmail(firebaseToken, trackChanges: false);
 
-            return Ok(toys);
+            return Ok(account);
         }
     }
 }
