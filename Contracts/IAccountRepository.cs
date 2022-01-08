@@ -8,6 +8,6 @@ namespace Contracts
 {
     public interface IAccountRepository
     {
-        Task<AccountReturnAfterLogin> loginByEmail(string firebaseToken, bool trackChanges);
+        AccountReturnAfterLogin getAccountByEmail(string email, bool trackChanges);
     }
 }

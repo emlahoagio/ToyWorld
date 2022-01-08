@@ -43,6 +43,11 @@ namespace ToyWorldSystem.Extensions
                     errors = err.Error;
                     context.Response.StatusCode = (int)err.StatusCode;
                     break;
+                case ArgumentException aggEx:
+                    logger.LogError(aggEx, "Internal Sever Error");
+                    errors = aggEx.InnerException;
+                    context.Response.StatusCode = (int)aggEx.InnerException?.HResult;
+                    break;
                 case Exception e:
                     logger.LogError(e, "Sever error");
                     errors = string.IsNullOrWhiteSpace(e.Message) ? "Error" : e.Message;

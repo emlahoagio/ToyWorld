@@ -12,7 +12,6 @@ namespace Repository
         private readonly DataContext _context;
         private readonly IConfiguration _configuration;
         private IJwtSupport _jwtSupport;
-        private IFirebaseSupport _firebaseSupport;
         private IToyRepository _toyRepository;
         private IBrandRepository _brandRepository;
         private ITypeRepository _typeRepository;
@@ -34,11 +33,7 @@ namespace Repository
                     {
                         _jwtSupport = new JwtServices(_configuration);
                     }
-                    if(_firebaseSupport == null)
-                    {
-                        _firebaseSupport = new FirebaseServices(_configuration);
-                    }
-                    _accountRepository = new AccountRepository(_context, _jwtSupport, _firebaseSupport);
+                    _accountRepository = new AccountRepository(_context, _jwtSupport);
                 }
                 return _accountRepository;
             }

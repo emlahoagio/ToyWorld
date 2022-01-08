@@ -37,6 +37,7 @@ namespace ToyWorldSystem
             services.ConfigureLoggerServices();
             services.ConfigureSqlServices(Configuration);
             services.ConfigureRepositoryManager();
+            services.ConfigureFirebaseServices();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
