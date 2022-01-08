@@ -24,36 +24,20 @@ namespace Repository
             _configuration = configuration;
         }
 
-        public IFirebaseSupport Firebase
-        {
-            get
-            {
-                if(_firebaseSupport == null)
-                {
-                    _firebaseSupport = new FirebaseServices(_configuration);
-                }
-                return _firebaseSupport;
-            }
-        }
-
-        public IJwtSupport Jwt
-        {
-            get
-            {
-                if(_jwtSupport == null)
-                {
-                    _jwtSupport = new JwtServices(_configuration);
-                }
-                return _jwtSupport;
-            }
-        }
-
         public IAccountRepository Account
         {
             get
             {
                 if(_accountRepository == null)
                 {
+                    if(_jwtSupport == null)
+                    {
+                        _jwtSupport = new JwtServices(_configuration);
+                    }
+                    if(_firebaseSupport == null)
+                    {
+                        _firebaseSupport = new FirebaseServices(_configuration);
+                    }
                     _accountRepository = new AccountRepository(_context, _jwtSupport, _firebaseSupport);
                 }
                 return _accountRepository;

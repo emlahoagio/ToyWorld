@@ -31,19 +31,19 @@ namespace Repository
             //check firebase token error:
             if (email.Contains("Get email from token error:"))
             {
-                throw new ErrorDetails(email, (int)HttpStatusCode.BadRequest);
+                throw new ErrorDetails(HttpStatusCode.BadRequest, new {firebaseDecodeError = email });
             }
             //process login
             var account = FindByCondition(account => account.Email.Equals(email), trackChanges).SingleOrDefault();
             //check is email in system
             if (account == null)
             {
-                throw new ErrorDetails("Email not exist in TWS", (int)HttpStatusCode.Unauthorized);
+                throw new ErrorDetails(HttpStatusCode.Unauthorized, new {AccountStatus = "Account is not exist in TWS" });
             }
             //check account status
             if (account.Status == false)
             {
-                throw new ErrorDetails("Account is exprise", (int)HttpStatusCode.Unauthorized);
+                throw new ErrorDetails(HttpStatusCode.Unauthorized, new {AccountStatus = "Account is exprise" });
             }
             var result = new AccountReturnAfterLogin
             {

@@ -1,19 +1,24 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 
 namespace Entities.ErrorModel
 {
     public class ErrorDetails : Exception
     {
-        public int StatusCode { get; set; }
-        public string Msg { get; set; }
+        public HttpStatusCode StatusCode { get; }
+        public Object Error { get; }
 
-        public ErrorDetails(string msg, int statusCode)
+        public ErrorDetails(HttpStatusCode code, object error = null)
         {
-            Msg = msg;
-            StatusCode = statusCode;
+            Error = error;
+            StatusCode = code;
+        }
+
+        public ErrorDetails()
+        {
         }
 
         public override string ToString()

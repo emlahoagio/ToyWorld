@@ -1,9 +1,11 @@
 ﻿using Contracts;
+using Entities.ErrorModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace ToyWorldSystem.Controller
@@ -20,7 +22,7 @@ namespace ToyWorldSystem.Controller
         }
 
         [HttpPost("loginbyemail")]
-        public IActionResult loginByEmail(string firebaseToken)
+        public ActionResult loginByEmail(string firebaseToken)
         {
             var account = _repository.Account.loginByEmail(firebaseToken, trackChanges: false);
 

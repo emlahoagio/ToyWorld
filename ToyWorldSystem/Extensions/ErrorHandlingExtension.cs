@@ -40,7 +40,7 @@ namespace ToyWorldSystem.Extensions
             {
                 case ErrorDetails err:
                     logger.LogError(ex, "Internal Sever Error");
-                    errors = err.Msg;
+                    errors = err.Error;
                     context.Response.StatusCode = (int)err.StatusCode;
                     break;
                 case Exception e:
