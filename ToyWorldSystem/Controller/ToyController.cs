@@ -16,10 +16,12 @@ namespace ToyWorldSystem.Controller
     public class ToyController : ControllerBase
     {
         private readonly IRepositoryManager _repository;
+        private readonly IUserAccessor _userAccessor;
 
-        public ToyController(IRepositoryManager repository)
+        public ToyController(IRepositoryManager repository, IUserAccessor userAccessor)
         {
             _repository = repository;
+            _userAccessor = userAccessor;
         }
 
         [HttpGet]

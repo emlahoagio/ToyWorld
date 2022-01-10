@@ -42,6 +42,10 @@ namespace ToyWorldSystem.Extensions
         public static void ConfigureRepositoryManager(this IServiceCollection services)
             => services.AddScoped<IRepositoryManager, RepositoryManager>();
 
+        //UserAccessor services
+        public static void ConfigureUsserAccessor(this IServiceCollection services)
+            => services.AddScoped<IUserAccessor, UserAccessor>();
+
         //Firebase services
         public static void ConfigureFirebaseServices(this IServiceCollection services)
     => services.AddScoped<IFirebaseSupport, FirebaseServices>();

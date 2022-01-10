@@ -1,5 +1,6 @@
 ﻿using Contracts;
 using Entities.ErrorModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -23,6 +24,7 @@ namespace ToyWorldSystem.Controller
             _firebaseSupport = firebaseSupport;
         }
 
+        [AllowAnonymous]
         [HttpPost("loginbyemail")]
         public async Task<ActionResult> loginByEmail(string firebaseToken)
         {
