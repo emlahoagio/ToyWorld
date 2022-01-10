@@ -1,6 +1,8 @@
 ﻿using Contracts;
 using Entities.DataTransferObject;
 using Entities.Models;
+using Entities.RequestFeatures;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -25,9 +27,9 @@ namespace ToyWorldSystem.Controller
         }
 
         [HttpGet]
-        public IActionResult GetToys()
+        public async Task<IActionResult> GetToys([FromQuery] ToyParameters toyParameters)
         {
-            var toys = _repository.Toy.GetAllToys(trackChanges: false);
+            var toys = await _repository.Toy.GetAllToys(toyParameters, trackChanges: false);
 
             return Ok(toys);
         }

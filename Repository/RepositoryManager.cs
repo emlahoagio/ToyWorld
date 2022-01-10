@@ -17,6 +17,7 @@ namespace Repository
         private IBrandRepository _brandRepository;
         private ITypeRepository _typeRepository;
         private IAccountRepository _accountRepository;
+        private IGroupRepository _groupRepository;
 
         public RepositoryManager(DataContext context, IConfiguration configuration)
         {
@@ -72,6 +73,17 @@ namespace Repository
                     _brandRepository = new BrandRepository(_context);
                 }
                 return _brandRepository;
+            }
+        }
+        public IGroupRepository Group
+        {
+            get
+            {
+                if (_groupRepository == null)
+                {
+                    _groupRepository = new GroupRepository(_context);
+                }
+                return _groupRepository;
             }
         }
 

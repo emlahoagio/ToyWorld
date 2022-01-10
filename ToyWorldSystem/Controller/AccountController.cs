@@ -26,7 +26,7 @@ namespace ToyWorldSystem.Controller
 
         [AllowAnonymous]
         [HttpPost("loginbyemail")]
-        public async Task<ActionResult> loginByEmail(string firebaseToken)
+        public async Task<IActionResult> loginByEmail(string firebaseToken)
         {
             //init firebase
             _firebaseSupport.initFirebase();
@@ -36,7 +36,7 @@ namespace ToyWorldSystem.Controller
             {
                 throw new ErrorDetails(HttpStatusCode.BadRequest, new { firebaseToken = email });
             }
-            var account = _repository.Account.getAccountByEmail(email, trackChanges: false);
+            var account = await _repository.Account.getAccountByEmail(email, trackChanges: false);
             if(account == null)
             {
                 throw new ErrorDetails(HttpStatusCode.Unauthorized, new { AccountStatus = "This account is not exist in our system" });

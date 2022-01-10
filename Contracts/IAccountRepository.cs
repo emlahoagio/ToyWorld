@@ -8,6 +8,6 @@ namespace Contracts
 {
     public interface IAccountRepository
     {
-        AccountReturnAfterLogin getAccountByEmail(string email, bool trackChanges);
+        Task<AccountReturnAfterLogin> getAccountByEmail(string email, bool trackChanges);
     }
 }

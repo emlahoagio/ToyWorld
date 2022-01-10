@@ -10,6 +10,7 @@ namespace Contracts
         ITypeRepository Type { get; }
         IBrandRepository Brand { get; }
         IAccountRepository Account { get; }
+        IGroupRepository Group { get; }
         void Save();
     }
 }

@@ -1,12 +1,7 @@
 ﻿using Contracts;
 using Entities.DataTransferObject;
-using Entities.ErrorModel;
 using Entities.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
 namespace Repository
@@ -20,9 +15,9 @@ namespace Repository
             _jwtSupport = jwtSupport;
         }
 
-        public AccountReturnAfterLogin getAccountByEmail(string email, bool trackChanges)
+        public async Task<AccountReturnAfterLogin> getAccountByEmail(string email, bool trackChanges)
         {
-            var account = FindByCondition(account => account.Email == email, trackChanges).SingleOrDefault();
+            var account = await FindByCondition(account => account.Email == email, trackChanges).SingleOrDefaultAsync();
 
             if (account == null) return null;
 
