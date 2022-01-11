@@ -18,6 +18,7 @@ namespace Repository
         private ITypeRepository _typeRepository;
         private IAccountRepository _accountRepository;
         private IGroupRepository _groupRepository;
+        private IContestRepository _contestRepository;
 
         public RepositoryManager(DataContext context, IConfiguration configuration)
         {
@@ -84,6 +85,18 @@ namespace Repository
                     _groupRepository = new GroupRepository(_context);
                 }
                 return _groupRepository;
+            }
+        }
+
+        public IContestRepository Contest
+        {
+            get
+            {
+                if(_contestRepository == null)
+                {
+                    _contestRepository = new ContestRepository(_context);
+                }
+                return _contestRepository;
             }
         }
 

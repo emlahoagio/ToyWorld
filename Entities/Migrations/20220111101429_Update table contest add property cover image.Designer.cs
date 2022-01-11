@@ -4,14 +4,16 @@ using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Entities.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class TWSContextModelSnapshot : ModelSnapshot
+    [Migration("20220111101429_Update table contest add property cover image")]
+    partial class Updatetablecontestaddpropertycoverimage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -142,9 +144,6 @@ namespace Entities.Migrations
 
                     b.Property<int?>("ProposalId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Slogan")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime");

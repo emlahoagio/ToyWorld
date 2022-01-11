@@ -34,16 +34,16 @@ namespace ToyWorldSystem.Controller
             var email = await _firebaseSupport.getEmailFromToken(firebaseToken);
             if(email.Contains("Get email from token error: "))
             {
-                throw new ErrorDetails(HttpStatusCode.BadRequest, new { firebaseToken = email });
+                throw new ErrorDetails(HttpStatusCode.BadRequest, email);
             }
             var account = await _repository.Account.getAccountByEmail(email, trackChanges: false);
             if(account == null)
             {
-                throw new ErrorDetails(HttpStatusCode.Unauthorized, new { AccountStatus = "This account is not exist in our system" });
+                throw new ErrorDetails(HttpStatusCode.Unauthorized, "This account is not exist in our system");
             }
             if (!account.Status)
             {
-                throw new ErrorDetails(HttpStatusCode.Unauthorized, new { AccountStatus = "This account is disable" });
+                throw new ErrorDetails(HttpStatusCode.Unauthorized, "This account is disable" );
             }
             return Ok(account);
         }

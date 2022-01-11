@@ -11,6 +11,7 @@ namespace Contracts
         IBrandRepository Brand { get; }
         IAccountRepository Account { get; }
         IGroupRepository Group { get; }
+        IContestRepository Contest { get; }
         void Save();
     }
 }
