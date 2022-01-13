@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Repository
 {
@@ -19,6 +20,7 @@ namespace Repository
         private IAccountRepository _accountRepository;
         private IGroupRepository _groupRepository;
         private IContestRepository _contestRepository;
+        private IImageRepository _imageRepository;
 
         public RepositoryManager(DataContext context, IConfiguration configuration)
         {
@@ -48,7 +50,7 @@ namespace Repository
             {
                 if(_toyRepository == null)
                 {
-                    _toyRepository = new ToyRepository(_context);
+                    _toyRepository = new ToyRepository(_context, _configuration, this);
                 }
                 return _toyRepository;
             }
@@ -100,9 +102,18 @@ namespace Repository
             }
         }
 
-        public void Save()
+        public IImageRepository Image
         {
-            _context.SaveChanges();
+            get
+            {
+                if(_imageRepository == null)
+                {
+                    _imageRepository = new ImageRepository(_context);
+                }
+                return _imageRepository;
+            }
         }
+
+        public Task SaveAsync() => _context.SaveChangesAsync();
     }
 }

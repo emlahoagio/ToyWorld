@@ -11,5 +11,8 @@ namespace Contracts
     public interface IToyRepository
     {
         Task<IEnumerable<ToyInList>> GetAllToys(ToyParameters toyParameters, bool trackChanges);
+        void CreateToy(Toy toy);
+        void UpdateToy(Toy toy);
+        int IdExistToy(string toyName);
     }
 }

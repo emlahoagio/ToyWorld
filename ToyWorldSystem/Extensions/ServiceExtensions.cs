@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using Contracts.Services;
 using Entities.Models;
 using LoggerService;
 using Microsoft.AspNetCore.Builder;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Repository;
+using Repository.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,6 +50,10 @@ namespace ToyWorldSystem.Extensions
 
         //Firebase services
         public static void ConfigureFirebaseServices(this IServiceCollection services)
-    => services.AddScoped<IFirebaseSupport, FirebaseServices>();
+            => services.AddScoped<IFirebaseSupport, FirebaseServices>();
+
+        //Crawl Japan Figure services
+        public static void ConfigureCrawlDataFromJapanFigure(this IServiceCollection services)
+            => services.AddScoped<ICrawlDataJapanFigureServices, CrawlDataJapanFigureServices>();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Contracts
 {
@@ -12,6 +13,7 @@ namespace Contracts
         IAccountRepository Account { get; }
         IGroupRepository Group { get; }
         IContestRepository Contest { get; }
-        void Save();
+        IImageRepository Image { get; }
+        Task SaveAsync();
     }
 }

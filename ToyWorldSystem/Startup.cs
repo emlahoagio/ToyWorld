@@ -44,6 +44,8 @@ namespace ToyWorldSystem
 
             services.ConfigureUsserAccessor();
 
+            services.ConfigureCrawlDataFromJapanFigure();
+
             services.AddHttpContextAccessor();
 
             //Add verify jwt services
