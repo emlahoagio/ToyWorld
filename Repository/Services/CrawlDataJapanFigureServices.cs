@@ -15,7 +15,6 @@ namespace Repository.Services
 
         private readonly string FigureDomain = "https://japanfigure.vn";
         private readonly IRepositoryManager _repositoryManager;
-        private string[] removeChar = {"\t", "&nbsp;"};
 
         public CrawlDataJapanFigureServices(IRepositoryManager repositoryManager)
         {
@@ -61,13 +60,13 @@ namespace Repository.Services
             HtmlAgilityPack.HtmlWeb web = new HtmlAgilityPack.HtmlWeb();
             //open xml list toy
             HtmlAgilityPack.HtmlDocument doc = web.Load(crawlLink);
-            Console.WriteLine("Crawling data from " + crawlLink);
-            Console.WriteLine("================================");
-            Console.WriteLine(doc.DocumentNode);
-            Console.WriteLine("================================");
             var nodeList = doc.DocumentNode.SelectNodes("//div[@class='product-detail clearfix']");
+            Console.WriteLine("Node list:");
+            Console.WriteLine("================================");
+            Console.WriteLine(nodeList.Count);
+            Console.WriteLine("================================");
             //foreach (var toyNode in nodeList)
-            for(int i=0; i < nodeList.Count; i++)
+            for (int i=0; i < nodeList.Count; i++)
             {
                 var toyNode = nodeList.ElementAt(i);
                 var name = "";
