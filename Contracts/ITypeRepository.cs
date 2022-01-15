@@ -9,5 +9,6 @@ namespace Contracts
     {
         Task<Entities.Models.Type> GetTypeByName(string name, bool trackChanges);
         void CreateType(Entities.Models.Type type);
+        Task<IEnumerable<string>> GetListName(bool trackChanges);
     }
 }

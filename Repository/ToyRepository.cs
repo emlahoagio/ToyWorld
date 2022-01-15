@@ -28,7 +28,6 @@ namespace Repository
             var toys = await FindAll(trackChanges)
                 .Include(toy => toy.Brand)
                 .Include(toy => toy.Type)
-                .Include(toy => toy.Images)
                 .OrderBy(toy => toy.Name)
                 .Skip((toyParameters.PageNumber -1) * toyParameters.PageSize)
                 .Take(toyParameters.PageSize)
@@ -59,6 +58,30 @@ namespace Repository
             {
                 result = toy.Id;
             }
+            return result;
+        }
+
+        public async Task<IEnumerable<ToyInList>> GetToysByType(ToyParameters toyParameters, string typeName, bool trackChanges)
+        {
+            var toys = await FindByCondition(x => x.Type.Name == typeName, trackChanges)
+                .Include(x => x.Type)
+                .Include(x => x.Brand)
+                .Skip((toyParameters.PageNumber - 1) * toyParameters.PageSize)
+                .Take(toyParameters.PageSize)
+                .ToListAsync();
+
+            if (toys == null) return null;
+
+            var result = toys.Select(toy => new ToyInList
+            {
+                BrandName = toy.Brand.Name,
+                Name = toy.Name,
+                CoverImage = toy.CoverImage,
+                Id = toy.Id,
+                Price = toy.Price,
+                TypeName = toy.Type.Name
+            });
+
             return result;
         }
     }

@@ -32,17 +32,43 @@ namespace ToyWorldSystem.Controller
             _crawlDataJapanFigure = crawlDataJapanFigure;
             _configuration = configuration;
         }
-        
-        [AllowAnonymous]
+
         [HttpGet]
         public async Task<IActionResult> GetToys([FromQuery] ToyParameters toyParameters)
         {
             var toys = await _repository.Toy.GetAllToys(toyParameters, trackChanges: false);
 
-            return Ok(toys);
+            if (toys == null || toys.Count() == 0) return NotFound(new { error = "No more items in this page" });
+            var pagingNation = new Pagination<ToyInList>
+            {
+                Count = toys.Count(),
+                Data = toys,
+                PageNumber = toyParameters.PageNumber,
+                PageSize = toyParameters.PageSize
+            };
+
+            return Ok(pagingNation);
         }
 
-        [AllowAnonymous]
+        [HttpGet]
+        [Route("type/{type_name}")]
+        public async Task<IActionResult> GetToysByType(string type_name,[FromQuery] ToyParameters toyParameters)
+        {
+            var toys = await _repository.Toy.GetToysByType(toyParameters ,type_name, trackChanges: false);
+
+            if (toys == null) return NotFound(new { error = "No more result in this page" });
+
+            var pagingNation = new Pagination<ToyInList>
+            {
+                Count = toys.Count(),
+                Data = toys,
+                PageNumber = toyParameters.PageNumber,
+                PageSize = toyParameters.PageSize
+            };
+
+            return Ok(pagingNation);
+        }
+
         [HttpPost]
         [Route("crawl/japanfigure")]
         public async Task<IActionResult> CrawlData([FromHeader]string link_crawl, string toy_type)
