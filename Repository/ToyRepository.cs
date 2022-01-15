@@ -25,17 +25,17 @@ namespace Repository
 
         public async Task<Pagination<ToyInList>> GetAllToys(ToyParameters toyParameters, bool trackChanges)
         {
-            var toys = await FindAll(trackChanges)
+            var toys = await FindByCondition(x => x.Id != 3,trackChanges)
                 .Include(toy => toy.Brand)
                 .Include(toy => toy.Type).ToListAsync();
 
             int count = toys.Count();
 
-            toys.Skip((toyParameters.PageNumber - 1) * toyParameters.PageSize)
+            var pagingToys = toys.Skip((toyParameters.PageNumber - 1) * toyParameters.PageSize)
                 .Take(toyParameters.PageSize)
                 .OrderBy(x => x.Name);
 
-            var toysInList = toys.Select(toy => new ToyInList
+            var toysInList = pagingToys.Select(toy => new ToyInList
             {
                 Id = toy.Id,
                 Name = toy.Name,
@@ -73,20 +73,20 @@ namespace Repository
 
         public async Task<Pagination<ToyInList>> GetToysByType(ToyParameters toyParameters, string typeName, bool trackChanges)
         {
-            var toys = await FindByCondition(x => x.Type.Name == typeName, trackChanges)
+            var toys = await FindByCondition(x => x.Type.Name == typeName && x.Id != 3, trackChanges)
                 .Include(x => x.Type)
                 .Include(x => x.Brand)
                 .ToListAsync();
 
             int count = toys.Count();
 
-            toys.Skip((toyParameters.PageNumber - 1) * toyParameters.PageSize)
-            .Take(toyParameters.PageSize).OrderBy(x => x.Name);
+            var pagingToys = toys.Skip((toyParameters.PageNumber - 1) * toyParameters.PageSize)
+                                .Take(toyParameters.PageSize).OrderBy(x => x.Name);
                 
 
             if (toys == null) return null;
 
-            var toysInList = toys.Select(toy => new ToyInList
+            var toysInList = pagingToys.Select(toy => new ToyInList
             {
                 BrandName = toy.Brand.Name,
                 Name = toy.Name,
