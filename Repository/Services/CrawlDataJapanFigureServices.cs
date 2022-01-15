@@ -56,9 +56,9 @@ namespace Repository.Services
             //open xml list toy
             HtmlAgilityPack.HtmlDocument doc = web.Load(crawlLink);
             var nodeList = doc.DocumentNode.SelectNodes("//div[@class='product-detail clearfix']");
-            Console.WriteLine("Node list:");
+            Console.WriteLine("Crawl link:");
             Console.WriteLine("================================");
-            Console.WriteLine(nodeList.Count);
+            Console.WriteLine(crawlLink);
             Console.WriteLine("================================");
             //foreach (var toyNode in nodeList)
             for (int i=0; i < nodeList.Count; i++)
