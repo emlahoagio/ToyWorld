@@ -25,7 +25,6 @@ namespace Repository.Services
         {
             var result = new List<Image>();
             var imageDoc = toyDetail.DocumentNode.SelectNodes("//div[@id='sliderproduct']//img");
-            if (imageDoc == null) return null;
             foreach (var img in imageDoc)
             {
                 string imgLink = img.Attributes["src"].Value;
@@ -45,10 +44,6 @@ namespace Repository.Services
                 _repositoryManager.Brand.CreateBrand(brand);
                 await _repositoryManager.SaveAsync();
                 brand = await _repositoryManager.Brand.GetBrandByName(brandName, trackChanges: false);
-            }
-            if(brandName == "")
-            {
-                brand = await _repositoryManager.Brand.GetBrandByName("Unknow Brand", trackChanges: false);
             }
             return brand;
         }
@@ -75,45 +70,26 @@ namespace Repository.Services
                 var coverImage = "";
                 var brandName = "";
 
-                //Get cover image
-                var imageNodeCount = toyNode.SelectNodes("//img[@class='image-hover']").Count;
-                if (imageNodeCount == nodeList.Count)
-                {
-                    coverImage = toyNode.SelectNodes("//img[@class='image-hover']").ElementAt(i).Attributes["src"].Value;
-                }else
-                {
-                    if(i == 0)
-                    {
-                        coverImage = toyNode.SelectNodes("//div[@class='product-detail clearfix']//div[@class='product-image image-resize']//img")
-                        .FirstOrDefault().Attributes["src"].Value;
-                    }else
-                    {
-                        coverImage = toyNode.SelectNodes("//img[@class='image-hover']").ElementAt(i - 1).Attributes["src"].Value;
-                    }
-                }
-
-                //get price
+                coverImage = toyNode.SelectNodes("//img[@class='image-hover']").ElementAt(i).Attributes["src"].Value;
                 price = toyNode.SelectNodes("//span[@class='price price-new flexbox-content text-left']").ElementAt(i).InnerText.Trim();
-                
-                //read detail
                 var detailLink = toyNode.SelectNodes("//h2[@class='product-title name']//a").ElementAt(i).Attributes["href"].Value;
 
                 HtmlAgilityPack.HtmlDocument toyDetail = web.Load(FigureDomain + detailLink.ToString());
-                var detailDoc = toyDetail.DocumentNode.SelectNodes("//div[@id='description2']//p");
-                name = toyDetail.DocumentNode.SelectNodes("//div[@class='product-title']//h1").FirstOrDefault().InnerText.Trim();
-                if (detailDoc != null)
+                var detailDoc = toyDetail.DocumentNode.SelectNodes("//span[@style='color:#333333']");
+                foreach (var detailNode in detailDoc)
                 {
-                    foreach (var detailNode in detailDoc)
+                    var innverText = detailNode.InnerText;
+                    if (!innverText.Contains(":"))
                     {
-                        var innerText = detailNode.InnerText;
-                        if (innerText.Contains("Hãng sản xuất"))
-                        {
-                            brandName = innerText.Substring(detailNode.InnerText.IndexOf(":") + 1).Trim();
-                        }
-                        else
-                        {
-                            description += innerText + "\n";
-                        }
+                        name = innverText;
+                    }
+                    if (innverText.Contains("Hãng sản xuất"))
+                    {
+                        brandName = innverText.Substring(detailNode.InnerText.IndexOf(":") + 1).Trim();
+                    }
+                    else
+                    {
+                        description += detailNode.InnerText + "\n";
                     }
                 }
 
@@ -122,11 +98,10 @@ namespace Repository.Services
 
                 //check brand
                 var brand = await checkBrand(brandName);
-                var editedDescription = description.Replace("&nbsp;"," ").Replace("\t","");
                 var toy = new Toy
                 {
                     Name = name,
-                    Description = editedDescription,
+                    Description = description,
                     Price = decimal.Parse(price.Substring(0, price.Length - 1)),
                     CoverImage = "https:"+coverImage,
                     BrandId = brand.Id,
