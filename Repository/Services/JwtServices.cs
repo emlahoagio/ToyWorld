@@ -9,15 +9,15 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 
-namespace Repository
+namespace Repository.Services
 {
     public class JwtServices : IJwtSupport
     {
-        private readonly IConfiguration _configuration;
+        private readonly IConfiguration configuration;
 
         public JwtServices(IConfiguration configuration)
         {
-            _configuration = configuration;
+            this.configuration = configuration;
         }
         public string CreateToken(int role, int accountId)
         {
@@ -27,13 +27,13 @@ namespace Repository
                 new Claim("AccountId", accountId.ToString())
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:SecretKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(Claims),
-                Expires = DateTime.Now.AddMinutes(int.Parse(_configuration["Jwt:MinutesExprise"])),
+                Expires = DateTime.Now.AddMinutes(int.Parse(configuration["Jwt:MinutesExprise"])),
                 SigningCredentials = creds
             };
 

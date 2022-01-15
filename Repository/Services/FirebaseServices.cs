@@ -8,15 +8,15 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Repository
+namespace Repository.Services
 {
     public class FirebaseServices : IFirebaseSupport
     {
-        private readonly IConfiguration _configuration;
+        private readonly IConfiguration configuration;
 
         public FirebaseServices(IConfiguration configuration)
         {
-            _configuration = configuration;
+            this.configuration = configuration;
         }
         public async Task<string> getEmailFromToken(string firebaseToken)
         {
@@ -35,11 +35,11 @@ namespace Repository
         {
             if(FirebaseApp.DefaultInstance == null)
             {
-                string path = _configuration["Firebase:CridentialPath"];
+                string path = configuration["Firebase:CridentialPath"];
                 FirebaseApp.Create(new AppOptions()
                 {
                     Credential = GoogleCredential.FromFile(path),
-                    ServiceAccountId = _configuration["FirebaseApp:ServiceAccountId"]
+                    ServiceAccountId = configuration["FirebaseApp:ServiceAccountId"]
                 });
             }
         }
