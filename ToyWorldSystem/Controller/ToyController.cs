@@ -45,7 +45,7 @@ namespace ToyWorldSystem.Controller
         [AllowAnonymous]
         [HttpPost]
         [Route("crawl/japanfigure")]
-        public async Task<IActionResult> CrawlData(string link_crawl, string toy_type)
+        public async Task<IActionResult> CrawlData([FromHeader]string link_crawl, string toy_type)
         {
             //get list scale figure
             var toyList = await _crawlDataJapanFigure.getToy(link_crawl);
