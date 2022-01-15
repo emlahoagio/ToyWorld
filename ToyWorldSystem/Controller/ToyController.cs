@@ -43,16 +43,7 @@ namespace ToyWorldSystem.Controller
         {
             var toys = await _repository.Toy.GetAllToys(toyParameters, trackChanges: false);
 
-            if (toys == null || toys.Count() == 0) return NotFound(new { error = "No more items in this page" });
-            var pagingNation = new Pagination<ToyInList>
-            {
-                Count = toys.Count(),
-                Data = toys,
-                PageNumber = toyParameters.PageNumber,
-                PageSize = toyParameters.PageSize
-            };
-
-            return Ok(pagingNation);
+            return Ok(toys);
         }
 
         /// <summary>
@@ -67,17 +58,7 @@ namespace ToyWorldSystem.Controller
         {
             var toys = await _repository.Toy.GetToysByType(toyParameters ,type_name, trackChanges: false);
 
-            if (toys == null) return NotFound(new { error = "No more result in this page" });
-
-            var pagingNation = new Pagination<ToyInList>
-            {
-                Count = toys.Count(),
-                Data = toys,
-                PageNumber = toyParameters.PageNumber,
-                PageSize = toyParameters.PageSize
-            };
-
-            return Ok(pagingNation);
+            return Ok(toys);
         }
 
         /// <summary>

@@ -23,17 +23,19 @@ namespace Repository
             _repositoryManager = repositoryManager;
         }
 
-        public async Task<IEnumerable<ToyInList>> GetAllToys(ToyParameters toyParameters, bool trackChanges)
+        public async Task<Pagination<ToyInList>> GetAllToys(ToyParameters toyParameters, bool trackChanges)
         {
             var toys = await FindAll(trackChanges)
                 .Include(toy => toy.Brand)
-                .Include(toy => toy.Type)
-                .OrderBy(toy => toy.Name)
-                .Skip((toyParameters.PageNumber -1) * toyParameters.PageSize)
-                .Take(toyParameters.PageSize)
-                .ToListAsync();
+                .Include(toy => toy.Type).ToListAsync();
 
-            var result = toys.Select(toy => new ToyInList
+            int count = toys.Count();
+
+            toys.Skip((toyParameters.PageNumber - 1) * toyParameters.PageSize)
+                .Take(toyParameters.PageSize)
+                .OrderBy(x => x.Name);
+
+            var toysInList = toys.Select(toy => new ToyInList
             {
                 Id = toy.Id,
                 Name = toy.Name,
@@ -42,6 +44,14 @@ namespace Repository
                 TypeName = toy.Type.Name,
                 CoverImage = toy.CoverImage
             });
+
+            var result = new Pagination<ToyInList>
+            {
+                Count = count,
+                Data = toysInList,
+                PageNumber = toyParameters.PageNumber,
+                PageSize = toyParameters.PageSize
+            };
 
             return result;
         }
@@ -61,18 +71,22 @@ namespace Repository
             return result;
         }
 
-        public async Task<IEnumerable<ToyInList>> GetToysByType(ToyParameters toyParameters, string typeName, bool trackChanges)
+        public async Task<Pagination<ToyInList>> GetToysByType(ToyParameters toyParameters, string typeName, bool trackChanges)
         {
             var toys = await FindByCondition(x => x.Type.Name == typeName, trackChanges)
                 .Include(x => x.Type)
                 .Include(x => x.Brand)
-                .Skip((toyParameters.PageNumber - 1) * toyParameters.PageSize)
-                .Take(toyParameters.PageSize)
                 .ToListAsync();
+
+            int count = toys.Count();
+
+            toys.Skip((toyParameters.PageNumber - 1) * toyParameters.PageSize)
+            .Take(toyParameters.PageSize).OrderBy(x => x.Name);
+                
 
             if (toys == null) return null;
 
-            var result = toys.Select(toy => new ToyInList
+            var toysInList = toys.Select(toy => new ToyInList
             {
                 BrandName = toy.Brand.Name,
                 Name = toy.Name,
@@ -81,6 +95,14 @@ namespace Repository
                 Price = toy.Price,
                 TypeName = toy.Type.Name
             });
+
+            var result = new Pagination<ToyInList>
+            {
+                Count = count,
+                Data = toysInList,
+                PageNumber = toyParameters.PageNumber,
+                PageSize = toyParameters.PageSize
+            };
 
             return result;
         }

@@ -10,8 +10,8 @@ namespace Contracts
 {
     public interface IToyRepository
     {
-        Task<IEnumerable<ToyInList>> GetAllToys(ToyParameters toyParameters, bool trackChanges);
-        Task<IEnumerable<ToyInList>> GetToysByType(ToyParameters toyParameters, string typeName, bool trackChanges);
+        Task<Pagination<ToyInList>> GetAllToys(ToyParameters toyParameters, bool trackChanges);
+        Task<Pagination<ToyInList>> GetToysByType(ToyParameters toyParameters, string typeName, bool trackChanges);
         void CreateToy(Toy toy);
         void UpdateToy(Toy toy);
         int IdExistToy(string toyName);
