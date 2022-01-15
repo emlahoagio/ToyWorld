@@ -21,6 +21,10 @@ namespace ToyWorldSystem.Controller
             _repositoryManager = repositoryManager;
         }
 
+        /// <summary>
+        /// Get highlight contest for the home page (Role: Manager, Member)
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("highlight")]
         public async Task<IActionResult> getHighlightContest()

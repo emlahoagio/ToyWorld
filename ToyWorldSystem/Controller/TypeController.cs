@@ -19,6 +19,10 @@ namespace ToyWorldSystem.Controller
             _repositoryManager = repositoryManager;
         }
 
+        /// <summary>
+        /// get type name for combobox select type
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("type_to_conbobox")]
         public async Task<IActionResult> getTypeToCombobox()

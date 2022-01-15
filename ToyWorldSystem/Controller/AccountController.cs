@@ -24,6 +24,11 @@ namespace ToyWorldSystem.Controller
             _firebaseSupport = firebaseSupport;
         }
 
+        /// <summary>
+        /// Login by google mail (Role: ALL)
+        /// </summary>
+        /// <param name="firebaseToken">Token get from firebase</param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("loginbyemail")]
         public async Task<IActionResult> loginByEmail(string firebaseToken)

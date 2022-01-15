@@ -10,8 +10,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NLog;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using ToyWorldSystem.Extensions;
 
@@ -108,6 +110,10 @@ namespace ToyWorldSystem
                     new List<string>()
                     }
                 });
+
+                var fileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var path = Path.Combine(AppContext.BaseDirectory, fileName);
+                c.IncludeXmlComments(path);
             });
         }
 

@@ -20,6 +20,10 @@ namespace ToyWorldSystem.Controller
             _repository = repository;
         }
 
+        /// <summary>
+        /// Get list name of group for the tool bar on the top (Role: Manager, Member)
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetListGroup()
         {

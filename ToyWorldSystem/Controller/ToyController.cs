@@ -33,6 +33,11 @@ namespace ToyWorldSystem.Controller
             _configuration = configuration;
         }
 
+        /// <summary>
+        /// Get all toys for the home page (Role: Manager, Members)
+        /// </summary>
+        /// <param name="toyParameters">2 param: PageNumber is number of page, PageSize is the number of item in page</param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetToys([FromQuery] ToyParameters toyParameters)
         {
@@ -50,6 +55,12 @@ namespace ToyWorldSystem.Controller
             return Ok(pagingNation);
         }
 
+        /// <summary>
+        /// Get all toy by type name
+        /// </summary>
+        /// <param name="type_name">Name is get from combobox</param>
+        /// <param name="toyParameters">2 param: PageNumber is number of page, PageSize is the number of item in page</param>
+        /// <returns></returns>
         [HttpGet]
         [Route("type/{type_name}")]
         public async Task<IActionResult> GetToysByType(string type_name,[FromQuery] ToyParameters toyParameters)
@@ -69,6 +80,12 @@ namespace ToyWorldSystem.Controller
             return Ok(pagingNation);
         }
 
+        /// <summary>
+        /// Crawl data from Japan Figure (Still not done)
+        /// </summary>
+        /// <param name="link_crawl">JapanFigure link</param>
+        /// <param name="toy_type">Name of type</param>
+        /// <returns></returns>
         [HttpPost]
         [Route("crawl/japanfigure")]
         public async Task<IActionResult> CrawlData([FromHeader]string link_crawl, string toy_type)
