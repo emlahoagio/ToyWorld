@@ -1,6 +1,7 @@
 ﻿using Contracts;
 using Contracts.Services;
 using Entities.DataTransferObject;
+using Entities.ErrorModel;
 using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
@@ -33,7 +34,6 @@ namespace ToyWorldSystem.Controller
             _configuration = configuration;
         }
         
-        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetToys([FromQuery] ToyParameters toyParameters)
         {
@@ -42,12 +42,15 @@ namespace ToyWorldSystem.Controller
             return Ok(toys);
         }
 
-        [AllowAnonymous]
         [HttpPost]
         [Route("crawl/japanfigure")]
         public async Task<IActionResult> CrawlData(string link_crawl, string toy_type)
         {
-            //get list scale figure
+            //check valid link
+            if (!link_crawl.Contains("https://japanfigure.vn/collections/"))
+                throw new ErrorDetails(HttpStatusCode.BadRequest, "The link you select isn't from japanfigure.vn");
+
+            //get list toy from link
             var toyList = await _crawlDataJapanFigure.getToy(link_crawl);
 
             var type = await _repository.Type.GetTypeByName(toy_type, trackChanges: false);

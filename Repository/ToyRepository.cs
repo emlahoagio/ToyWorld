@@ -39,9 +39,10 @@ namespace Repository
                 Id = toy.Id,
                 Name = toy.Name,
                 Price = toy.Price,
-                BrandName = toy.Brand.Name,
-                TypeName = toy.Type.Name,
-                CoverImage = toy.CoverImage
+                BrandName = toy.Brand != null ? toy.Brand.Name : null,
+                TypeName = toy.Type != null? toy.Type.Name : null,
+                CoverImage = toy.CoverImage,
+                Description = toy.Description
             });
 
             return result;

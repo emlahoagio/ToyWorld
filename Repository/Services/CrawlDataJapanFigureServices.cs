@@ -15,6 +15,7 @@ namespace Repository.Services
 
         private readonly string FigureDomain = "https://japanfigure.vn";
         private readonly IRepositoryManager _repositoryManager;
+        private string[] removeChar = {"\t", "&nbsp;"};
 
         public CrawlDataJapanFigureServices(IRepositoryManager repositoryManager)
         {
@@ -25,6 +26,7 @@ namespace Repository.Services
         {
             var result = new List<Image>();
             var imageDoc = toyDetail.DocumentNode.SelectNodes("//div[@id='sliderproduct']//img");
+            if (imageDoc == null) return null;
             foreach (var img in imageDoc)
             {
                 string imgLink = img.Attributes["src"].Value;
@@ -45,6 +47,10 @@ namespace Repository.Services
                 await _repositoryManager.SaveAsync();
                 brand = await _repositoryManager.Brand.GetBrandByName(brandName, trackChanges: false);
             }
+            if(brandName == "")
+            {
+                brand = await _repositoryManager.Brand.GetBrandByName("Unknow Brand", trackChanges: false);
+            }
             return brand;
         }
 
@@ -57,7 +63,7 @@ namespace Repository.Services
             HtmlAgilityPack.HtmlDocument doc = web.Load(crawlLink);
             var nodeList = doc.DocumentNode.SelectNodes("//div[@class='product-detail clearfix']");
             //foreach (var toyNode in nodeList)
-            for(int i=0; i< nodeList.Count; i++)
+            for(int i=0; i < nodeList.Count; i++)
             {
                 var toyNode = nodeList.ElementAt(i);
                 var name = "";
@@ -66,26 +72,45 @@ namespace Repository.Services
                 var coverImage = "";
                 var brandName = "";
 
-                coverImage = toyNode.SelectNodes("//img[@class='image-hover']").ElementAt(i).Attributes["src"].Value;
+                //Get cover image
+                var imageNodeCount = toyNode.SelectNodes("//img[@class='image-hover']").Count;
+                if (imageNodeCount == nodeList.Count)
+                {
+                    coverImage = toyNode.SelectNodes("//img[@class='image-hover']").ElementAt(i).Attributes["src"].Value;
+                }else
+                {
+                    if(i == 0)
+                    {
+                        coverImage = toyNode.SelectNodes("//div[@class='product-detail clearfix']//div[@class='product-image image-resize']//img")
+                        .FirstOrDefault().Attributes["src"].Value;
+                    }else
+                    {
+                        coverImage = toyNode.SelectNodes("//img[@class='image-hover']").ElementAt(i - 1).Attributes["src"].Value;
+                    }
+                }
+
+                //get price
                 price = toyNode.SelectNodes("//span[@class='price price-new flexbox-content text-left']").ElementAt(i).InnerText.Trim();
+                
+                //read detail
                 var detailLink = toyNode.SelectNodes("//h2[@class='product-title name']//a").ElementAt(i).Attributes["href"].Value;
 
                 HtmlAgilityPack.HtmlDocument toyDetail = web.Load(FigureDomain + detailLink.ToString());
-                var detailDoc = toyDetail.DocumentNode.SelectNodes("//span[@style='color:#333333']");
-                foreach (var detailNode in detailDoc)
+                var detailDoc = toyDetail.DocumentNode.SelectNodes("//div[@id='description2']//p");
+                name = toyDetail.DocumentNode.SelectNodes("//div[@class='product-title']//h1").FirstOrDefault().InnerText.Trim();
+                if (detailDoc != null)
                 {
-                    var innverText = detailNode.InnerText;
-                    if (!innverText.Contains(":"))
+                    foreach (var detailNode in detailDoc)
                     {
-                        name = innverText;
-                    }
-                    if (innverText.Contains("Hãng sản xuất"))
-                    {
-                        brandName = innverText.Substring(detailNode.InnerText.IndexOf(":") + 1).Trim();
-                    }
-                    else
-                    {
-                        description += detailNode.InnerText + "\n";
+                        var innerText = detailNode.InnerText;
+                        if (innerText.Contains("Hãng sản xuất"))
+                        {
+                            brandName = innerText.Substring(detailNode.InnerText.IndexOf(":") + 1).Trim();
+                        }
+                        else
+                        {
+                            description += innerText + "\n";
+                        }
                     }
                 }
 
@@ -94,10 +119,11 @@ namespace Repository.Services
 
                 //check brand
                 var brand = await checkBrand(brandName);
+                var editedDescription = description.Replace("&nbsp;"," ").Replace("\t","");
                 var toy = new Toy
                 {
                     Name = name,
-                    Description = description,
+                    Description = editedDescription,
                     Price = decimal.Parse(price.Substring(0, price.Length - 1)),
                     CoverImage = "https:"+coverImage,
                     BrandId = brand.Id,
