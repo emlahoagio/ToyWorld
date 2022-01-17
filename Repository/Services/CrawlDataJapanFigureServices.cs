@@ -49,18 +49,28 @@ namespace Repository.Services
             return brand;
         }
 
+        private HtmlDocument load(string crawlLink)
+        {
+            HtmlWeb web = new HtmlWeb();
+            //open xml list toy
+            HtmlAgilityPack.HtmlDocument doc = web.Load(crawlLink);
+            return doc;
+        }
+
+        private Task<HtmlDocument> loadAsync(string crawlLink)
+        {
+            return Task.Run(() => load(crawlLink));
+        }
+
         public async Task<IEnumerable<Toy>> getToy(string crawlLink)
         {
             var result = new List<Toy>();
             //open xml document
-            HtmlAgilityPack.HtmlWeb web = new HtmlAgilityPack.HtmlWeb();
+            HtmlWeb web = new HtmlWeb();
             //open xml list toy
-            HtmlAgilityPack.HtmlDocument doc = web.Load(crawlLink);
+            HtmlAgilityPack.HtmlDocument doc = await loadAsync(crawlLink);
             HtmlAgilityPack.HtmlNodeCollection nodeList = doc.DocumentNode.SelectNodes("//div[@class='product-information']");
-            Console.WriteLine("----------------------");
-            Console.WriteLine("//div[@class='product-information']");
-            Console.WriteLine(doc.DocumentNode.InnerText);
-            Console.WriteLine("----------------------");
+            var debugText = doc.DocumentNode.InnerText;
             //foreach (var toyNode in nodeList)
             for (int i=0; i < nodeList.Count; i++)
             {
