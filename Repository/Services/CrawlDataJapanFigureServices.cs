@@ -71,6 +71,9 @@ namespace Repository.Services
             HtmlAgilityPack.HtmlDocument doc = await loadAsync(crawlLink);
             HtmlAgilityPack.HtmlNodeCollection nodeList = doc.DocumentNode.SelectNodes("//div[@class='product-information']");
             var debugText = doc.DocumentNode.InnerText;
+            Console.WriteLine("----------------");
+            Console.WriteLine(doc.DocumentNode.InnerText);
+            Console.WriteLine("----------------");
             //foreach (var toyNode in nodeList)
             for (int i=0; i < nodeList.Count; i++)
             {
