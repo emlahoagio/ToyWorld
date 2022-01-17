@@ -59,7 +59,7 @@ namespace Repository.Services
             HtmlAgilityPack.HtmlNodeCollection nodeList = doc.DocumentNode.SelectNodes("//div[@class='product-information']");
             Console.WriteLine("----------------------");
             Console.WriteLine("//div[@class='product-information']");
-            Console.WriteLine(doc.DocumentNode);
+            Console.WriteLine(doc.DocumentNode.InnerText);
             Console.WriteLine("----------------------");
             //foreach (var toyNode in nodeList)
             for (int i=0; i < nodeList.Count; i++)
