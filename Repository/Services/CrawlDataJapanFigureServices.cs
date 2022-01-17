@@ -56,10 +56,10 @@ namespace Repository.Services
             HtmlAgilityPack.HtmlWeb web = new HtmlAgilityPack.HtmlWeb();
             //open xml list toy
             HtmlAgilityPack.HtmlDocument doc = web.Load(crawlLink);
-            HtmlAgilityPack.HtmlNodeCollection nodeList = doc.DocumentNode.SelectNodes("//section[@id='collection']//div[@class='product-detail clearfix']");
+            HtmlAgilityPack.HtmlNodeCollection nodeList = doc.DocumentNode.SelectNodes("//div[@class='product-information']");
             Console.WriteLine("----------------------");
-            Console.WriteLine("//section[@id='collection']//div[@class='product-detail clearfix']");
-            Console.WriteLine(nodeList);
+            Console.WriteLine("//div[@class='product-information']");
+            Console.WriteLine(doc.DocumentNode);
             Console.WriteLine("----------------------");
             //foreach (var toyNode in nodeList)
             for (int i=0; i < nodeList.Count; i++)
