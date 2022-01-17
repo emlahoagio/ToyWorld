@@ -55,6 +55,10 @@ namespace Repository.Services
             HtmlAgilityPack.HtmlWeb web = new HtmlAgilityPack.HtmlWeb();
             //open xml list toy
             HtmlAgilityPack.HtmlDocument doc = web.Load(crawlLink);
+            Console.WriteLine("----------------------");
+            Console.WriteLine("Is document null");
+            Console.WriteLine(doc == null ? "null" : "not null");
+            Console.WriteLine("----------------------");
             HtmlNodeCollection nodeList = doc.DocumentNode.SelectNodes("//div[@class='product-information']");
             //foreach (var toyNode in nodeList)
             for (int i=0; i < nodeList.Count; i++)
