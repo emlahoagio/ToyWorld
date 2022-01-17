@@ -55,7 +55,7 @@ namespace Repository.Services
             HtmlAgilityPack.HtmlWeb web = new HtmlAgilityPack.HtmlWeb();
             //open xml list toy
             HtmlAgilityPack.HtmlDocument doc = web.Load(crawlLink);
-            var nodeList = doc.DocumentNode.SelectNodes("//div[@class='product-detail clearfix']");
+            var nodeList = doc.DocumentNode.SelectNodes("//div[@class='product-information']");
             //foreach (var toyNode in nodeList)
             for (int i=0; i < nodeList.Count; i++)
             {
