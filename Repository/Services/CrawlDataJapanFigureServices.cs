@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Repository.Services
@@ -55,6 +56,7 @@ namespace Repository.Services
             HtmlAgilityPack.HtmlWeb web = new HtmlAgilityPack.HtmlWeb();
             //open xml list toy
             HtmlAgilityPack.HtmlDocument doc = web.Load(crawlLink);
+            Thread.Sleep(2000);
             HtmlNodeCollection nodeList = doc.DocumentNode.SelectNodes("//div[@class='product-information']");
             Console.WriteLine("----------------------");
             Console.WriteLine("//div[@class='product-information']");
