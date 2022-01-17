@@ -49,25 +49,14 @@ namespace Repository.Services
             return brand;
         }
 
-        private HtmlDocument load(string crawlLink)
-        {
-            HtmlWeb web = new HtmlWeb();
-            //open xml list toy
-            HtmlAgilityPack.HtmlDocument doc = web.Load(crawlLink);
-            return doc;
-        }
-
-        private async Task<HtmlDocument> loadAsync(string crawlLink)
-        {
-            return await Task.Run(() => load(crawlLink));
-        }
-
         public async Task<IEnumerable<Toy>> getToy(string crawlLink)
         {
             var result = new List<Toy>();
             System.Net.WebClient client = new System.Net.WebClient();
+            var htmlDoc = await client.DownloadStringTaskAsync(crawlLink);
             //open xml list toy
-            HtmlDocument doc = await loadAsync(crawlLink);
+            HtmlDocument doc = new HtmlDocument();
+            doc.LoadHtml(htmlDoc);
             HtmlNodeCollection nodeList = doc.DocumentNode.SelectNodes("//div[@class='product-information']");
             var debugText = doc.DocumentNode.InnerText;
             Console.WriteLine("----------------");
@@ -87,7 +76,9 @@ namespace Repository.Services
                 price = toyNode.SelectNodes("//span[@class='price price-new flexbox-content text-left']").ElementAt(i).InnerText.Trim();
                 var detailLink = toyNode.SelectNodes("//h2[@class='product-title name']//a").ElementAt(i).Attributes["href"].Value;
 
-                var toyDetail = await loadAsync(FigureDomain+detailLink);
+                var htmlDetail = await client.DownloadStringTaskAsync(FigureDomain + detailLink.ToString());
+                var toyDetail = new HtmlDocument();
+                toyDetail.LoadHtml(htmlDetail);
                 var detailDoc = toyDetail.DocumentNode.SelectNodes("//span[@style='color:#333333']");
                 foreach (var detailNode in detailDoc)
                 {
