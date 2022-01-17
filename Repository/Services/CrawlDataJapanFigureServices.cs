@@ -57,7 +57,7 @@ namespace Repository.Services
             HtmlAgilityPack.HtmlDocument doc = web.Load(crawlLink);
             Console.WriteLine("----------------------");
             Console.WriteLine("Is document null");
-            Console.WriteLine(doc == null ? "null" : "not null");
+            Console.WriteLine(doc);
             Console.WriteLine("----------------------");
             HtmlNodeCollection nodeList = doc.DocumentNode.SelectNodes("//div[@class='product-information']");
             //foreach (var toyNode in nodeList)
