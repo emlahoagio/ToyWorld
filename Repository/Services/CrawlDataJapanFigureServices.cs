@@ -57,19 +57,17 @@ namespace Repository.Services
             return doc;
         }
 
-        private Task<HtmlDocument> loadAsync(string crawlLink)
+        private async Task<HtmlDocument> loadAsync(string crawlLink)
         {
-            return Task.Run(() => load(crawlLink));
+            return await Task.Run(() => load(crawlLink));
         }
 
         public async Task<IEnumerable<Toy>> getToy(string crawlLink)
         {
             var result = new List<Toy>();
             System.Net.WebClient client = new System.Net.WebClient();
-            var htmlDoc = await client.DownloadStringTaskAsync(crawlLink);
             //open xml list toy
-            HtmlDocument doc = new HtmlDocument();
-            doc.LoadHtml(htmlDoc);
+            HtmlDocument doc = await loadAsync(crawlLink);
             HtmlNodeCollection nodeList = doc.DocumentNode.SelectNodes("//div[@class='product-information']");
             var debugText = doc.DocumentNode.InnerText;
             Console.WriteLine("----------------");
@@ -89,9 +87,7 @@ namespace Repository.Services
                 price = toyNode.SelectNodes("//span[@class='price price-new flexbox-content text-left']").ElementAt(i).InnerText.Trim();
                 var detailLink = toyNode.SelectNodes("//h2[@class='product-title name']//a").ElementAt(i).Attributes["href"].Value;
 
-                var htmlDetail = await client.DownloadStringTaskAsync(FigureDomain + detailLink.ToString());
-                var toyDetail = new HtmlDocument();
-                toyDetail.LoadHtml(htmlDetail);
+                var toyDetail = await loadAsync(FigureDomain+detailLink);
                 var detailDoc = toyDetail.DocumentNode.SelectNodes("//span[@style='color:#333333']");
                 foreach (var detailNode in detailDoc)
                 {
