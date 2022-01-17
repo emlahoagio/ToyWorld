@@ -23,7 +23,7 @@ namespace Repository
             _repositoryManager = repositoryManager;
         }
 
-        public async Task<Pagination<ToyInList>> GetAllToys(ToyParameters toyParameters, bool trackChanges)
+        public async Task<Pagination<ToyInList>> GetAllToys(PagingParameters toyParameters, bool trackChanges)
         {
             var toys = await FindByCondition(x => x.Id != 3,trackChanges)
                 .Include(toy => toy.Brand)
@@ -60,18 +60,19 @@ namespace Repository
 
         public void UpdateToy(Toy toy) => Update(toy);
 
-        public int IdExistToy(string toyName)
+        public async Task<Toy> GetExistToy(string toyName)
         {
-            int result = -1;
-            var toy = FindByCondition(x => x.Name == toyName.Trim(), trackChanges: false).FirstOrDefault();
-            if (toy != null)
+            var toy = await FindByCondition(x => x.Name == toyName.Trim(), trackChanges: false)
+                .Include(x => x.Images)
+                .FirstOrDefaultAsync();
+            if (toy == null)
             {
-                result = toy.Id;
+                return null;
             }
-            return result;
+            return toy;
         }
 
-        public async Task<Pagination<ToyInList>> GetToysByType(ToyParameters toyParameters, string typeName, bool trackChanges)
+        public async Task<Pagination<ToyInList>> GetToysByType(PagingParameters toyParameters, string typeName, bool trackChanges)
         {
             var toys = await FindByCondition(x => x.Type.Name == typeName && x.Id != 3, trackChanges)
                 .Include(x => x.Type)
@@ -102,6 +103,40 @@ namespace Repository
                 Data = toysInList,
                 PageNumber = toyParameters.PageNumber,
                 PageSize = toyParameters.PageSize
+            };
+
+            return result;
+        }
+
+        public async Task<ToyDetail> GetToyDetail(int toyId, bool trackChanges)
+        {
+            var toyDetail = await FindByCondition(x => x.Id == toyId, trackChanges)
+                .Include(x => x.Brand)
+                .Include(x => x.Type)
+                .Include(x => x.Images)
+                .FirstOrDefaultAsync();
+
+            if(toyDetail == null)
+            {
+                return null;
+            }
+
+            var listImages = toyDetail.Images.Select(image => new ImageReturn
+            {
+                Id = image.Id,
+                Url = image.Url
+            }).ToList();
+
+            var result = new ToyDetail
+            {
+                BrandName = toyDetail.Brand.Name,
+                Name = toyDetail.Name,
+                CoverImage = toyDetail.CoverImage,
+                Description = toyDetail.Description,
+                Id = toyDetail.Id,
+                ImagesOfToy = listImages,
+                Price = toyDetail.Price,
+                TypeName = toyDetail.Type.Name
             };
 
             return result;

@@ -23,7 +23,7 @@ namespace Entities.RequestFeatures
         }
     }
 
-    public class ToyParameters : RequestParameters
+    public class PagingParameters : RequestParameters
     {
     }
 }

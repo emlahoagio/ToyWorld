@@ -39,7 +39,7 @@ namespace ToyWorldSystem.Controller
         /// <param name="toyParameters">2 param: PageNumber is number of page, PageSize is the number of item in page</param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetToys([FromQuery] ToyParameters toyParameters)
+        public async Task<IActionResult> GetToys([FromQuery] PagingParameters toyParameters)
         {
             var toys = await _repository.Toy.GetAllToys(toyParameters, trackChanges: false);
 
@@ -54,11 +54,20 @@ namespace ToyWorldSystem.Controller
         /// <returns></returns>
         [HttpGet]
         [Route("type/{type_name}")]
-        public async Task<IActionResult> GetToysByType(string type_name,[FromQuery] ToyParameters toyParameters)
+        public async Task<IActionResult> GetToysByType(string type_name,[FromQuery] PagingParameters toyParameters)
         {
             var toys = await _repository.Toy.GetToysByType(toyParameters ,type_name, trackChanges: false);
 
             return Ok(toys);
+        }
+
+        [HttpGet]
+        [Route("details/{toy_id}")]
+        public async Task<IActionResult> GetToyDetailById(int toy_id)
+        {
+            var toyDetail = await _repository.Toy.GetToyDetail(toy_id, trackChanges: false);
+
+            return Ok(toyDetail);
         }
 
         /// <summary>
@@ -85,10 +94,11 @@ namespace ToyWorldSystem.Controller
             foreach(var toy in toyList)
             {
                 toy.TypeId = type.Id;
-                var idExistToy = _repository.Toy.IdExistToy(toy.Name);
-                if (idExistToy != -1)
+                var existToy = await _repository.Toy.GetExistToy(toy.Name);
+                if (existToy != null)
                 {
-                    toy.Id = idExistToy;
+                    toy.Id = existToy.Id;
+                    toy.Images = existToy.Images;
                     _repository.Toy.UpdateToy(toy);
                 }
                 else _repository.Toy.CreateToy(toy);

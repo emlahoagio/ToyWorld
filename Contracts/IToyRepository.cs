@@ -12,8 +12,9 @@ namespace Contracts
     {
         Task<Pagination<ToyInList>> GetAllToys(ToyParameters toyParameters, bool trackChanges);
         Task<Pagination<ToyInList>> GetToysByType(ToyParameters toyParameters, string typeName, bool trackChanges);
+        Task<ToyDetail> GetToyDetail(int toyId, bool trackChanges);
         void CreateToy(Toy toy);
         void UpdateToy(Toy toy);
-        int IdExistToy(string toyName);
+        Task<Toy> GetExistToy(string toyName);
     }
 }
