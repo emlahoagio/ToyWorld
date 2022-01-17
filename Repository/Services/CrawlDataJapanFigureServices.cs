@@ -56,8 +56,7 @@ namespace Repository.Services
             HtmlAgilityPack.HtmlWeb web = new HtmlAgilityPack.HtmlWeb();
             //open xml list toy
             HtmlAgilityPack.HtmlDocument doc = web.Load(crawlLink);
-            Thread.Sleep(2000);
-            HtmlNodeCollection nodeList = doc.DocumentNode.SelectNodes("//div[@class='product-information']");
+            HtmlAgilityPack.HtmlNodeCollection nodeList = doc.DocumentNode.SelectNodes("//div[@class='product-information']");
             Console.WriteLine("----------------------");
             Console.WriteLine("//div[@class='product-information']");
             Console.WriteLine(nodeList);
