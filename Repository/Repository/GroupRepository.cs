@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using Entities.DataTransferObject;
 using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -15,18 +16,17 @@ namespace Repository
         {
 
         }
-        public async Task<IEnumerable<string>> getListGroup(bool trackChanges)
+        public async Task<List<GroupReturn>> getListGroup(bool trackChanges)
         {
             var groupList = await FindAll(trackChanges).OrderBy(x => x.Name).ToListAsync();
 
             if (groupList == null) return null;
 
-            List<string> result = new List<string>();
-
-            foreach(Group group in groupList)
+            var result = groupList.Select(x => new GroupReturn
             {
-                result.Add(group.Name);
-            }
+                Id = x.Id,
+                Name = x.Name
+            }).ToList();
 
             return result;
         }

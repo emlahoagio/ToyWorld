@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Contracts.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ namespace Contracts
         ITypeRepository Type { get; }
         IBrandRepository Brand { get; }
         IAccountRepository Account { get; }
+        IPostRepository Post { get; }
         IGroupRepository Group { get; }
         IContestRepository Contest { get; }
         IImageRepository Image { get; }

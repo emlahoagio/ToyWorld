@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using Contracts.Repositories;
 using Entities.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -22,6 +23,7 @@ namespace Repository
         private IGroupRepository _groupRepository;
         private IContestRepository _contestRepository;
         private IImageRepository _imageRepository;
+        private IPostRepository _postRepository;
 
         public RepositoryManager(DataContext context, IConfiguration configuration)
         {
@@ -112,6 +114,18 @@ namespace Repository
                     _imageRepository = new ImageRepository(_context);
                 }
                 return _imageRepository;
+            }
+        }
+
+        public IPostRepository Post
+        {
+            get
+            {
+                if(_postRepository == null)
+                {
+                    _postRepository = new PostRepository(_context);
+                }
+                return _postRepository;
             }
         }
 

@@ -61,6 +61,11 @@ namespace ToyWorldSystem.Controller
             return Ok(toys);
         }
 
+        /// <summary>
+        /// Get detail of toy by toy Id
+        /// </summary>
+        /// <param name="toy_id">Id return in get list toy</param>
+        /// <returns></returns>
         [HttpGet]
         [Route("details/{toy_id}")]
         public async Task<IActionResult> GetToyDetailById(int toy_id)
@@ -78,7 +83,7 @@ namespace ToyWorldSystem.Controller
         /// <returns></returns>
         [HttpPost]
         [Route("crawl/japanfigure")]
-        public async Task<IActionResult> CrawlData([FromHeader]string link_crawl, string toy_type)
+        public async Task<IActionResult> CrawlData(string link_crawl, string toy_type)
         {
             //get list scale figure
             var toyList = await _crawlDataJapanFigure.getToy(link_crawl);
