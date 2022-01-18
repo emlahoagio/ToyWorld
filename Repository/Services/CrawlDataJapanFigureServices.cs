@@ -53,7 +53,11 @@ namespace Repository.Services
         {
             var result = new List<Toy>();
             System.Net.WebClient client = new System.Net.WebClient();
+
             var htmlDoc = await client.DownloadStringTaskAsync(crawlLink);
+            Console.WriteLine("----------------");
+            Console.WriteLine(client);
+            Console.WriteLine("----------------");
             //open xml list toy
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml(htmlDoc);
