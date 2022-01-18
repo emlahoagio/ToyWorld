@@ -61,6 +61,11 @@ namespace ToyWorldSystem.Controller
             return Ok(toys);
         }
 
+        /// <summary>
+        /// Get detail of toy by toy Id
+        /// </summary>
+        /// <param name="toy_id">Id return in get list toy</param>
+        /// <returns></returns>
         [HttpGet]
         [Route("details/{toy_id}")]
         public async Task<IActionResult> GetToyDetailById(int toy_id)

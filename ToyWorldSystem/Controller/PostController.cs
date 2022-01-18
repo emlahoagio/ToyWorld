@@ -22,6 +22,12 @@ namespace ToyWorldSystem.Controller
             _repositoryManager = repositoryManager;
         }
 
+        /// <summary>
+        /// Get list post by group id (Role: Members, Manager)
+        /// </summary>
+        /// <param name="group_id">Id return in get list</param>
+        /// <param name="paging"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("group/{group_id}")]
         public async Task<IActionResult> GetListPostByGroup(int group_id, [FromQuery]PagingParameters paging)
