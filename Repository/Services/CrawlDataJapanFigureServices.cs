@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Net;
 
 namespace Repository.Services
 {
@@ -50,22 +49,35 @@ namespace Repository.Services
             return brand;
         }
 
+        private HtmlDocument load(string crawlLink)
+        {
+            HtmlWeb web = new HtmlWeb();
+            //open xml list toy
+            HtmlAgilityPack.HtmlDocument doc = web.Load(crawlLink);
+            return doc;
+        }
+
+        private async Task<HtmlDocument> loadAsync(string crawlLink)
+        {
+            return await Task.Run(() => load(crawlLink));
+        }
+
         public async Task<IEnumerable<Toy>> getToy(string crawlLink)
         {
             var result = new List<Toy>();
-            WebClient client = new WebClient();
-            Console.WriteLine("----------------");
-            Console.WriteLine(client);
-            Console.WriteLine("----------------");
-            var htmlDoc = await client.DownloadStringTaskAsync(crawlLink);
+            System.Net.WebClient client = new System.Net.WebClient();
             //open xml list toy
-            HtmlDocument doc = new HtmlDocument();
-            doc.LoadHtml(htmlDoc);
-            HtmlNodeCollection nodeList = doc.DocumentNode.SelectNodes("//div[@class='product-information']");
+            HtmlDocument doc = await loadAsync(crawlLink);
             var debugText = doc.DocumentNode.InnerText;
             Console.WriteLine("----------------");
             Console.WriteLine(doc.DocumentNode.InnerText);
             Console.WriteLine("----------------");
+            if(debugText.Contains("Please wait"))
+            {
+                Thread.Sleep(10000);
+                doc = await loadAsync(crawlLink);
+            }
+            HtmlNodeCollection nodeList = doc.DocumentNode.SelectNodes("//div[@class='product-information']");
             //foreach (var toyNode in nodeList)
             for (int i=0; i < nodeList.Count; i++)
             {
