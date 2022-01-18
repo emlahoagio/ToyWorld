@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Net;
 
 namespace Repository.Services
 {
@@ -52,7 +53,7 @@ namespace Repository.Services
         public async Task<IEnumerable<Toy>> getToy(string crawlLink)
         {
             var result = new List<Toy>();
-            System.Net.WebClient client = new System.Net.WebClient();
+            WebClient client = new WebClient();
             Console.WriteLine("----------------");
             Console.WriteLine(client);
             Console.WriteLine("----------------");
