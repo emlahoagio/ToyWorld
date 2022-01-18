@@ -6,10 +6,12 @@ namespace Entities.DataTransferObject
 {
     public class PostInList
     {
-        public string OwnerImage { get; set; }
+        public int Id { get; set; }
+        public string OwnerAvatar { get; set; }
         public string OwnerName { get; set; }
-        public DateTime PostDate { get; set; }
-
-
+        public DateTime? PublicDate { get; set; }
+        public List<ImageReturn> Images { get; set; }
+        public int NumOfReact { get; set; }
+        public int NumOfComment { get; set; }
     }
 }

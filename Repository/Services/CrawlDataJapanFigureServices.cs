@@ -68,15 +68,6 @@ namespace Repository.Services
             System.Net.WebClient client = new System.Net.WebClient();
             //open xml list toy
             HtmlDocument doc = await loadAsync(crawlLink);
-            var debugText = doc.DocumentNode.InnerText;
-            Console.WriteLine("----------------");
-            Console.WriteLine(doc.DocumentNode.InnerText);
-            Console.WriteLine("----------------");
-            if(debugText.Contains("Please wait"))
-            {
-                Thread.Sleep(10000);
-                doc = await loadAsync(crawlLink);
-            }
             HtmlNodeCollection nodeList = doc.DocumentNode.SelectNodes("//div[@class='product-information']");
             //foreach (var toyNode in nodeList)
             for (int i=0; i < nodeList.Count; i++)
