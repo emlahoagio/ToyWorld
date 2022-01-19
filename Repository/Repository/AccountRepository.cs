@@ -32,5 +32,14 @@ namespace Repository
 
             return result;
         }
+
+        public async Task<Account> GetAccountById(int account_id, bool trackChanges)
+        {
+            var result = await FindByCondition(x => x.Id == account_id, trackChanges).FirstOrDefaultAsync();
+
+            if (result == null) return null;
+
+            return result;
+        }
     }
 }

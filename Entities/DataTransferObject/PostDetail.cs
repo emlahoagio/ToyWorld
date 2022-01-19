@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Entities.DataTransferObject
 {
-    public class PostInList
+    public class PostDetail
     {
         public int Id { get; set; }
         public string OwnerAvatar { get; set; }
@@ -12,6 +12,7 @@ namespace Entities.DataTransferObject
         public string Content { get; set; }
         public DateTime? PublicDate { get; set; }
         public List<ImageReturn> Images { get; set; }
+        public List<CommentReturn> Comments { get; set; }
         public int NumOfReact { get; set; }
         public int NumOfComment { get; set; }
     }

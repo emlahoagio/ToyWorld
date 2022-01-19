@@ -17,9 +17,25 @@ namespace Repository
         {
         }
 
+        public void CreatePost(NewPostParameter param)
+        {
+            var post = new Post
+            {
+                AccountId = param.AccountId,
+                Content = param.Content,
+                GroupId = param.GroupId,
+                ToyId = param.ToyId == 0 ? 3 : param.ToyId,
+                Images = param.ImagesLink.Select(x => new Image { Url = x }).ToList(),
+                Status = false,
+                IsDeleted = false,
+                PostDate = DateTime.Now
+            };
+            Create(post);
+        }
+
         public async Task<Pagination<PostInList>> GetPostByGroupId(int groupId, bool trackChanges, PagingParameters paging)
         {
-            var listPost = await FindByCondition(post => post.GroupId == groupId, trackChanges)
+            var listPost = await FindByCondition(post => post.GroupId == groupId && post.Status == true && post.IsDeleted == false, trackChanges)
                 .Include(x => x.Account)
                 .Include(x => x.Images)
                 .Include(x => x.ReactPosts)
@@ -47,6 +63,7 @@ namespace Repository
                 }).ToList(),
                 NumOfComment = x.Comments.Count,
                 NumOfReact = x.ReactPosts.Count,
+                Content = x.Content,
                 OwnerAvatar = x.Account.Avatar,
                 OwnerName = x.Account.Name,
                 PublicDate = x.PublicDate
@@ -61,6 +78,70 @@ namespace Repository
             };
 
             return pagingNation;
+        }
+
+        public async Task<Post> GetPostById(int post_id, bool trackChanges)
+        {
+            var result = await FindByCondition(x => x.Id == post_id && x.Status == true && x.IsDeleted == false, trackChanges)
+                .Include(x => x.ReactPosts)
+                .FirstOrDefaultAsync();
+
+            if (result == null) return null;
+
+            return result;
+        }
+
+        public async Task<PostDetail> GetPostDetail(int post_id, bool trackChanges)
+        {
+            var post = await FindByCondition(x => x.Id == post_id && x.Status == true && x.IsDeleted == false, trackChanges)
+                .Include(x => x.Account)
+                .Include(x => x.Images)
+                .Include(x => x.Comments).ThenInclude(x => x.ReactComments)
+                .Include(x => x.Comments).ThenInclude(x => x.Account)
+                .Include(x => x.ReactPosts)
+                .FirstOrDefaultAsync();
+
+            if (post == null) return null;
+
+            var result = new PostDetail
+            {
+                Id = post.Id,
+                NumOfComment = post.Comments.Count,
+                Comments = post.Comments.Select(x => new CommentReturn
+                {
+                    Id = x.Id,
+                    Content = x.Content,
+                    NumOfReact = x.ReactComments.Count,
+                    OwnerAvatar = x.Account.Avatar,
+                    OwnerName = x.Account.Name
+                }).ToList(),
+                Images = post.Images.Select(x => new ImageReturn
+                {
+                    Id = x.Id,
+                    Url = x.Url
+                }).ToList(),
+                NumOfReact = post.ReactPosts.Count,
+                OwnerAvatar = post.Account.Avatar,
+                OwnerName = post.Account.Name,
+                PublicDate = post.PublicDate,
+                Content = post.Content
+            };
+
+            return result;
+        }
+
+        public bool IsReactedPost(Post post, int account_id)
+        {
+            bool result = false;
+            foreach (var reactPost in post.ReactPosts)
+            {
+                if (reactPost.AccountId == account_id)
+                {
+                    result = true;
+                    break;
+                }
+            }
+            return result;
         }
     }
 }

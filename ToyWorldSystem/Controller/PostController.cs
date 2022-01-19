@@ -41,5 +41,78 @@ namespace ToyWorldSystem.Controller
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Get post detail (Role: Member, Manager)
+        /// </summary>
+        /// <param name="post_id">Id of post return in get list post</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("details/{post_id}")]
+        public async Task<IActionResult> GetPostDetail(int post_id)
+        {
+            var result = await _repositoryManager.Post.GetPostDetail(post_id, trackChanges: false);
+
+            if (result == null) 
+                throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No post matches with the id: " + post_id);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Create new post (Role: Manager, Member)
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("new")]
+        public async Task<IActionResult> CreatePost(NewPostParameter param)
+        {
+            _repositoryManager.Post.CreatePost(param);
+
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
+        /// React Post
+        /// </summary>
+        /// <param name="post_id">Id of post return in detail, or get list</param>
+        /// <param name="account_id">Id return after login</param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("reacts/{post_id}/{account_id}")]
+        public async Task<IActionResult> ReactPost(int post_id, int account_id)
+        {
+            var post = await _repositoryManager.Post.GetPostById(post_id, trackChanges: false);
+
+            if (post == null) 
+                throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "No post matches with post id");
+
+            var account = await _repositoryManager.Account.GetAccountById(account_id, trackChanges: false);
+
+            if(account == null)
+                throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "No account matches with account id");
+
+            //account is reacted
+            var isReacted = _repositoryManager.Post.IsReactedPost(post, account_id);
+
+            if (isReacted)
+            {
+                //un react
+                _repositoryManager.ReactPost.DeleteReact(
+                    new Entities.Models.ReactPost { AccountId = account_id, PostId = post_id });
+            }else
+            {
+                //react
+                _repositoryManager.ReactPost.CreateReact(
+                    new Entities.Models.ReactPost { AccountId = account_id, PostId = post_id });
+            }
+
+            await _repositoryManager.SaveAsync();
+
+            return Ok(new {message = "Save changes success"});
+        }
     }
 }
