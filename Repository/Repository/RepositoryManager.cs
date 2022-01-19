@@ -26,6 +26,7 @@ namespace Repository
         private IImageRepository _imageRepository;
         private IPostRepository _postRepository;
         private IReactPostRepository _reactPostRepository;
+        private ICommentRepository _commentRepository;
 
         public RepositoryManager(DataContext context, IConfiguration configuration)
         {
@@ -140,6 +141,18 @@ namespace Repository
                     _reactPostRepository = new ReactPostRepository(_context);
                 }
                 return _reactPostRepository;
+            }
+        }
+
+        public ICommentRepository Comment
+        {
+            get
+            {
+                if(_commentRepository == null)
+                {
+                    _commentRepository = new CommentRepository(_context);
+                }
+                return _commentRepository;
             }
         }
 
