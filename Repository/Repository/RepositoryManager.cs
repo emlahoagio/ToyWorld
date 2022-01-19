@@ -3,6 +3,7 @@ using Contracts.Repositories;
 using Entities.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Repository.Repository;
 using Repository.Services;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,7 @@ namespace Repository
         private IContestRepository _contestRepository;
         private IImageRepository _imageRepository;
         private IPostRepository _postRepository;
+        private IReactPostRepository _reactPostRepository;
 
         public RepositoryManager(DataContext context, IConfiguration configuration)
         {
@@ -126,6 +128,18 @@ namespace Repository
                     _postRepository = new PostRepository(_context);
                 }
                 return _postRepository;
+            }
+        }
+
+        public IReactPostRepository ReactPost
+        {
+            get
+            {
+                if(_reactPostRepository == null)
+                {
+                    _reactPostRepository = new ReactPostRepository(_context);
+                }
+                return _reactPostRepository;
             }
         }
 

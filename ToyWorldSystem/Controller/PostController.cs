@@ -58,5 +58,39 @@ namespace ToyWorldSystem.Controller
 
             return Ok(result);
         }
+
+        [HttpPut]
+        [Route("reacts/{post_id}/{account_id}")]
+        public async Task<IActionResult> ReactPost(int post_id, int account_id)
+        {
+            var post = await _repositoryManager.Post.GetPostById(post_id, trackChanges: false);
+
+            if (post == null) 
+                throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "No post matches with post id");
+
+            var account = await _repositoryManager.Account.GetAccountById(account_id, trackChanges: false);
+
+            if(account == null)
+                throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "No account matches with account id");
+
+            //account is reacted
+            var isReacted = _repositoryManager.Post.IsReactedPost(post, account_id);
+
+            if (isReacted)
+            {
+                //un react
+                _repositoryManager.ReactPost.DeleteReact(
+                    new Entities.Models.ReactPost { AccountId = account_id, PostId = post_id });
+            }else
+            {
+                //react
+                _repositoryManager.ReactPost.CreateReact(
+                    new Entities.Models.ReactPost { AccountId = account_id, PostId = post_id });
+            }
+
+            await _repositoryManager.SaveAsync();
+
+            return Ok(new {message = "Save changes success"});
+        }
     }
 }

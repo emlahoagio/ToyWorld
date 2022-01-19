@@ -16,6 +16,7 @@ namespace Contracts
         IGroupRepository Group { get; }
         IContestRepository Contest { get; }
         IImageRepository Image { get; }
+        IReactPostRepository ReactPost { get; }
         Task SaveAsync();
     }
 }

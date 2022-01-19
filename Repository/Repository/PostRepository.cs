@@ -63,6 +63,16 @@ namespace Repository
             return pagingNation;
         }
 
+        public async Task<Post> GetPostById(int post_id, bool trackChanges)
+        {
+            var result = await FindByCondition(x => x.Id == post_id, trackChanges)
+                .Include(x => x.ReactPosts)
+                .FirstOrDefaultAsync();
+            if (result == null) return null;
+
+            return result;
+        }
+
         public async Task<PostDetail> GetPostDetail(int post_id, bool trackChanges)
         {
             var post = await FindByCondition(x => x.Id == post_id, trackChanges)
@@ -98,6 +108,20 @@ namespace Repository
                 PublicDate = post.PublicDate
             };
 
+            return result;
+        }
+
+        public bool IsReactedPost(Post post, int account_id)
+        {
+            bool result = false;
+            foreach (var reactPost in post.ReactPosts)
+            {
+                if (reactPost.AccountId == account_id)
+                {
+                    result = true;
+                    break;
+                }
+            }
             return result;
         }
     }
