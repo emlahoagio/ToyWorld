@@ -62,5 +62,43 @@ namespace Repository
 
             return pagingNation;
         }
+
+        public async Task<PostDetail> GetPostDetail(int post_id, bool trackChanges)
+        {
+            var post = await FindByCondition(x => x.Id == post_id, trackChanges)
+                .Include(x => x.Account)
+                .Include(x => x.Images)
+                .Include(x => x.Comments).ThenInclude(x => x.ReactComments)
+                .Include(x => x.Comments).ThenInclude(x => x.Account)
+                .Include(x => x.ReactPosts)
+                .FirstOrDefaultAsync();
+
+            if (post == null) return null;
+
+            var result = new PostDetail
+            {
+                Id = post.Id,
+                NumOfComment = post.Comments.Count,
+                Comments = post.Comments.Select(x => new CommentReturn
+                {
+                    Id = x.Id,
+                    Content = x.Content,
+                    NumOfReact = x.ReactComments.Count,
+                    OwnerAvatar = x.Account.Avatar,
+                    OwnerName = x.Account.Name
+                }).ToList(),
+                Images = post.Images.Select(x => new ImageReturn
+                {
+                    Id = x.Id,
+                    Url = x.Url
+                }).ToList(),
+                NumOfReact = post.ReactPosts.Count,
+                OwnerAvatar = post.Account.Avatar,
+                OwnerName = post.Account.Name,
+                PublicDate = post.PublicDate
+            };
+
+            return result;
+        }
     }
 }

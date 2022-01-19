@@ -41,5 +41,22 @@ namespace ToyWorldSystem.Controller
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Get post detail (Role: Member, Manager)
+        /// </summary>
+        /// <param name="post_id">Id of post return in get list post</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("details/{post_id}")]
+        public async Task<IActionResult> GetPostDetail(int post_id)
+        {
+            var result = await _repositoryManager.Post.GetPostDetail(post_id, trackChanges: false);
+
+            if (result == null) 
+                throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No post matches with the id: " + post_id);
+
+            return Ok(result);
+        }
     }
 }

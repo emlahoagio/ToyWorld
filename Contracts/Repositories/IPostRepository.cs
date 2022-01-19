@@ -10,5 +10,7 @@ namespace Contracts.Repositories
     public interface IPostRepository
     {
         Task<Pagination<PostInList>> GetPostByGroupId(int groupId, bool trackChanges, PagingParameters paging);
+
+        Task<PostDetail> GetPostDetail(int post_id, bool trackChanges);
     }
 }
