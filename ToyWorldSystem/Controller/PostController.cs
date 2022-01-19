@@ -59,6 +59,12 @@ namespace ToyWorldSystem.Controller
             return Ok(result);
         }
 
+        /// <summary>
+        /// React Post
+        /// </summary>
+        /// <param name="post_id">Id of post return in detail, or get list</param>
+        /// <param name="account_id">Id return after login</param>
+        /// <returns></returns>
         [HttpPut]
         [Route("reacts/{post_id}/{account_id}")]
         public async Task<IActionResult> ReactPost(int post_id, int account_id)
