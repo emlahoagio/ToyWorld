@@ -47,6 +47,7 @@ namespace Repository
                 }).ToList(),
                 NumOfComment = x.Comments.Count,
                 NumOfReact = x.ReactPosts.Count,
+                Content = x.Content,
                 OwnerAvatar = x.Account.Avatar,
                 OwnerName = x.Account.Name,
                 PublicDate = x.PublicDate
@@ -65,9 +66,10 @@ namespace Repository
 
         public async Task<Post> GetPostById(int post_id, bool trackChanges)
         {
-            var result = await FindByCondition(x => x.Id == post_id, trackChanges)
+            var result = await FindByCondition(x => x.Id == post_id && x.Status == true && x.IsDeleted == false, trackChanges)
                 .Include(x => x.ReactPosts)
                 .FirstOrDefaultAsync();
+
             if (result == null) return null;
 
             return result;
@@ -75,7 +77,7 @@ namespace Repository
 
         public async Task<PostDetail> GetPostDetail(int post_id, bool trackChanges)
         {
-            var post = await FindByCondition(x => x.Id == post_id, trackChanges)
+            var post = await FindByCondition(x => x.Id == post_id && x.Status == true && x.IsDeleted == false, trackChanges)
                 .Include(x => x.Account)
                 .Include(x => x.Images)
                 .Include(x => x.Comments).ThenInclude(x => x.ReactComments)
@@ -105,7 +107,8 @@ namespace Repository
                 NumOfReact = post.ReactPosts.Count,
                 OwnerAvatar = post.Account.Avatar,
                 OwnerName = post.Account.Name,
-                PublicDate = post.PublicDate
+                PublicDate = post.PublicDate,
+                Content = post.Content
             };
 
             return result;
