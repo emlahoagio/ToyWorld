@@ -17,9 +17,25 @@ namespace Repository
         {
         }
 
+        public void CreatePost(NewPostParameter param)
+        {
+            var post = new Post
+            {
+                AccountId = param.AccountId,
+                Content = param.Content,
+                GroupId = param.GroupId,
+                ToyId = param.ToyId == 0 ? 3 : param.ToyId,
+                Images = param.ImagesLink.Select(x => new Image { Url = x }).ToList(),
+                Status = false,
+                IsDeleted = false,
+                PostDate = DateTime.Now
+            };
+            Create(post);
+        }
+
         public async Task<Pagination<PostInList>> GetPostByGroupId(int groupId, bool trackChanges, PagingParameters paging)
         {
-            var listPost = await FindByCondition(post => post.GroupId == groupId, trackChanges)
+            var listPost = await FindByCondition(post => post.GroupId == groupId && post.Status == true && post.IsDeleted == false, trackChanges)
                 .Include(x => x.Account)
                 .Include(x => x.Images)
                 .Include(x => x.ReactPosts)

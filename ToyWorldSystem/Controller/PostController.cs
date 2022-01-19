@@ -60,6 +60,22 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Create new post (Role: Manager, Member)
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("new")]
+        public async Task<IActionResult> CreatePost(NewPostParameter param)
+        {
+            _repositoryManager.Post.CreatePost(param);
+
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
         /// React Post
         /// </summary>
         /// <param name="post_id">Id of post return in detail, or get list</param>
