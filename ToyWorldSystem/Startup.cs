@@ -70,11 +70,11 @@ namespace ToyWorldSystem
                     opt.TokenValidationParameters = tokenValidationParams;
                 });
 
-            //services.AddMvc(opt =>
-            //{
-            //    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
-            //    opt.Filters.Add(new AuthorizeFilter(policy));
-            //});
+            services.AddMvc(opt =>
+            {
+                var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                opt.Filters.Add(new AuthorizeFilter(policy));
+            });
 
             services.AddControllers(config =>
             {

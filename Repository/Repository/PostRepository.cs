@@ -17,11 +17,11 @@ namespace Repository
         {
         }
 
-        public void CreatePost(NewPostParameter param)
+        public void CreatePost(NewPostParameter param, int accountId)
         {
             var post = new Post
             {
-                AccountId = param.AccountId,
+                AccountId = accountId,
                 Content = param.Content,
                 GroupId = param.GroupId,
                 ToyId = param.ToyId == 0 ? 3 : param.ToyId,

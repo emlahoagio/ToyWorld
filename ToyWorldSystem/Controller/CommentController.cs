@@ -14,10 +14,12 @@ namespace ToyWorldSystem.Controller
     public class CommentController : ControllerBase
     {
         private readonly IRepositoryManager _repositoryManager;
+        private readonly IUserAccessor _userAccessor;
 
-        public CommentController(IRepositoryManager repositoryManager)
+        public CommentController(IRepositoryManager repositoryManager, IUserAccessor userAccessor)
         {
             _repositoryManager = repositoryManager;
+            _userAccessor = userAccessor;
         }
 
         /// <summary>
@@ -29,10 +31,12 @@ namespace ToyWorldSystem.Controller
         [Route("new")]
         public async Task<IActionResult> CreateComment(NewCommentParameter param)
         {
+            var accountId = _userAccessor.getAccountId();
+
             _repositoryManager.Comment.CreateComment(
                 new Entities.Models.Comment
                 {
-                    AccountId = param.AccountId,
+                    AccountId = accountId,
                     Content = param.Content,
                     PostId = param.PostId
                 });

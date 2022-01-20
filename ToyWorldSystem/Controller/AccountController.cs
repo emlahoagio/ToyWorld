@@ -31,7 +31,8 @@ namespace ToyWorldSystem.Controller
         /// <param name="firebaseToken">Token get from firebase</param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpPost("loginbyemail")]
+        [HttpPost]
+        [Route("loginbyemail")]
         public async Task<IActionResult> LoginByEmail(string firebaseToken)
         {
             //init firebase
@@ -54,6 +55,12 @@ namespace ToyWorldSystem.Controller
             return Ok(account);
         }
 
+        /// <summary>
+        /// Login by email and password
+        /// </summary>
+        /// <param name="unverify_account"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
         [HttpPost]
         [Route("loginby_system_account")]
         public async Task<IActionResult> LoginByAccountSystem(AccountSystemParameters unverify_account)
@@ -64,5 +71,7 @@ namespace ToyWorldSystem.Controller
 
             return Ok(account);
         }
+
+        
     }
 }
