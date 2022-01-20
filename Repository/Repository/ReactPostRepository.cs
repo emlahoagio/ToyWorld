@@ -1,8 +1,12 @@
 ﻿using Contracts.Repositories;
+using Entities.DataTransferObject;
 using Entities.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Repository.Repository
 {
@@ -15,5 +19,23 @@ namespace Repository.Repository
         public void CreateReact(ReactPost reactPost) => Create(reactPost);
 
         public void DeleteReact(ReactPost reactPost) => Delete(reactPost);
+
+        public async Task<List<AccountReact>> GetAccountReactPost(int post_id, bool trackChanges)
+        {
+            var reactPosts = await FindByCondition(x => x.PostId == post_id, trackChanges)
+                .Include(x => x.Account)
+                .ToListAsync();
+
+            if (reactPosts == null) return null;
+
+            var result = reactPosts.Select(x => new AccountReact
+            {
+                Avatar = x.Account.Avatar,
+                Id = x.Account.Id,
+                Name = x.Account.Name
+            }).ToList();
+            
+            return result;
+        }
     }
 }

@@ -10,8 +10,6 @@ namespace Entities.RequestFeatures
         [Required]
         public string Content { get; set; }
         [Required]
-        public int AccountId { get; set; }
-        [Required]
         public int GroupId { get; set; }
         public int ToyId { get; set; }
         public List<string> ImagesLink { get; set; }

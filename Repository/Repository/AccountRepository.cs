@@ -2,6 +2,8 @@
 using Entities.DataTransferObject;
 using Entities.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Repository
@@ -18,6 +20,24 @@ namespace Repository
         public async Task<AccountReturnAfterLogin> getAccountByEmail(string email, bool trackChanges)
         {
             var account = await FindByCondition(account => account.Email == email, trackChanges).SingleOrDefaultAsync();
+
+            if (account == null) return null;
+
+            var result = new AccountReturnAfterLogin
+            {
+                AccountId = account.Id,
+                Avatar = account.Avatar,
+                Role = (int)account.Role,
+                Token = _jwtSupport.CreateToken((int)account.Role, account.Id),
+                Status = (bool)account.Status
+            };
+
+            return result;
+        }
+
+        public async Task<AccountReturnAfterLogin> getAccountByEmail(string email, string password, bool trackChanges)
+        {
+            var account = await FindByCondition(account => account.Email == email && account.Password == password, trackChanges).SingleOrDefaultAsync();
 
             if (account == null) return null;
 

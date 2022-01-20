@@ -14,6 +14,6 @@ namespace Contracts.Repositories
         Task<PostDetail> GetPostDetail(int post_id, bool trackChanges);
         Task<Post> GetPostById(int post_id, bool trackChanges);
         bool IsReactedPost(Post post, int account_id);
-        void CreatePost(NewPostParameter param);
+        void CreatePost(NewPostParameter param, int accountId);
     }
 }

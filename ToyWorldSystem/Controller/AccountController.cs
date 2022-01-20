@@ -1,5 +1,6 @@
 ﻿using Contracts;
 using Entities.ErrorModel;
+using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,13 +26,46 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Get account react post
+        /// </summary>
+        /// <param name="post_id">Post Id return in GetPostDetail</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("react_post/{post_id}")]
+        public async Task<IActionResult> GetAccountReactPost(int post_id)
+        {
+            var result = await _repository.ReactPost.GetAccountReactPost(post_id, trackChanges: false);
+
+            if (result == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No one react this post");
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Get account react comment
+        /// </summary>
+        /// <param name="comment_id">Id of comment return in get post detail</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("react_comment/{comment_id}")]
+        public async Task<IActionResult> GetAccountReactComment(int comment_id)
+        {
+            var result = await _repository.ReactComment.GetAccountReactComment(comment_id, trackChanges: false);
+
+            if(result == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No one react this comment");
+
+            return Ok(result);
+        }
+
+        /// <summary>
         /// Login by google mail (Role: ALL)
         /// </summary>
         /// <param name="firebaseToken">Token get from firebase</param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpPost("loginbyemail")]
-        public async Task<IActionResult> loginByEmail(string firebaseToken)
+        [HttpPost]
+        [Route("loginbyemail")]
+        public async Task<IActionResult> LoginByEmail(string firebaseToken)
         {
             //init firebase
             _firebaseSupport.initFirebase();
@@ -50,6 +84,23 @@ namespace ToyWorldSystem.Controller
             {
                 throw new ErrorDetails(HttpStatusCode.Unauthorized, "This account is disable" );
             }
+            return Ok(account);
+        }
+
+        /// <summary>
+        /// Login by email and password
+        /// </summary>
+        /// <param name="unverify_account"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("loginby_system_account")]
+        public async Task<IActionResult> LoginByAccountSystem(AccountSystemParameters unverify_account)
+        {
+            var account = await _repository.Account.getAccountByEmail(unverify_account.Email, unverify_account.Password, trackChanges: false);
+
+            if (account == null) throw new ErrorDetails(HttpStatusCode.Unauthorized, "Invalid username/password!");
+
             return Ok(account);
         }
     }
