@@ -1,5 +1,6 @@
 ﻿using Contracts;
 using Entities.ErrorModel;
+using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -31,7 +32,7 @@ namespace ToyWorldSystem.Controller
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("loginbyemail")]
-        public async Task<IActionResult> loginByEmail(string firebaseToken)
+        public async Task<IActionResult> LoginByEmail(string firebaseToken)
         {
             //init firebase
             _firebaseSupport.initFirebase();
@@ -50,6 +51,17 @@ namespace ToyWorldSystem.Controller
             {
                 throw new ErrorDetails(HttpStatusCode.Unauthorized, "This account is disable" );
             }
+            return Ok(account);
+        }
+
+        [HttpPost]
+        [Route("loginby_system_account")]
+        public async Task<IActionResult> LoginByAccountSystem(AccountSystemParameters unverify_account)
+        {
+            var account = await _repository.Account.getAccountByEmail(unverify_account.Email, unverify_account.Password, trackChanges: false);
+
+            if (account == null) throw new ErrorDetails(HttpStatusCode.Unauthorized, "Invalid username/password!");
+
             return Ok(account);
         }
     }

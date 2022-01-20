@@ -10,6 +10,7 @@ namespace Contracts
     public interface IAccountRepository
     {
         Task<AccountReturnAfterLogin> getAccountByEmail(string email, bool trackChanges);
+        Task<AccountReturnAfterLogin> getAccountByEmail(string email, string password, bool trackChanges);
         Task<Account> GetAccountById(int account_id, bool trackChanges);
     }
 }
