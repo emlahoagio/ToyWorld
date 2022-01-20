@@ -26,6 +26,22 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Get account react post
+        /// </summary>
+        /// <param name="post_id">Post Id return in GetPostDetail</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("react_post/{post_id}")]
+        public async Task<IActionResult> GetAccountReactPost(int post_id)
+        {
+            var result = await _repository.ReactPost.GetAccountReactPost(post_id, trackChanges: false);
+
+            if (result == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No one react this post");
+
+            return Ok(result);
+        }
+
+        /// <summary>
         /// Login by google mail (Role: ALL)
         /// </summary>
         /// <param name="firebaseToken">Token get from firebase</param>
@@ -71,7 +87,5 @@ namespace ToyWorldSystem.Controller
 
             return Ok(account);
         }
-
-        
     }
 }
