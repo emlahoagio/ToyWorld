@@ -8,6 +8,7 @@ using Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace ToyWorldSystem.Controller
@@ -115,7 +116,7 @@ namespace ToyWorldSystem.Controller
         [Route("reacts/{post_id}")]
         public async Task<IActionResult> ReactPost(int post_id)
         {
-            var post = await _repositoryManager.Post.GetPostById(post_id, trackChanges: false);
+            var post = await _repositoryManager.Post.GetPostReactById(post_id, trackChanges: false);
 
             var accountId = _userAccessor.getAccountId();
 
@@ -145,6 +146,31 @@ namespace ToyWorldSystem.Controller
             await _repositoryManager.SaveAsync();
 
             return Ok(new {message = "Save changes success"});
+        }
+
+        /// <summary>
+        /// Approve post (Role: Manager)
+        /// </summary>
+        /// <param name="post_id">Id of post return in get list post</param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("approve/{post_id}")]
+        public async Task<IActionResult> ApprovePost(int post_id)
+        {
+            var accountId = _userAccessor.getAccountId();
+            var account = await _repositoryManager.Account.GetAccountById(accountId, trackChanges: false);
+
+            if (account.Role != 1) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid request");
+
+            var post = await _repositoryManager.Post.GetPostById(post_id, trackChanges: false);
+            if (post == null) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid post id");
+
+            _repositoryManager.Post.ApprovePost(post);
+            await _repositoryManager.SaveAsync();
+
+            //Send notification
+
+            return Ok("Save changes success");
         }
     }
 }

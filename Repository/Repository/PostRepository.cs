@@ -17,6 +17,14 @@ namespace Repository
         {
         }
 
+        public void ApprovePost(Post post)
+        {
+            post.IsPublic = true;
+            post.IsWaiting = false;
+            post.PublicDate = DateTime.Now;
+            Update(post);
+        }
+
         public void CreatePost(NewPostParameter param, int accountId)
         {
             var post = new Post
@@ -81,7 +89,7 @@ namespace Repository
             return pagingNation;
         }
 
-        public async Task<Post> GetPostById(int post_id, bool trackChanges)
+        public async Task<Post> GetPostReactById(int post_id, bool trackChanges)
         {
             var result = await FindByCondition(x => x.Id == post_id && x.IsPublic == true && x.IsDeleted == false, trackChanges)
                 .Include(x => x.ReactPosts)
@@ -227,6 +235,15 @@ namespace Repository
                 }
             }
             return result;
+        }
+
+        public async Task<Post> GetPostById(int post_id, bool trackChanges)
+        {
+            var post = await FindByCondition(x => x.Id == post_id, trackChanges).FirstOrDefaultAsync();
+
+            if (post == null) return null;
+
+            return post;
         }
     }
 }
