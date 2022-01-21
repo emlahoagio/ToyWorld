@@ -25,6 +25,12 @@ namespace Repository
             Update(post);
         }
 
+        public void DenyPost(Post post)
+        {
+            post.IsWaiting = false;
+            Update(post);
+        }
+
         public void CreatePost(NewPostParameter param, int accountId)
         {
             var post = new Post
@@ -237,9 +243,9 @@ namespace Repository
             return result;
         }
 
-        public async Task<Post> GetPostById(int post_id, bool trackChanges)
+        public async Task<Post> GetPostApproveOrDenyById(int post_id, bool trackChanges)
         {
-            var post = await FindByCondition(x => x.Id == post_id, trackChanges).FirstOrDefaultAsync();
+            var post = await FindByCondition(x => x.Id == post_id && x.IsWaiting == true, trackChanges).FirstOrDefaultAsync();
 
             if (post == null) return null;
 

@@ -162,10 +162,35 @@ namespace ToyWorldSystem.Controller
 
             if (account.Role != 1) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid request");
 
-            var post = await _repositoryManager.Post.GetPostById(post_id, trackChanges: false);
+            var post = await _repositoryManager.Post.GetPostApproveOrDenyById(post_id, trackChanges: false);
             if (post == null) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid post id");
 
             _repositoryManager.Post.ApprovePost(post);
+            await _repositoryManager.SaveAsync();
+
+            //Send notification
+
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
+        /// Deny post (Role: Manager)
+        /// </summary>
+        /// <param name="post_id">Id of post return in get list post</param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("deny/{post_id}")]
+        public async Task<IActionResult> DenyPost(int post_id)
+        {
+            var accountId = _userAccessor.getAccountId();
+            var account = await _repositoryManager.Account.GetAccountById(accountId, trackChanges: false);
+
+            if (account.Role != 1) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid request");
+
+            var post = await _repositoryManager.Post.GetPostApproveOrDenyById(post_id, trackChanges: false);
+            if (post == null) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid post id");
+
+            _repositoryManager.Post.DenyPost(post);
             await _repositoryManager.SaveAsync();
 
             //Send notification
