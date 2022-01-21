@@ -173,6 +173,48 @@ namespace Repository
             return result;
         }
 
+        public async Task<Pagination<WaitingPost>> GetWaitingPost(bool trackChanges, PagingParameters param, int accountId)
+        {
+            var posts = await FindByCondition(x => x.IsWaiting == true && x.AccountId == accountId, trackChanges)
+                .Include(x => x.Account)
+                .Include(x => x.Images)
+                .Include(x => x.ReactPosts)
+                .Include(x => x.Comments)
+                .OrderByDescending(x => x.PostDate)
+                .ToListAsync();
+
+            int count = posts.Count;
+
+            var pagingPosts = posts.Skip((param.PageNumber - 1) * param.PageSize)
+                .Take(param.PageSize);
+
+            if (posts == null || posts.Count == 0) return null;
+
+            var waitingPosts = pagingPosts.Select(x => new WaitingPost
+            {
+                Content = x.Content,
+                Id = x.Id,
+                Images = x.Images.Select(x => new ImageReturn
+                {
+                    Id = x.Id,
+                    Url = x.Url
+                }).ToList(),
+                OwnerAvatar = x.Account.Avatar,
+                OwnerName = x.Account.Name,
+                PostDate = x.PostDate
+            });
+
+            var result = new Pagination<WaitingPost>
+            {
+                Count = count,
+                Data = waitingPosts,
+                PageNumber = param.PageNumber,
+                PageSize = param.PageSize
+            };
+
+            return result;
+        }
+
         public bool IsReactedPost(Post post, int account_id)
         {
             bool result = false;

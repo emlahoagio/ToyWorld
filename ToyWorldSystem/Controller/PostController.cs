@@ -45,11 +45,26 @@ namespace ToyWorldSystem.Controller
             return Ok(result);
         }
 
+        /// <summary>
+        /// Get Waiting post (Role: Manager, Member)
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("waiting")]
         public async Task<IActionResult> GetWaitingPost([FromQuery]PagingParameters paging)
         {
-            var result = await _repositoryManager.Post.GetWaitingPost(trackChanges: false, paging);
+            var accountId = _userAccessor.getAccountId();
+            var account = await _repositoryManager.Account.GetAccountById(accountId, trackChanges: false);
+
+            Pagination<WaitingPost> result;
+            if(account.Role == 1)
+            {
+                result = await _repositoryManager.Post.GetWaitingPost(trackChanges: false, paging);
+            }else
+            {
+                result = await _repositoryManager.Post.GetWaitingPost(trackChanges: false, paging, accountId);
+            }
 
             if (result == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No waiting post");
 
