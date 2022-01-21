@@ -33,7 +33,7 @@ namespace Repository.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(Claims),
-                Expires = DateTime.Now.AddMinutes(int.Parse(configuration["Jwt:MinutesExprise"])),
+                Expires = DateTime.Now.AddMinutes(int.Parse(configuration["Jwt:MinutesExprise"])).AddDays(int.Parse(configuration["Jwt:DateExprise"])),
                 SigningCredentials = creds
             };
 

@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using Entities.DataTransferObject;
 using Entities.ErrorModel;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Http;
@@ -40,6 +41,17 @@ namespace ToyWorldSystem.Controller
             {
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
             }
+
+            return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("waiting")]
+        public async Task<IActionResult> GetWaitingPost([FromQuery]PagingParameters paging)
+        {
+            var result = await _repositoryManager.Post.GetWaitingPost(trackChanges: false, paging);
+
+            if (result == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No waiting post");
 
             return Ok(result);
         }
