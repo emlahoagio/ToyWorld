@@ -17,6 +17,20 @@ namespace Repository
         {
         }
 
+        public void ApprovePost(Post post)
+        {
+            post.IsPublic = true;
+            post.IsWaiting = false;
+            post.PublicDate = DateTime.Now;
+            Update(post);
+        }
+
+        public void DenyPost(Post post)
+        {
+            post.IsWaiting = false;
+            Update(post);
+        }
+
         public void CreatePost(NewPostParameter param, int accountId)
         {
             var post = new Post
@@ -26,7 +40,8 @@ namespace Repository
                 GroupId = param.GroupId,
                 ToyId = param.ToyId == 0 ? 3 : param.ToyId,
                 Images = param.ImagesLink.Select(x => new Image { Url = x }).ToList(),
-                Status = false,
+                IsWaiting = true,
+                IsPublic = false,
                 IsDeleted = false,
                 PostDate = DateTime.Now
             };
@@ -35,7 +50,7 @@ namespace Repository
 
         public async Task<Pagination<PostInList>> GetPostByGroupId(int groupId, bool trackChanges, PagingParameters paging)
         {
-            var listPost = await FindByCondition(post => post.GroupId == groupId && post.Status == true && post.IsDeleted == false, trackChanges)
+            var listPost = await FindByCondition(post => post.GroupId == groupId && post.IsPublic == true && post.IsDeleted == false, trackChanges)
                 .Include(x => x.Account)
                 .Include(x => x.Images)
                 .Include(x => x.ReactPosts)
@@ -80,9 +95,9 @@ namespace Repository
             return pagingNation;
         }
 
-        public async Task<Post> GetPostById(int post_id, bool trackChanges)
+        public async Task<Post> GetPostReactById(int post_id, bool trackChanges)
         {
-            var result = await FindByCondition(x => x.Id == post_id && x.Status == true && x.IsDeleted == false, trackChanges)
+            var result = await FindByCondition(x => x.Id == post_id && x.IsPublic == true && x.IsDeleted == false, trackChanges)
                 .Include(x => x.ReactPosts)
                 .FirstOrDefaultAsync();
 
@@ -93,7 +108,7 @@ namespace Repository
 
         public async Task<PostDetail> GetPostDetail(int post_id, bool trackChanges)
         {
-            var post = await FindByCondition(x => x.Id == post_id && x.Status == true && x.IsDeleted == false, trackChanges)
+            var post = await FindByCondition(x => x.Id == post_id && x.IsPublic == true && x.IsDeleted == false, trackChanges)
                 .Include(x => x.Account)
                 .Include(x => x.Images)
                 .Include(x => x.Comments).ThenInclude(x => x.ReactComments)
@@ -130,6 +145,90 @@ namespace Repository
             return result;
         }
 
+        public async Task<Pagination<WaitingPost>> GetWaitingPost(bool trackChanges, PagingParameters param)
+        {
+            var posts = await FindByCondition(x => x.IsWaiting == true, trackChanges)
+                .Include(x => x.Account)
+                .Include(x => x.Images)
+                .Include(x => x.ReactPosts)
+                .Include(x => x.Comments)
+                .OrderByDescending(x => x.PostDate)
+                .ToListAsync();
+
+            int count = posts.Count;
+
+            var pagingPosts = posts.Skip((param.PageNumber - 1) * param.PageSize)
+                .Take(param.PageSize);
+
+            if (posts == null || posts.Count == 0) return null;
+
+            var waitingPosts = pagingPosts.Select(x => new WaitingPost
+            {
+                Content = x.Content,
+                Id = x.Id,
+                Images = x.Images.Select(x => new ImageReturn
+                {
+                    Id = x.Id,
+                    Url = x.Url
+                }).ToList(),
+                OwnerAvatar = x.Account.Avatar,
+                OwnerName = x.Account.Name,
+                PostDate = x.PostDate
+            });
+
+            var result = new Pagination<WaitingPost>
+            {
+                Count = count,
+                Data = waitingPosts,
+                PageNumber = param.PageNumber,
+                PageSize = param.PageSize
+            };
+
+            return result;
+        }
+
+        public async Task<Pagination<WaitingPost>> GetWaitingPost(bool trackChanges, PagingParameters param, int accountId)
+        {
+            var posts = await FindByCondition(x => x.IsWaiting == true && x.AccountId == accountId, trackChanges)
+                .Include(x => x.Account)
+                .Include(x => x.Images)
+                .Include(x => x.ReactPosts)
+                .Include(x => x.Comments)
+                .OrderByDescending(x => x.PostDate)
+                .ToListAsync();
+
+            int count = posts.Count;
+
+            var pagingPosts = posts.Skip((param.PageNumber - 1) * param.PageSize)
+                .Take(param.PageSize);
+
+            if (posts == null || posts.Count == 0) return null;
+
+            var waitingPosts = pagingPosts.Select(x => new WaitingPost
+            {
+                Content = x.Content,
+                Id = x.Id,
+                Images = x.Images.Select(x => new ImageReturn
+                {
+                    Id = x.Id,
+                    Url = x.Url
+                }).ToList(),
+                OwnerAvatar = x.Account.Avatar,
+                OwnerName = x.Account.Name,
+                PostDate = x.PostDate
+            });
+
+            var result = new Pagination<WaitingPost>
+            {
+                Count = count,
+                Data = waitingPosts,
+                PageNumber = param.PageNumber,
+                PageSize = param.PageSize
+            };
+
+            return result;
+        }
+
         public bool IsReactedPost(Post post, int account_id)
         {
             bool result = false;
@@ -142,6 +241,30 @@ namespace Repository
                 }
             }
             return result;
+        }
+
+        public async Task<Post> GetPostApproveOrDenyById(int post_id, bool trackChanges)
+        {
+            var post = await FindByCondition(x => x.Id == post_id && x.IsWaiting == true, trackChanges).FirstOrDefaultAsync();
+
+            if (post == null) return null;
+
+            return post;
+        }
+
+        public async Task<Post> GetDisablePost(int post_id, bool trackChanges)
+        {
+            var post = await FindByCondition(x => x.Id == post_id, trackChanges).FirstOrDefaultAsync();
+
+            if (post == null) return null;
+
+            return post;
+        }
+
+        public void DisablePost(Post post)
+        {
+            post.IsDeleted = true;
+            Update(post);
         }
     }
 }

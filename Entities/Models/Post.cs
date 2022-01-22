@@ -17,7 +17,8 @@ namespace Entities.Models
 
         public int Id { get; set; }
         public string Content { get; set; }
-        public bool? Status { get; set; }
+        public bool? IsWaiting { get; set; }
+        public bool? IsPublic { get; set; }
         public DateTime? PostDate { get; set; }
         public DateTime? PublicDate { get; set; }
         public bool? IsDeleted { get; set; }

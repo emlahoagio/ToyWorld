@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using Entities.DataTransferObject;
 using Entities.ErrorModel;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Http;
@@ -7,6 +8,7 @@ using Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace ToyWorldSystem.Controller
@@ -40,6 +42,32 @@ namespace ToyWorldSystem.Controller
             {
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
             }
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Get Waiting post (Role: Manager, Member)
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("waiting")]
+        public async Task<IActionResult> GetWaitingPost([FromQuery]PagingParameters paging)
+        {
+            var accountId = _userAccessor.getAccountId();
+            var account = await _repositoryManager.Account.GetAccountById(accountId, trackChanges: false);
+
+            Pagination<WaitingPost> result;
+            if(account.Role == 1)
+            {
+                result = await _repositoryManager.Post.GetWaitingPost(trackChanges: false, paging);
+            }else
+            {
+                result = await _repositoryManager.Post.GetWaitingPost(trackChanges: false, paging, accountId);
+            }
+
+            if (result == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No waiting post");
 
             return Ok(result);
         }
@@ -88,7 +116,7 @@ namespace ToyWorldSystem.Controller
         [Route("reacts/{post_id}")]
         public async Task<IActionResult> ReactPost(int post_id)
         {
-            var post = await _repositoryManager.Post.GetPostById(post_id, trackChanges: false);
+            var post = await _repositoryManager.Post.GetPostReactById(post_id, trackChanges: false);
 
             var accountId = _userAccessor.getAccountId();
 
@@ -118,6 +146,83 @@ namespace ToyWorldSystem.Controller
             await _repositoryManager.SaveAsync();
 
             return Ok(new {message = "Save changes success"});
+        }
+
+        /// <summary>
+        /// Approve post (Role: Manager)
+        /// </summary>
+        /// <param name="post_id">Id of post return in get list post</param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("approve/{post_id}")]
+        public async Task<IActionResult> ApprovePost(int post_id)
+        {
+            var accountId = _userAccessor.getAccountId();
+            var account = await _repositoryManager.Account.GetAccountById(accountId, trackChanges: false);
+
+            if (account.Role != 1) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid request");
+
+            var post = await _repositoryManager.Post.GetPostApproveOrDenyById(post_id, trackChanges: false);
+            if (post == null) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid post id");
+
+            _repositoryManager.Post.ApprovePost(post);
+            await _repositoryManager.SaveAsync();
+
+            //Send notification
+
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
+        /// Deny post (Role: Manager)
+        /// </summary>
+        /// <param name="post_id">Id of post return in get list post</param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("deny/{post_id}")]
+        public async Task<IActionResult> DenyPost(int post_id)
+        {
+            var accountId = _userAccessor.getAccountId();
+            var account = await _repositoryManager.Account.GetAccountById(accountId, trackChanges: false);
+
+            if (account.Role != 1) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid request");
+
+            var post = await _repositoryManager.Post.GetPostApproveOrDenyById(post_id, trackChanges: false);
+            if (post == null) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid post id");
+
+            _repositoryManager.Post.DenyPost(post);
+            await _repositoryManager.SaveAsync();
+
+            //Send notification
+
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
+        /// Disable post (Role: Manager, Member)
+        /// </summary>
+        /// <param name="post_id">Id of post return in get list, or get detail</param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("disable/{post_id}")]
+        public async Task<IActionResult> DisablePost(int post_id)
+        {
+            var accountId = _userAccessor.getAccountId();
+            var account = await _repositoryManager.Account.GetAccountById(accountId, trackChanges: false);
+
+            var post = await _repositoryManager.Post.GetDisablePost(post_id, trackChanges: false);
+            if (post == null) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid post");
+
+            //check not owner, not manager
+            if(post.AccountId != accountId && account.Role != 1)
+            {
+                throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid request");
+            }
+
+            _repositoryManager.Post.DisablePost(post);
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Save changes success");
         }
     }
 }
