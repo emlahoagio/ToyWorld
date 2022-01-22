@@ -197,5 +197,32 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+
+        /// <summary>
+        /// Disable post (Role: Manager, Member)
+        /// </summary>
+        /// <param name="post_id">Id of post return in get list, or get detail</param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("disable/{post_id}")]
+        public async Task<IActionResult> DisablePost(int post_id)
+        {
+            var accountId = _userAccessor.getAccountId();
+            var account = await _repositoryManager.Account.GetAccountById(accountId, trackChanges: false);
+
+            var post = await _repositoryManager.Post.GetDisablePost(post_id, trackChanges: false);
+            if (post == null) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid post");
+
+            //check not owner, not manager
+            if(post.AccountId != accountId && account.Role != 1)
+            {
+                throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid request");
+            }
+
+            _repositoryManager.Post.DisablePost(post);
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Save changes success");
+        }
     }
 }

@@ -251,5 +251,20 @@ namespace Repository
 
             return post;
         }
+
+        public async Task<Post> GetDisablePost(int post_id, bool trackChanges)
+        {
+            var post = await FindByCondition(x => x.Id == post_id, trackChanges).FirstOrDefaultAsync();
+
+            if (post == null) return null;
+
+            return post;
+        }
+
+        public void DisablePost(Post post)
+        {
+            post.IsDeleted = true;
+            Update(post);
+        }
     }
 }
