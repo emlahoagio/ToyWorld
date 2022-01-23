@@ -109,5 +109,29 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+
+        /// <summary>
+        /// Delete comment by id
+        /// </summary>
+        /// <param name="comment_id">Comment return in post detail</param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("{comment_id}")]
+        public async Task<IActionResult> DeleteComment(int comment_id)
+        {
+            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            var comment = await _repositoryManager.Comment.GetUpdateCommentById(comment_id, trackChanges: false);
+
+            if(comment == null) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Invalid comment");
+
+            if (comment.AccountId != account.Id)
+                throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "You're not owner to remove");
+
+            _repositoryManager.Comment.DeleteComment(comment);
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Save changes success");
+        }
     }
 }

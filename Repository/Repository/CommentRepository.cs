@@ -15,6 +15,8 @@ namespace Repository.Repository
         }
         public void CreateComment(Comment comment) => Create(comment);
 
+        public void DeleteComment(Comment comment) => Delete(comment);
+
         public async Task<Comment> GetCommentReactById(int comment_id, bool trackChanges)
         {
             var comment = await FindByCondition(x => x.Id == comment_id, trackChanges)

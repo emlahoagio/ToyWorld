@@ -13,5 +13,6 @@ namespace Contracts.Repositories
         bool IsReactedComment(Comment comment, int accountId);
         Task<Comment> GetUpdateCommentById(int comment_id, bool trackChanges);
         void UpdateComment(Comment comment, string content);
+        void DeleteComment(Comment comment);
     }
 }
