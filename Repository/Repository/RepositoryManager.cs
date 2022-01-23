@@ -28,6 +28,7 @@ namespace Repository
         private IReactPostRepository _reactPostRepository;
         private ICommentRepository _commentRepository;
         private IReactCommentRepository _reactCommentRepository;
+        private IFollowAccountRepository _followAccountRepository;
 
         public RepositoryManager(DataContext context, IConfiguration configuration)
         {
@@ -166,6 +167,18 @@ namespace Repository
                     _reactCommentRepository = new ReactCommentRepository(_context);
                 }
                 return _reactCommentRepository;
+            }
+        }
+
+        public IFollowAccountRepository FollowAccount
+        {
+            get
+            {
+                if(_followAccountRepository == null)
+                {
+                    _followAccountRepository = new FollowAccountRepository(_context);
+                }
+                return _followAccountRepository;
             }
         }
 

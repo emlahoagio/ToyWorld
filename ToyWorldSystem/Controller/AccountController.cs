@@ -18,11 +18,13 @@ namespace ToyWorldSystem.Controller
     {
         private readonly IRepositoryManager _repository;
         private readonly IFirebaseSupport _firebaseSupport;
+        private readonly IUserAccessor _userAccessor;
 
-        public AccountController(IRepositoryManager repository, IFirebaseSupport firebaseSupport)
+        public AccountController(IRepositoryManager repository, IFirebaseSupport firebaseSupport, IUserAccessor userAccessor)
         {
             _repository = repository;
             _firebaseSupport = firebaseSupport;
+            _userAccessor = userAccessor;
         }
 
         /// <summary>
@@ -58,13 +60,45 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Get following account
+        /// </summary>
+        /// <param name="account_id">Account need to get following</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("following/{account_id}")]
+        public async Task<IActionResult> GetFollowingAccount(int account_id)
+        {
+            var account = await _repository.FollowAccount.GetAccountFollowing(account_id, trackChanges: false);
+
+            if (account == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No account following");
+
+            return Ok(account);
+        }
+
+        /// <summary>
+        /// Get follower account
+        /// </summary>
+        /// <param name="account_id">Account need to get follower</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("follower/{account_id}")]
+        public async Task<IActionResult> GetFollowerAccount(int account_id)
+        {
+            var account = await _repository.FollowAccount.GetAccountFollower(account_id, trackChanges: false);
+
+            if (account == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No account following");
+
+            return Ok(account);
+        }
+
+        /// <summary>
         /// Login by google mail (Role: ALL)
         /// </summary>
         /// <param name="firebaseToken">Token get from firebase</param>
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost]
-        [Route("loginbyemail")]
+        [Route("login_by_email")]
         public async Task<IActionResult> LoginByEmail(string firebaseToken)
         {
             //init firebase
@@ -94,7 +128,7 @@ namespace ToyWorldSystem.Controller
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost]
-        [Route("loginby_system_account")]
+        [Route("login_by_system_account")]
         public async Task<IActionResult> LoginByAccountSystem(AccountSystemParameters unverify_account)
         {
             var account = await _repository.Account.getAccountByEmail(unverify_account.Email, unverify_account.Password, trackChanges: false);
@@ -102,6 +136,38 @@ namespace ToyWorldSystem.Controller
             if (account == null) throw new ErrorDetails(HttpStatusCode.Unauthorized, "Invalid username/password!");
 
             return Ok(account);
+        }
+
+        /// <summary>
+        /// Follow or unfollow the current visit account
+        /// </summary>
+        /// <param name="visit_account_id">The account id of another user</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("follow_or_unfollow/{visit_account_id}")]
+        public async Task<IActionResult> FollowOrUnfollowAccount(int visit_account_id)
+        {
+            var current_login_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            if(current_login_account.Id == visit_account_id) Ok("Save changes success");
+
+            var current_follow = new Entities.Models.FollowAccount
+            {
+                AccountId = current_login_account.Id,
+                AccountFollowId = visit_account_id
+            };
+            var follow_account = await _repository.FollowAccount.GetFollowAccount(current_follow, trackChanges: false);
+
+            if(follow_account == null)
+            {
+                _repository.FollowAccount.CreateFollow(current_follow);
+            }else
+            {
+                _repository.FollowAccount.DeleteFollow(current_follow);
+            }
+
+            await _repository.SaveAsync();
+            return Ok("Save changes success");
         }
     }
 }

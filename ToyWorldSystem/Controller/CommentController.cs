@@ -54,9 +54,9 @@ namespace ToyWorldSystem.Controller
         /// <returns></returns>
         [HttpPut]
         [Route("reacts/{comment_id}")]
-        public async Task<IActionResult> ReactPost(int comment_id)
+        public async Task<IActionResult> ReactComment(int comment_id)
         {
-            var comment = await _repositoryManager.Comment.GetCommentById(comment_id, trackChanges: false);
+            var comment = await _repositoryManager.Comment.GetCommentReactById(comment_id, trackChanges: false);
 
             var accountId = _userAccessor.getAccountId();
 
@@ -87,6 +87,51 @@ namespace ToyWorldSystem.Controller
             await _repositoryManager.SaveAsync();
 
             return Ok(new { message = "Save changes success" });
+        }
+
+        /// <summary>
+        /// Update comment (Role: Member, Manager)
+        /// </summary>
+        /// <param name="request_comment"></param>
+        /// <returns></returns>
+        [HttpPut]
+        public async Task<IActionResult> UpdateComment(UpdateCommentParameters request_comment)
+        {
+            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            var comment = await _repositoryManager.Comment.GetUpdateCommentById(request_comment.Id, trackChanges: false);
+
+            if (comment.AccountId != account.Id)
+                throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "You're not owner to update");
+
+            _repositoryManager.Comment.UpdateComment(comment, request_comment.Content);
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
+        /// Delete comment by id
+        /// </summary>
+        /// <param name="comment_id">Comment return in post detail</param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("{comment_id}")]
+        public async Task<IActionResult> DeleteComment(int comment_id)
+        {
+            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            var comment = await _repositoryManager.Comment.GetUpdateCommentById(comment_id, trackChanges: false);
+
+            if(comment == null) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Invalid comment");
+
+            if (comment.AccountId != account.Id)
+                throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "You're not owner to remove");
+
+            _repositoryManager.Comment.DeleteComment(comment);
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Save changes success");
         }
     }
 }
