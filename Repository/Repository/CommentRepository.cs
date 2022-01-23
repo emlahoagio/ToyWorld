@@ -15,10 +15,20 @@ namespace Repository.Repository
         }
         public void CreateComment(Comment comment) => Create(comment);
 
-        public async Task<Comment> GetCommentById(int comment_id, bool trackChanges)
+        public async Task<Comment> GetCommentReactById(int comment_id, bool trackChanges)
         {
             var comment = await FindByCondition(x => x.Id == comment_id, trackChanges)
                 .Include(x => x.ReactComments)
+                .FirstOrDefaultAsync();
+
+            if (comment == null) return null;
+
+            return comment;
+        }
+
+        public async Task<Comment> GetUpdateCommentById(int comment_id, bool trackChanges)
+        {
+            var comment = await FindByCondition(x => x.Id == comment_id, trackChanges)
                 .FirstOrDefaultAsync();
 
             if (comment == null) return null;
@@ -38,6 +48,12 @@ namespace Repository.Repository
                 }
             }
             return result;
+        }
+
+        public void UpdateComment(Comment comment, string content)
+        {
+            comment.Content = content;
+            Update(comment);
         }
     }
 }

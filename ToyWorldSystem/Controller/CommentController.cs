@@ -56,7 +56,7 @@ namespace ToyWorldSystem.Controller
         [Route("reacts/{comment_id}")]
         public async Task<IActionResult> ReactPost(int comment_id)
         {
-            var comment = await _repositoryManager.Comment.GetCommentById(comment_id, trackChanges: false);
+            var comment = await _repositoryManager.Comment.GetCommentReactById(comment_id, trackChanges: false);
 
             var accountId = _userAccessor.getAccountId();
 
@@ -87,6 +87,27 @@ namespace ToyWorldSystem.Controller
             await _repositoryManager.SaveAsync();
 
             return Ok(new { message = "Save changes success" });
+        }
+
+        /// <summary>
+        /// Update comment (Role: Member, Manager)
+        /// </summary>
+        /// <param name="request_comment"></param>
+        /// <returns></returns>
+        [HttpPut]
+        public async Task<IActionResult> UpdateComment(UpdateCommentParameters request_comment)
+        {
+            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            var comment = await _repositoryManager.Comment.GetUpdateCommentById(request_comment.Id, trackChanges: false);
+
+            if (comment.AccountId != account.Id)
+                throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "You're not owner to update");
+
+            _repositoryManager.Comment.UpdateComment(comment, request_comment.Content);
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Save changes success");
         }
     }
 }
