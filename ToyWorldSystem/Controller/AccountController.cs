@@ -76,6 +76,22 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Get follower account
+        /// </summary>
+        /// <param name="account_id">Account need to get follower</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("follower/{account_id}")]
+        public async Task<IActionResult> GetFollowerAccount(int account_id)
+        {
+            var account = await _repository.FollowAccount.GetAccountFollower(account_id, trackChanges: false);
+
+            if (account == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No account following");
+
+            return Ok(account);
+        }
+
+        /// <summary>
         /// Login by google mail (Role: ALL)
         /// </summary>
         /// <param name="firebaseToken">Token get from firebase</param>

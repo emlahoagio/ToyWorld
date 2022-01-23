@@ -20,6 +20,24 @@ namespace Repository.Repository
 
         public void DeleteFollow(FollowAccount followAccount) => Delete(followAccount);
 
+        public async Task<List<AccountReact>> GetAccountFollower(int account_id, bool trackChanges)
+        {
+            var follow_accounts = await FindByCondition(x => x.AccountFollowId == account_id, trackChanges)
+                .Include(x => x.Account)
+                .ToListAsync();
+
+            if (follow_accounts == null || follow_accounts.Count == 0) return null;
+
+            var result = follow_accounts.Select(x => new AccountReact
+            {
+                Avatar = x.Account.Avatar,
+                Id = x.Account.Id,
+                Name = x.Account.Name
+            }).ToList();
+
+            return result;
+        }
+
         public async Task<List<AccountReact>> GetAccountFollowing(int account_id, bool trackChanges)
         {
             var follow_accounts = await FindByCondition(x => x.AccountId == account_id, trackChanges)
