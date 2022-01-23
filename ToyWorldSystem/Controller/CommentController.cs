@@ -54,7 +54,7 @@ namespace ToyWorldSystem.Controller
         /// <returns></returns>
         [HttpPut]
         [Route("reacts/{comment_id}")]
-        public async Task<IActionResult> ReactPost(int comment_id)
+        public async Task<IActionResult> ReactComment(int comment_id)
         {
             var comment = await _repositoryManager.Comment.GetCommentReactById(comment_id, trackChanges: false);
 

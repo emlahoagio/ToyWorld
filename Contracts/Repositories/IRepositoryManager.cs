@@ -19,6 +19,7 @@ namespace Contracts
         IImageRepository Image { get; }
         IReactPostRepository ReactPost { get; }
         IReactCommentRepository ReactComment { get; }
+        IFollowAccountRepository FollowAccount { get; }
         Task SaveAsync();
     }
 }
