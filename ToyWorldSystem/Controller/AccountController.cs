@@ -60,6 +60,22 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Get following account
+        /// </summary>
+        /// <param name="account_id">Account need to get following</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("following/{account_id}")]
+        public async Task<IActionResult> GetFollowingAccount(int account_id)
+        {
+            var account = await _repository.FollowAccount.GetAccountFollowing(account_id, trackChanges: false);
+
+            if (account == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No account following");
+
+            return Ok(account);
+        }
+
+        /// <summary>
         /// Login by google mail (Role: ALL)
         /// </summary>
         /// <param name="firebaseToken">Token get from firebase</param>
@@ -116,6 +132,9 @@ namespace ToyWorldSystem.Controller
         public async Task<IActionResult> FollowOrUnfollowAccount(int visit_account_id)
         {
             var current_login_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            if(current_login_account.Id == visit_account_id) Ok("Save changes success");
+
             var current_follow = new Entities.Models.FollowAccount
             {
                 AccountId = current_login_account.Id,
@@ -134,6 +153,5 @@ namespace ToyWorldSystem.Controller
             await _repository.SaveAsync();
             return Ok("Save changes success");
         }
-
     }
 }
