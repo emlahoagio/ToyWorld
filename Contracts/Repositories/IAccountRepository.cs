@@ -15,5 +15,7 @@ namespace Contracts
         Task<Pagination<AccountInList>> GetListAccount(PagingParameters paging, bool trackChanges);
         Task<Account> GetAccountById(int account_id, bool trackChanges);
         Task<AccountDetail> GetAccountDetail(int account_id, bool trackChanges);
+        void DisableAccount(Account account);
+        void EnableAccount(Account account);
     }
 }

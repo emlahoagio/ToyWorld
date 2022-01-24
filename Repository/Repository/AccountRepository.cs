@@ -18,6 +18,18 @@ namespace Repository
             _jwtSupport = jwtSupport;
         }
 
+        public void DisableAccount(Account account)
+        {
+            account.Status = false;
+            Update(account);
+        }
+
+        public void EnableAccount(Account account)
+        {
+            account.Status = true;
+            Update(account);
+        }
+
         public async Task<AccountReturnAfterLogin> getAccountByEmail(string email, bool trackChanges)
         {
             var account = await FindByCondition(account => account.Email == email, trackChanges).SingleOrDefaultAsync();

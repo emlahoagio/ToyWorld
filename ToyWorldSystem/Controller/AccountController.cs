@@ -170,6 +170,8 @@ namespace ToyWorldSystem.Controller
 
             if (account == null) throw new ErrorDetails(HttpStatusCode.Unauthorized, "Invalid username/password!");
 
+            if (!account.Status) throw new ErrorDetails(HttpStatusCode.Unauthorized, "Account is disbled");
+
             return Ok(account);
         }
 
@@ -202,6 +204,33 @@ namespace ToyWorldSystem.Controller
             }
 
             await _repository.SaveAsync();
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
+        /// Disable or Enable account (Role: Admin)
+        /// </summary>
+        /// <param name="account_id">Account id</param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("enable_disable/{account_id}")]
+        public async Task<IActionResult> DisableEnableAccount(int account_id)
+        {
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            if (current_account.Role != 0) throw new ErrorDetails(HttpStatusCode.BadRequest, "Not enough role to update");
+
+            var update_account = await _repository.Account.GetAccountById(account_id, trackChanges: false);
+
+            if (update_account.Status)
+            {
+                _repository.Account.DisableAccount(update_account);
+            }else
+            {
+                _repository.Account.EnableAccount(update_account);
+            }
+            await _repository.SaveAsync();
+
             return Ok("Save changes success");
         }
     }
