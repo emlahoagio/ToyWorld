@@ -61,5 +61,28 @@ namespace Repository
 
             return result;
         }
+
+        public async Task<AccountDetail> GetAccountDetail(int account_id, bool trackChanges)
+        {
+            var account = await FindByCondition(x => x.Id == account_id, trackChanges)
+                .Include(x => x.Posts)
+                .Include(x => x.FollowAccountAccounts)
+                .Include(x => x.FollowAccountAccountFollows)
+                .FirstOrDefaultAsync();
+
+            if (account == null) return null;
+
+            var result = new AccountDetail
+            {
+                Avatar = account.Avatar,
+                Biography = account.Biography,
+                Name = account.Name,
+                NoOfFollower = account.FollowAccountAccountFollows.Count,
+                NoOfFollowing = account.FollowAccountAccounts.Count,
+                NoOfPost = account.Posts.Count
+            };
+
+            return result;
+        }
     }
 }

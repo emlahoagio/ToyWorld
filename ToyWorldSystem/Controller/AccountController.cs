@@ -27,6 +27,17 @@ namespace ToyWorldSystem.Controller
             _userAccessor = userAccessor;
         }
 
+        [HttpGet]
+        [Route("detail/{account_id}")]
+        public async Task<IActionResult> GetAccountDetail(int account_id)
+        {
+            var account = await _repository.Account.GetAccountDetail(account_id, trackChanges: false);
+
+            if (account == null) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid account");
+
+            return Ok(account);
+        }
+
         /// <summary>
         /// Get account react post
         /// </summary>
@@ -149,7 +160,7 @@ namespace ToyWorldSystem.Controller
         {
             var current_login_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
 
-            if(current_login_account.Id == visit_account_id) Ok("Save changes success");
+            if(current_login_account.Id == visit_account_id) throw new ErrorDetails(HttpStatusCode.BadRequest, "Can't follow yourself");
 
             var current_follow = new Entities.Models.FollowAccount
             {
