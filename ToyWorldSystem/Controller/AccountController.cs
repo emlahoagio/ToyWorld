@@ -27,6 +27,11 @@ namespace ToyWorldSystem.Controller
             _userAccessor = userAccessor;
         }
 
+        /// <summary>
+        /// Get account detail, not include post of account (Role: Manager, Member)
+        /// </summary>
+        /// <param name="account_id">Id of account want to get detail</param>
+        /// <returns></returns>
         [HttpGet]
         [Route("detail/{account_id}")]
         public async Task<IActionResult> GetAccountDetail(int account_id)
