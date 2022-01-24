@@ -249,6 +249,8 @@ namespace ToyWorldSystem.Controller
 
             var update_account = await _repository.Account.GetAccountById(account_id, trackChanges: false);
 
+            if (update_account.Role == 0) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid request");
+
             if (update_account.Role == 1) return Ok("Already manager");
 
             _repository.Account.UpdateAccountToManager(update_account);
@@ -272,6 +274,8 @@ namespace ToyWorldSystem.Controller
             if (current_account.Role != 0) throw new ErrorDetails(HttpStatusCode.BadRequest, "Not enough role to update");
 
             var update_account = await _repository.Account.GetAccountById(account_id, trackChanges: false);
+
+            if (update_account.Role == 0) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid request");
 
             if (update_account.Role == 2) return Ok("Already member");
 
