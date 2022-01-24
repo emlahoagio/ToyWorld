@@ -1,6 +1,7 @@
 ﻿using Contracts;
 using Entities.DataTransferObject;
 using Entities.Models;
+using Entities.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -83,6 +84,43 @@ namespace Repository
             };
 
             return result;
+        }
+
+        public async Task<Pagination<AccountInList>> GetListAccount(PagingParameters paging, bool trackChanges)
+        {
+            var accounts = await FindAll(trackChanges).ToListAsync();
+
+            var count = accounts.Count;
+
+            if (count == 0) return null;
+
+            var afterPagingAccount = accounts.Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize);
+
+            var listAccounts = afterPagingAccount.Select(x => new AccountInList
+            {
+                Avatar = x.Avatar,
+                Id = x.Id,
+                Name = x.Name,
+                Phone = x.Phone,
+                Status = getStatus(x.Status)
+            }).ToList();
+
+            var result = new Pagination<AccountInList>
+            {
+                Count = count,
+                Data = listAccounts,
+                PageNumber = paging.PageNumber,
+                PageSize = paging.PageSize
+            };
+
+            return result;
+        }
+
+        private string getStatus(bool? status)
+        {
+            if (status == true) return "Active";
+            return "Disabled";
         }
     }
 }

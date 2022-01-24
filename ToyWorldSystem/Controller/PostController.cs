@@ -47,7 +47,7 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
-        /// Get post by account Id
+        /// Get post by account Id (Role: Manager, Member)
         /// </summary>
         /// <param name="account_id">Id of account return in login function</param>
         /// <param name="paging"></param>

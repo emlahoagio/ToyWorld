@@ -28,6 +28,25 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Get list account (Role: Admin)
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetListAccount([FromQuery] PagingParameters paging)
+        {
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            if (current_account.Role != 0) throw new ErrorDetails(HttpStatusCode.BadRequest, "Not enough role to get");
+
+            var result = await _repository.Account.GetListAccount(paging, trackChanges: false);
+
+            if (result == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No more records in this page");
+
+            return Ok(result);
+        }
+
+        /// <summary>
         /// Get account detail, not include post of account (Role: Manager, Member)
         /// </summary>
         /// <param name="account_id">Id of account want to get detail</param>
@@ -106,7 +125,7 @@ namespace ToyWorldSystem.Controller
 
             return Ok(account);
         }
-
+        
         /// <summary>
         /// Login by google mail (Role: ALL)
         /// </summary>
