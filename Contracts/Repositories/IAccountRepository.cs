@@ -17,5 +17,7 @@ namespace Contracts
         Task<AccountDetail> GetAccountDetail(int account_id, bool trackChanges);
         void DisableAccount(Account account);
         void EnableAccount(Account account);
+        void UpdateAccountToManager(Account account);
+        void UpdateAccountToMember(Account account);
     }
 }

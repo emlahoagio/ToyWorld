@@ -233,5 +233,53 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+
+        /// <summary>
+        /// Update account role from member to manager (Role: Admin)
+        /// </summary>
+        /// <param name="account_id"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("{account_id}/role/manager")]
+        public async Task<IActionResult> UpdateAccountToManager(int account_id)
+        {
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            if (current_account.Role != 0) throw new ErrorDetails(HttpStatusCode.BadRequest, "Not enough role to update");
+
+            var update_account = await _repository.Account.GetAccountById(account_id, trackChanges: false);
+
+            if (update_account.Role == 1) return Ok("Already manager");
+
+            _repository.Account.UpdateAccountToManager(update_account);
+
+            await _repository.SaveAsync();
+
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
+        /// Update account role from manager to member (Role: Admin)
+        /// </summary>
+        /// <param name="account_id"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("{account_id}/role/member")]
+        public async Task<IActionResult> UpdateAccountToMember(int account_id)
+        {
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            if (current_account.Role != 0) throw new ErrorDetails(HttpStatusCode.BadRequest, "Not enough role to update");
+
+            var update_account = await _repository.Account.GetAccountById(account_id, trackChanges: false);
+
+            if (update_account.Role == 2) return Ok("Already member");
+
+            _repository.Account.UpdateAccountToMember(update_account);
+
+            await _repository.SaveAsync();
+
+            return Ok("Save changes success");
+        }
     }
 }

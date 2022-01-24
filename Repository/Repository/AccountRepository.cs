@@ -129,6 +129,18 @@ namespace Repository
             return result;
         }
 
+        public void UpdateAccountToManager(Account account)
+        {
+            account.Role = 1;
+            Update(account);
+        }
+
+        public void UpdateAccountToMember(Account account)
+        {
+            account.Role = 2;
+            Update(account);
+        }
+
         private string getStatus(bool? status)
         {
             if (status == true) return "Active";
