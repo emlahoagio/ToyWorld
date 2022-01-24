@@ -13,6 +13,7 @@ namespace Contracts.Repositories
         Task<Pagination<WaitingPost>> GetWaitingPost(bool trackChanges, PagingParameters param);
         Task<Pagination<WaitingPost>> GetWaitingPost(bool trackChanges, PagingParameters param, int accountId);
         Task<Pagination<PostInList>> GetPostByGroupId(int groupId, bool trackChanges, PagingParameters paging);
+        Task<Pagination<PostInList>> GetPostByAccountId(int accountId, bool trackChanges, PagingParameters paging);
         Task<PostDetail> GetPostDetail(int post_id, bool trackChanges);
         Task<Post> GetPostReactById(int post_id, bool trackChanges);
         Task<Post> GetPostApproveOrDenyById(int post_id, bool trackChanges);

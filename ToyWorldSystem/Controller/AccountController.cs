@@ -28,6 +28,41 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Get list account (Role: Admin)
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetListAccount([FromQuery] PagingParameters paging)
+        {
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            if (current_account.Role != 0) throw new ErrorDetails(HttpStatusCode.BadRequest, "Not enough role to get");
+
+            var result = await _repository.Account.GetListAccount(paging, trackChanges: false);
+
+            if (result == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No more records in this page");
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Get account detail, not include post of account (Role: Manager, Member)
+        /// </summary>
+        /// <param name="account_id">Id of account want to get detail</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("detail/{account_id}")]
+        public async Task<IActionResult> GetAccountDetail(int account_id)
+        {
+            var account = await _repository.Account.GetAccountDetail(account_id, trackChanges: false);
+
+            if (account == null) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid account");
+
+            return Ok(account);
+        }
+
+        /// <summary>
         /// Get account react post
         /// </summary>
         /// <param name="post_id">Post Id return in GetPostDetail</param>
@@ -90,7 +125,7 @@ namespace ToyWorldSystem.Controller
 
             return Ok(account);
         }
-
+        
         /// <summary>
         /// Login by google mail (Role: ALL)
         /// </summary>
@@ -135,6 +170,8 @@ namespace ToyWorldSystem.Controller
 
             if (account == null) throw new ErrorDetails(HttpStatusCode.Unauthorized, "Invalid username/password!");
 
+            if (!account.Status) throw new ErrorDetails(HttpStatusCode.Unauthorized, "Account is disbled");
+
             return Ok(account);
         }
 
@@ -149,7 +186,7 @@ namespace ToyWorldSystem.Controller
         {
             var current_login_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
 
-            if(current_login_account.Id == visit_account_id) Ok("Save changes success");
+            if(current_login_account.Id == visit_account_id) throw new ErrorDetails(HttpStatusCode.BadRequest, "Can't follow yourself");
 
             var current_follow = new Entities.Models.FollowAccount
             {
@@ -167,6 +204,85 @@ namespace ToyWorldSystem.Controller
             }
 
             await _repository.SaveAsync();
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
+        /// Disable or Enable account (Role: Admin)
+        /// </summary>
+        /// <param name="account_id">Account id</param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("enable_disable/{account_id}")]
+        public async Task<IActionResult> DisableEnableAccount(int account_id)
+        {
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            if (current_account.Role != 0) throw new ErrorDetails(HttpStatusCode.BadRequest, "Not enough role to update");
+
+            var update_account = await _repository.Account.GetAccountById(account_id, trackChanges: false);
+
+            if (update_account.Status)
+            {
+                _repository.Account.DisableAccount(update_account);
+            }else
+            {
+                _repository.Account.EnableAccount(update_account);
+            }
+            await _repository.SaveAsync();
+
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
+        /// Update account role from member to manager (Role: Admin)
+        /// </summary>
+        /// <param name="account_id"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("{account_id}/role/manager")]
+        public async Task<IActionResult> UpdateAccountToManager(int account_id)
+        {
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            if (current_account.Role != 0) throw new ErrorDetails(HttpStatusCode.BadRequest, "Not enough role to update");
+
+            var update_account = await _repository.Account.GetAccountById(account_id, trackChanges: false);
+
+            if (update_account.Role == 0) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid request");
+
+            if (update_account.Role == 1) return Ok("Already manager");
+
+            _repository.Account.UpdateAccountToManager(update_account);
+
+            await _repository.SaveAsync();
+
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
+        /// Update account role from manager to member (Role: Admin)
+        /// </summary>
+        /// <param name="account_id"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("{account_id}/role/member")]
+        public async Task<IActionResult> UpdateAccountToMember(int account_id)
+        {
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            if (current_account.Role != 0) throw new ErrorDetails(HttpStatusCode.BadRequest, "Not enough role to update");
+
+            var update_account = await _repository.Account.GetAccountById(account_id, trackChanges: false);
+
+            if (update_account.Role == 0) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid request");
+
+            if (update_account.Role == 2) return Ok("Already member");
+
+            _repository.Account.UpdateAccountToMember(update_account);
+
+            await _repository.SaveAsync();
+
             return Ok("Save changes success");
         }
     }

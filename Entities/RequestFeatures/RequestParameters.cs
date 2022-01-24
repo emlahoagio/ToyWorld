@@ -6,7 +6,7 @@ namespace Entities.RequestFeatures
 {
     public abstract class RequestParameters
     {
-        const int maxPageSize = 9;
+        const int maxPageSize = 20;
         public int PageNumber { get; set; } = 1;
 
         private int _pageSize = 9;
