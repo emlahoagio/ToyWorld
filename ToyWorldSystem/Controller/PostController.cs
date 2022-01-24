@@ -47,6 +47,23 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Get post by account Id
+        /// </summary>
+        /// <param name="account_id">Id of account return in login function</param>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("account/{account_id}")]
+        public async Task<IActionResult> GetListPostByAccount(int account_id, [FromQuery] PagingParameters paging)
+        {
+            var result = await _repositoryManager.Post.GetPostByAccountId(account_id, trackChanges: false, paging);
+
+            if (result == null) throw new ErrorDetails(HttpStatusCode.NotFound, "This account has no post yet");
+
+            return Ok(result);
+        }
+
+        /// <summary>
         /// Get Waiting post (Role: Manager, Member)
         /// </summary>
         /// <param name="paging"></param>
