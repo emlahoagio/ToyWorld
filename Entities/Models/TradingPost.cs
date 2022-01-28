@@ -10,6 +10,7 @@ namespace Entities.Models
         public TradingPost()
         {
             Images = new HashSet<Image>();
+            ReactTradingPosts = new HashSet<ReactTradingPost>();
         }
 
         public int Id { get; set; }
@@ -26,5 +27,6 @@ namespace Entities.Models
         public virtual Account Account { get; set; }
         public virtual Toy Toy { get; set; }
         public virtual ICollection<Image> Images { get; set; }
+        public virtual ICollection<ReactTradingPost> ReactTradingPosts { get; set; }
     }
 }

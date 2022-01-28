@@ -22,6 +22,7 @@ namespace Entities.Models
             Proposals = new HashSet<Proposal>();
             ReactComments = new HashSet<ReactComment>();
             ReactPosts = new HashSet<ReactPost>();
+            ReactTradingPosts = new HashSet<ReactTradingPost>();
             TradingPosts = new HashSet<TradingPost>();
         }
 
@@ -49,6 +50,7 @@ namespace Entities.Models
         public virtual ICollection<Proposal> Proposals { get; set; }
         public virtual ICollection<ReactComment> ReactComments { get; set; }
         public virtual ICollection<ReactPost> ReactPosts { get; set; }
+        public virtual ICollection<ReactTradingPost> ReactTradingPosts { get; set; }
         public virtual ICollection<TradingPost> TradingPosts { get; set; }
     }
 }

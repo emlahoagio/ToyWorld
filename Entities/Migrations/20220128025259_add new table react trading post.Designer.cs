@@ -4,14 +4,16 @@ using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Entities.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class TWSContextModelSnapshot : ModelSnapshot
+    [Migration("20220128025259_add new table react trading post")]
+    partial class addnewtablereacttradingpost
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -528,8 +530,6 @@ namespace Entities.Migrations
 
                     b.HasKey("AccountId", "TradingPostId");
 
-                    b.HasIndex("TradingPostId");
-
                     b.ToTable("ReactTradingPost");
                 });
 
@@ -947,25 +947,6 @@ namespace Entities.Migrations
                     b.Navigation("Post");
                 });
 
-            modelBuilder.Entity("Entities.Models.ReactTradingPost", b =>
-                {
-                    b.HasOne("Entities.Models.Account", "Account")
-                        .WithMany("ReactTradingPosts")
-                        .HasForeignKey("AccountId")
-                        .HasConstraintName("FK_ReactTradingPost_Account")
-                        .IsRequired();
-
-                    b.HasOne("Entities.Models.TradingPost", "TradingPost")
-                        .WithMany("ReactTradingPosts")
-                        .HasForeignKey("TradingPostId")
-                        .HasConstraintName("FK_ReactTradingPost_TradingPost")
-                        .IsRequired();
-
-                    b.Navigation("Account");
-
-                    b.Navigation("TradingPost");
-                });
-
             modelBuilder.Entity("Entities.Models.Toy", b =>
                 {
                     b.HasOne("Entities.Models.Brand", "Brand")
@@ -1027,8 +1008,6 @@ namespace Entities.Migrations
                     b.Navigation("ReactComments");
 
                     b.Navigation("ReactPosts");
-
-                    b.Navigation("ReactTradingPosts");
 
                     b.Navigation("TradingPosts");
                 });
@@ -1106,8 +1085,6 @@ namespace Entities.Migrations
             modelBuilder.Entity("Entities.Models.TradingPost", b =>
                 {
                     b.Navigation("Images");
-
-                    b.Navigation("ReactTradingPosts");
                 });
 
             modelBuilder.Entity("Entities.Models.Type", b =>
