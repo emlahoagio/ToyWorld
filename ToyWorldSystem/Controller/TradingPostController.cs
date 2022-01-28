@@ -23,6 +23,14 @@ namespace ToyWorldSystem.Controller
             _userAccessor = userAccessor;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetListTradingPost([FromQuery] PagingParameters paging)
+        {
+            var result = await _repositoryManager.TradingPost.GetList(paging, trackChanges: false);
+
+            return Ok(result);
+        }
+
         /// <summary>
         /// Get information to create new trading post page
         /// </summary>
@@ -63,7 +71,7 @@ namespace ToyWorldSystem.Controller
                 _repositoryManager.TradingPost.CreateTradingPost(tradingPost, group_id, account_id, toy.Id);
             }else
             {
-                _repositoryManager.TradingPost.CreateTradingPost(tradingPost, group_id, account_id);
+                _repositoryManager.TradingPost.CreateTradingPost(tradingPost, group_id, account_id, 3);
             }
 
             await _repositoryManager.SaveAsync();

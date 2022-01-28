@@ -4,14 +4,16 @@ using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Entities.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class TWSContextModelSnapshot : ModelSnapshot
+    [Migration("20220128115134_update table trading post Add property IsExchanged and IsDeleted")]
+    partial class updatetabletradingpostAddpropertyIsExchangedandIsDeleted
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -99,16 +101,11 @@ namespace Entities.Migrations
                     b.Property<int?>("PostId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TradingPostId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
 
                     b.HasIndex("PostId");
-
-                    b.HasIndex("TradingPostId");
 
                     b.ToTable("Comment");
                 });
@@ -604,9 +601,6 @@ namespace Entities.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(10)");
 
-                    b.Property<DateTime>("PostDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
@@ -661,17 +655,9 @@ namespace Entities.Migrations
                         .HasForeignKey("PostId")
                         .HasConstraintName("FK_Comment_Post");
 
-                    b.HasOne("Entities.Models.TradingPost", "TradingPost")
-                        .WithMany("Comments")
-                        .HasForeignKey("TradingPostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Account");
 
                     b.Navigation("Post");
-
-                    b.Navigation("TradingPost");
                 });
 
             modelBuilder.Entity("Entities.Models.Contest", b =>
@@ -1143,8 +1129,6 @@ namespace Entities.Migrations
 
             modelBuilder.Entity("Entities.Models.TradingPost", b =>
                 {
-                    b.Navigation("Comments");
-
                     b.Navigation("Images");
 
                     b.Navigation("ReactTradingPosts");
