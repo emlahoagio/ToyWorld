@@ -175,5 +175,28 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+    
+        /// <summary>
+        /// Disable trading post
+        /// </summary>
+        /// <param name="tradingpost_id">id of trading post need to disable</param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("{tradingpost_id}")]
+        public async Task<IActionResult> DisableTradingPost(int tradingpost_id)
+        {
+            var delete_post = await _repositoryManager.TradingPost.GetTradingPostById(tradingpost_id, trackChanges: false);
+
+            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            if (delete_post.AccountId != account.Id && account.Role != 1)
+                throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Unable to delete");
+
+            _repositoryManager.TradingPost.Disable(delete_post);
+
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Save changes success");
+        }
     }
 }

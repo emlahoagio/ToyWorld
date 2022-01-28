@@ -38,6 +38,12 @@ namespace Repository.Repository
             Create(newTradingPost);
         }
 
+        public void Disable(TradingPost tradingPost)
+        {
+            tradingPost.IsDeleted = true;
+            Update(tradingPost);
+        }
+
         public void ExchangedTradingPost(TradingPost tradingPost)
         {
             tradingPost.IsExchanged = true;
