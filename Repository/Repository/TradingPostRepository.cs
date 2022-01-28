@@ -17,7 +17,7 @@ namespace Repository.Repository
         {
         }
 
-        public void CreateTradingPost(NewTradingPost tradingPost, int group_id, int account_id, int toy_id)
+        public void CreateTradingPost(NewTradingPostParameters tradingPost, int group_id, int account_id, int toy_id)
         {
             var newTradingPost = new TradingPost
             {
@@ -36,6 +36,12 @@ namespace Repository.Repository
             };
 
             Create(newTradingPost);
+        }
+
+        public void ExchangedTradingPost(TradingPost tradingPost)
+        {
+            tradingPost.IsExchanged = true;
+            Update(tradingPost);
         }
 
         public async Task<Pagination<TradingPostInList>> GetList(PagingParameters paging, bool trackChanges)
@@ -77,6 +83,45 @@ namespace Repository.Repository
             };
 
             return result;
+        }
+
+        public async Task<TradingPost> GetTradingPostById(int tradingpost_id, bool trackChanges)
+        {
+            var tradingPost = await FindByCondition(x => x.Id == tradingpost_id, trackChanges).FirstOrDefaultAsync();
+
+            if (tradingPost == null) return null;
+
+            return tradingPost;
+        }
+
+        public async Task<UpdateTradingPost> GetUpdateDetail(int tradingpost_id, bool trackChanges)
+        {
+            var tradingPost = await FindByCondition(x => x.Id == tradingpost_id, trackChanges).FirstOrDefaultAsync();
+
+            var result = new UpdateTradingPost
+            {
+                Address = tradingPost.Address,
+                Content = tradingPost.Content,
+                Exchange = tradingPost.Trading,
+                Phone = tradingPost.Phone,
+                Title = tradingPost.Title,
+                ToyName = tradingPost.ToyName,
+                Value = tradingPost.Value
+            };
+
+            return result;
+        }
+
+        public void UpdateTradingPost(UpdateTradingPostParameters update_infor, TradingPost tradingPost)
+        {
+            tradingPost.Title = update_infor.Title;
+            tradingPost.ToyName = update_infor.ToyName;
+            tradingPost.Content = update_infor.Content;
+            tradingPost.Address = update_infor.Address;
+            tradingPost.Trading = update_infor.Exchange;
+            tradingPost.Value = update_infor.Value;
+            tradingPost.Phone = update_infor.Phone;
+            Update(tradingPost);
         }
     }
 }

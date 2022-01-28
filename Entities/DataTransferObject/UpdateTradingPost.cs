@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Entities.RequestFeatures
+namespace Entities.DataTransferObject
 {
-    public class NewTradingPost
+    public class UpdateTradingPost
     {
         public string Title { get; set; }
         public string ToyName { get; set; }
@@ -13,6 +13,5 @@ namespace Entities.RequestFeatures
         public string Exchange { get; set; }
         public decimal? Value { get; set; }
         public string Phone { get; set; }
-        public List<string> ImagesLink { get; set; }
     }
 }
