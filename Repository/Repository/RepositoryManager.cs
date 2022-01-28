@@ -25,6 +25,7 @@ namespace Repository
         private IContestRepository _contestRepository;
         private IImageRepository _imageRepository;
         private IPostRepository _postRepository;
+        private ITradingPostRepository _tradingPostRepository;
         private IReactPostRepository _reactPostRepository;
         private ICommentRepository _commentRepository;
         private IReactCommentRepository _reactCommentRepository;
@@ -143,6 +144,18 @@ namespace Repository
                     _reactPostRepository = new ReactPostRepository(_context);
                 }
                 return _reactPostRepository;
+            }
+        }
+
+        public ITradingPostRepository TradingPost
+        {
+            get
+            {
+                if(_tradingPostRepository == null)
+                {
+                    _tradingPostRepository = new TradingPostRepository(_context);
+                }
+                return _tradingPostRepository;
             }
         }
 

@@ -462,6 +462,11 @@ namespace Entities.Models
                     .WithMany(p => p.TradingPosts)
                     .HasForeignKey(d => d.ToyId)
                     .HasConstraintName("FK_TradingPost_Toy");
+
+                entity.HasOne(d => d.Group)
+                    .WithMany(p => p.TradingPosts)
+                    .HasForeignKey(d => d.GroupId)
+                    .HasConstraintName("FK_TradingPost_Group");
             });
 
             modelBuilder.Entity<Type>(entity =>
