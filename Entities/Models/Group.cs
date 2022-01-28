@@ -12,6 +12,7 @@ namespace Entities.Models
             FollowGroups = new HashSet<FollowGroup>();
             ManageGroups = new HashSet<ManageGroup>();
             Posts = new HashSet<Post>();
+            TradingPosts = new HashSet<TradingPost>();
         }
 
         public int Id { get; set; }
@@ -20,5 +21,6 @@ namespace Entities.Models
         public virtual ICollection<FollowGroup> FollowGroups { get; set; }
         public virtual ICollection<ManageGroup> ManageGroups { get; set; }
         public virtual ICollection<Post> Posts { get; set; }
+        public virtual ICollection<TradingPost> TradingPosts { get; set; }
     }
 }

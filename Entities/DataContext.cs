@@ -35,6 +35,7 @@ namespace Entities.Models
         public virtual DbSet<ProposalPrize> ProposalPrizes { get; set; }
         public virtual DbSet<ReactComment> ReactComments { get; set; }
         public virtual DbSet<ReactPost> ReactPosts { get; set; }
+        public virtual DbSet<ReactTradingPost> ReactTradingPosts {get; set;}
         public virtual DbSet<Toy> Toys { get; set; }
         public virtual DbSet<TradingPost> TradingPosts { get; set; }
         public virtual DbSet<Type> Types { get; set; }
@@ -402,6 +403,25 @@ namespace Entities.Models
                     .HasConstraintName("FK_ReactPost_Post");
             });
 
+            modelBuilder.Entity<ReactTradingPost>(entity =>
+            {
+                entity.HasKey(e => new { e.AccountId, e.TradingPostId });
+
+                entity.ToTable("ReactTradingPost");
+                
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.ReactTradingPosts)
+                    .HasForeignKey(d => d.AccountId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ReactTradingPost_Account");
+
+                entity.HasOne(d => d.TradingPost)
+                    .WithMany(p => p.ReactTradingPosts)
+                    .HasForeignKey(d => d.TradingPostId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ReactTradingPost_TradingPost");
+            });
+
             modelBuilder.Entity<Toy>(entity =>
             {
                 entity.ToTable("Toy");
@@ -442,6 +462,11 @@ namespace Entities.Models
                     .WithMany(p => p.TradingPosts)
                     .HasForeignKey(d => d.ToyId)
                     .HasConstraintName("FK_TradingPost_Toy");
+
+                entity.HasOne(d => d.Group)
+                    .WithMany(p => p.TradingPosts)
+                    .HasForeignKey(d => d.GroupId)
+                    .HasConstraintName("FK_TradingPost_Group");
             });
 
             modelBuilder.Entity<Type>(entity =>

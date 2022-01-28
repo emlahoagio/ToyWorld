@@ -13,6 +13,7 @@ namespace Contracts
         IBrandRepository Brand { get; }
         IAccountRepository Account { get; }
         IPostRepository Post { get; }
+        ITradingPostRepository TradingPost { get; }
         ICommentRepository Comment { get; }
         IGroupRepository Group { get; }
         IContestRepository Contest { get; }

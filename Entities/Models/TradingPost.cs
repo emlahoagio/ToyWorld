@@ -10,6 +10,8 @@ namespace Entities.Models
         public TradingPost()
         {
             Images = new HashSet<Image>();
+            ReactTradingPosts = new HashSet<ReactTradingPost>();
+            Comments = new HashSet<Comment>();
         }
 
         public int Id { get; set; }
@@ -20,11 +22,18 @@ namespace Entities.Models
         public string Trading { get; set; }
         public decimal? Value { get; set; }
         public string Phone { get; set; }
+        public bool IsExchanged { get; set; }
+        public bool IsDeleted { get; set; }
+        public DateTime PostDate { get; set; }
+        public int GroupId { get; set; }
         public int? AccountId { get; set; }
         public int? ToyId { get; set; }
 
         public virtual Account Account { get; set; }
         public virtual Toy Toy { get; set; }
+        public virtual Group Group { get; set; }
         public virtual ICollection<Image> Images { get; set; }
+        public virtual ICollection<ReactTradingPost> ReactTradingPosts { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
     }
 }

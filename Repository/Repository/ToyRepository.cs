@@ -141,5 +141,21 @@ namespace Repository
 
             return result;
         }
+
+        public async Task<Toy> GetToyByName(string toyName, bool trackChanges)
+        {
+            var result = await FindByCondition(x => x.Name == toyName, trackChanges).FirstOrDefaultAsync();
+
+            if (result == null) return null;
+
+            return result;
+        }
+
+        public async Task<List<string>> GetNameOfToy(bool trackChanges)
+        {
+            var result = await FindAll(trackChanges).Select(x => x.Name).ToListAsync();
+
+            return result;
+        }
     }
 }

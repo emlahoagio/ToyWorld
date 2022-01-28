@@ -4,14 +4,16 @@ using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Entities.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class TWSContextModelSnapshot : ModelSnapshot
+    [Migration("20220128025259_add new table react trading post")]
+    partial class addnewtablereacttradingpost
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -99,16 +101,11 @@ namespace Entities.Migrations
                     b.Property<int?>("PostId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TradingPostId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
 
                     b.HasIndex("PostId");
-
-                    b.HasIndex("TradingPostId");
 
                     b.ToTable("Comment");
                 });
@@ -533,8 +530,6 @@ namespace Entities.Migrations
 
                     b.HasKey("AccountId", "TradingPostId");
 
-                    b.HasIndex("TradingPostId");
-
                     b.ToTable("ReactTradingPost");
                 });
 
@@ -590,22 +585,10 @@ namespace Entities.Migrations
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("GroupId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsExchanged")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Phone")
                         .HasMaxLength(10)
                         .IsUnicode(false)
                         .HasColumnType("varchar(10)");
-
-                    b.Property<DateTime>("PostDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
@@ -625,8 +608,6 @@ namespace Entities.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
-
-                    b.HasIndex("GroupId");
 
                     b.HasIndex("ToyId");
 
@@ -661,17 +642,9 @@ namespace Entities.Migrations
                         .HasForeignKey("PostId")
                         .HasConstraintName("FK_Comment_Post");
 
-                    b.HasOne("Entities.Models.TradingPost", "TradingPost")
-                        .WithMany("Comments")
-                        .HasForeignKey("TradingPostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Account");
 
                     b.Navigation("Post");
-
-                    b.Navigation("TradingPost");
                 });
 
             modelBuilder.Entity("Entities.Models.Contest", b =>
@@ -974,25 +947,6 @@ namespace Entities.Migrations
                     b.Navigation("Post");
                 });
 
-            modelBuilder.Entity("Entities.Models.ReactTradingPost", b =>
-                {
-                    b.HasOne("Entities.Models.Account", "Account")
-                        .WithMany("ReactTradingPosts")
-                        .HasForeignKey("AccountId")
-                        .HasConstraintName("FK_ReactTradingPost_Account")
-                        .IsRequired();
-
-                    b.HasOne("Entities.Models.TradingPost", "TradingPost")
-                        .WithMany("ReactTradingPosts")
-                        .HasForeignKey("TradingPostId")
-                        .HasConstraintName("FK_ReactTradingPost_TradingPost")
-                        .IsRequired();
-
-                    b.Navigation("Account");
-
-                    b.Navigation("TradingPost");
-                });
-
             modelBuilder.Entity("Entities.Models.Toy", b =>
                 {
                     b.HasOne("Entities.Models.Brand", "Brand")
@@ -1017,21 +971,12 @@ namespace Entities.Migrations
                         .HasForeignKey("AccountId")
                         .HasConstraintName("FK_TradingPost_Account");
 
-                    b.HasOne("Entities.Models.Group", "Group")
-                        .WithMany("TradingPosts")
-                        .HasForeignKey("GroupId")
-                        .HasConstraintName("FK_TradingPost_Group")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Entities.Models.Toy", "Toy")
                         .WithMany("TradingPosts")
                         .HasForeignKey("ToyId")
                         .HasConstraintName("FK_TradingPost_Toy");
 
                     b.Navigation("Account");
-
-                    b.Navigation("Group");
 
                     b.Navigation("Toy");
                 });
@@ -1063,8 +1008,6 @@ namespace Entities.Migrations
                     b.Navigation("ReactComments");
 
                     b.Navigation("ReactPosts");
-
-                    b.Navigation("ReactTradingPosts");
 
                     b.Navigation("TradingPosts");
                 });
@@ -1099,8 +1042,6 @@ namespace Entities.Migrations
                     b.Navigation("ManageGroups");
 
                     b.Navigation("Posts");
-
-                    b.Navigation("TradingPosts");
                 });
 
             modelBuilder.Entity("Entities.Models.Post", b =>
@@ -1143,11 +1084,7 @@ namespace Entities.Migrations
 
             modelBuilder.Entity("Entities.Models.TradingPost", b =>
                 {
-                    b.Navigation("Comments");
-
                     b.Navigation("Images");
-
-                    b.Navigation("ReactTradingPosts");
                 });
 
             modelBuilder.Entity("Entities.Models.Type", b =>

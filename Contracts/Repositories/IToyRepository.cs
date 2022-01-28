@@ -13,6 +13,8 @@ namespace Contracts
         Task<Pagination<ToyInList>> GetAllToys(PagingParameters toyParameters, bool trackChanges);
         Task<Pagination<ToyInList>> GetToysByType(PagingParameters toyParameters, string typeName, bool trackChanges);
         Task<ToyDetail> GetToyDetail(int toyId, bool trackChanges);
+        Task<Toy> GetToyByName(string toyName, bool trackChanges);
+        Task<List<string>> GetNameOfToy(bool trackChanges);
         void CreateToy(Toy toy);
         void UpdateToy(Toy toy);
         Task<Toy> GetExistToy(string toyName);
