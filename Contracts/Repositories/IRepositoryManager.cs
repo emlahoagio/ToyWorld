@@ -21,6 +21,7 @@ namespace Contracts
         IReactPostRepository ReactPost { get; }
         IReactCommentRepository ReactComment { get; }
         IFollowAccountRepository FollowAccount { get; }
+        IProposalRepository Proposal { get; }
         Task SaveAsync();
     }
 }
