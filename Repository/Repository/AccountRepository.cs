@@ -42,7 +42,12 @@ namespace Repository
                 Avatar = account.Avatar,
                 Role = (int)account.Role,
                 Token = _jwtSupport.CreateToken((int)account.Role, account.Id),
-                Status = (bool)account.Status
+                Status = (bool)account.Status,
+                Biography = account.Biography,
+                Email = account.Email,
+                Gender = account.Gender,
+                Name = account.Name,
+                PhoneNumber = account.Phone
             };
 
             return result;
@@ -60,7 +65,12 @@ namespace Repository
                 Avatar = account.Avatar,
                 Role = (int)account.Role,
                 Token = _jwtSupport.CreateToken((int)account.Role, account.Id),
-                Status = (bool)account.Status
+                Status = (bool)account.Status,
+                Biography = account.Biography,
+                Email = account.Email,
+                Gender = account.Gender,
+                Name = account.Name,
+                PhoneNumber = account.Phone
             };
 
             return result;
