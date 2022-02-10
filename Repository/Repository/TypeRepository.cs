@@ -19,6 +19,9 @@ namespace Repository
         {
             var type = await FindByCondition(x => x.Name == name.Trim(), trackChanges).FirstOrDefaultAsync();
 
+            if (type == null)
+                type = await FindByCondition(x => x.Id == 5, trackChanges).FirstOrDefaultAsync();
+
             return type;
         }
 

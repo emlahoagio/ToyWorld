@@ -29,18 +29,46 @@ namespace ToyWorldSystem.Controller
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("new")]
-        public async Task<IActionResult> CreateComment(NewCommentParameter param)
+        [Route("news/post")]
+        public async Task<IActionResult> CreateCommentInPost(NewCommentParameter param)
         {
             var accountId = _userAccessor.getAccountId();
 
-            _repositoryManager.Comment.CreateComment(
-                new Entities.Models.Comment
-                {
-                    AccountId = accountId,
-                    Content = param.Content,
-                    PostId = param.PostId
-                });
+            var comment = new Entities.Models.Comment
+            {
+                AccountId = accountId,
+                Content = param.Content,
+                PostId = param.PostId,
+                TradingPostId = null
+            };
+
+            _repositoryManager.Comment.CreateComment(comment);
+
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
+        /// Create new comment in trading post
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("news/trading_post")]
+        public async Task<IActionResult> CreateCommentInTradingPost(NewCommentParameter param)
+        {
+            var accountId = _userAccessor.getAccountId();
+
+            var comment = new Entities.Models.Comment
+            {
+                AccountId = accountId,
+                Content = param.Content,
+                PostId = null,
+                TradingPostId = param.PostId
+            };
+
+            _repositoryManager.Comment.CreateComment(comment);
 
             await _repositoryManager.SaveAsync();
 
