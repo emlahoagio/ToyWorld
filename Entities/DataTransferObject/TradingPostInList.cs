@@ -7,6 +7,7 @@ namespace Entities.DataTransferObject
     public class TradingPostInList
     {
         public int Id { get; set; }
+        public int? OwnerId { get; set; }
         public string OwnerAvatar { get; set; }
         public string OwnerName { get; set; }
         public DateTime PostDate { get; set; }

@@ -79,6 +79,7 @@ namespace Repository
                 NumOfComment = x.Comments.Count,
                 NumOfReact = x.ReactPosts.Count,
                 Content = x.Content,
+                OwnerId = x.AccountId,
                 OwnerAvatar = x.Account.Avatar,
                 OwnerName = x.Account.Name,
                 PublicDate = x.PublicDate
@@ -136,6 +137,7 @@ namespace Repository
                     Url = x.Url
                 }).ToList(),
                 NumOfReact = post.ReactPosts.Count,
+                OwnerId = post.Account.Id,
                 OwnerAvatar = post.Account.Avatar,
                 OwnerName = post.Account.Name,
                 PublicDate = post.PublicDate,
@@ -171,6 +173,7 @@ namespace Repository
                     Id = x.Id,
                     Url = x.Url
                 }).ToList(),
+                OwnerId = x.AccountId,
                 OwnerAvatar = x.Account.Avatar,
                 OwnerName = x.Account.Name,
                 PostDate = x.PostDate
@@ -213,6 +216,7 @@ namespace Repository
                     Id = x.Id,
                     Url = x.Url
                 }).ToList(),
+                OwnerId = x.AccountId,
                 OwnerAvatar = x.Account.Avatar,
                 OwnerName = x.Account.Name,
                 PostDate = x.PostDate
@@ -298,6 +302,7 @@ namespace Repository
                 NumOfComment = x.Comments.Count,
                 NumOfReact = x.ReactPosts.Count,
                 Content = x.Content,
+                OwnerId = x.AccountId,
                 OwnerAvatar = x.Account.Avatar,
                 OwnerName = x.Account.Name,
                 PublicDate = x.PublicDate

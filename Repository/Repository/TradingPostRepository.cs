@@ -80,6 +80,7 @@ namespace Repository.Repository
                     Images = x.Images.Select(x => new ImageReturn { Id = x.Id, Url = x.Url }).ToList(),
                     NoOfComment = x.Comments.Count,
                     NoOfReact = x.ReactTradingPosts.Count,
+                    OwnerId = x.AccountId,
                     OwnerAvatar = x.Account.Avatar,
                     OwnerName = x.Account.Name,
                     PostDate = x.PostDate,
