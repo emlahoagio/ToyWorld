@@ -50,7 +50,7 @@ namespace Repository.Repository
             Update(tradingPost);
         }
 
-        public async Task<Pagination<TradingPostInList>> GetList(PagingParameters paging, bool trackChanges)
+        public async Task<Pagination<TradingPostInList>> GetList(PagingParameters paging, bool trackChanges, int account_id)
         {
             var tradingPosts = await FindByCondition(x => x.IsExchanged == false && x.IsDeleted == false, trackChanges)
                 .Include(x => x.Toy).ThenInclude(x => x.Brand)
@@ -85,7 +85,8 @@ namespace Repository.Repository
                     OwnerName = x.Account.Name,
                     PostDate = x.PostDate,
                     ToyName = x.ToyName,
-                    Type = x.Toy.Type.Name
+                    Type = x.Toy.Type.Name,
+                    IsLiked = x.ReactTradingPosts.Where(y => y.AccountId == account_id).Count() == 0 ? false : true,
                 })
             };
 

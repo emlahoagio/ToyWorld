@@ -19,5 +19,6 @@ namespace Entities.DataTransferObject
         public List<ImageReturn> Images { get; set; }
         public int NoOfReact { get; set; }
         public int NoOfComment { get; set; }
+        public bool IsLiked { get; set; }
     }
 }
