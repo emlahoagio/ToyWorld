@@ -86,7 +86,7 @@ namespace Repository.Repository
                     PostDate = x.PostDate,
                     ToyName = x.ToyName,
                     Type = x.Toy.Type.Name,
-                    IsLiked = x.ReactTradingPosts.Where(y => y.AccountId == account_id).Count() == 0 ? false : true,
+                    IsLikedPost = x.ReactTradingPosts.Where(y => y.AccountId == account_id).Count() == 0 ? false : true,
                 })
             };
 
