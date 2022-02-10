@@ -10,6 +10,7 @@ namespace Entities.DataTransferObject
         public int? OwnerId { get; set; }
         public string OwnerAvatar { get; set; }
         public string OwnerName { get; set; }
+        public bool? IsLikedPost { get; set; }
         public string Content { get; set; }
         public DateTime? PublicDate { get; set; }
         public List<ImageReturn> Images { get; set; }

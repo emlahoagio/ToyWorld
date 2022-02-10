@@ -16,5 +16,6 @@ namespace Entities.DataTransferObject
         public List<CommentReturn> Comments { get; set; }
         public int NumOfReact { get; set; }
         public int NumOfComment { get; set; }
+        public bool IsLiked { get; set; }
     }
 }

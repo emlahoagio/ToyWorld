@@ -34,11 +34,13 @@ namespace ToyWorldSystem.Controller
         /// <returns></returns>
         [HttpGet]
         [Route("group/{group_id}")]
-        public async Task<IActionResult> GetListPostByGroup(int group_id, [FromQuery]PagingParameters paging)
+        public async Task<IActionResult> GetListPostByGroup(int group_id, [FromQuery] PagingParameters paging)
         {
-            var result = await _repositoryManager.Post.GetPostByGroupId(group_id, trackChanges: false, paging);
+            var account_id = _userAccessor.getAccountId();
 
-            if(result == null)
+            var result = await _repositoryManager.Post.GetPostByGroupId(group_id, trackChanges: false, paging, account_id);
+
+            if (result == null)
             {
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
             }
@@ -70,16 +72,17 @@ namespace ToyWorldSystem.Controller
         /// <returns></returns>
         [HttpGet]
         [Route("waiting")]
-        public async Task<IActionResult> GetWaitingPost([FromQuery]PagingParameters paging)
+        public async Task<IActionResult> GetWaitingPost([FromQuery] PagingParameters paging)
         {
             var accountId = _userAccessor.getAccountId();
             var account = await _repositoryManager.Account.GetAccountById(accountId, trackChanges: false);
 
             Pagination<WaitingPost> result;
-            if(account.Role == 1)
+            if (account.Role == 1)
             {
                 result = await _repositoryManager.Post.GetWaitingPost(trackChanges: false, paging);
-            }else
+            }
+            else
             {
                 result = await _repositoryManager.Post.GetWaitingPost(trackChanges: false, paging, accountId);
             }
@@ -98,9 +101,11 @@ namespace ToyWorldSystem.Controller
         [Route("details/{post_id}")]
         public async Task<IActionResult> GetPostDetail(int post_id)
         {
-            var result = await _repositoryManager.Post.GetPostDetail(post_id, trackChanges: false);
+            var account_id = _userAccessor.getAccountId();
 
-            if (result == null) 
+            var result = await _repositoryManager.Post.GetPostDetail(post_id, trackChanges: false, account_id);
+
+            if (result == null)
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No post matches with the id: " + post_id);
 
             return Ok(result);
@@ -133,16 +138,18 @@ namespace ToyWorldSystem.Controller
         [Route("reacts/{post_id}")]
         public async Task<IActionResult> ReactPost(int post_id)
         {
+            bool isLiked = true;
+
             var post = await _repositoryManager.Post.GetPostReactById(post_id, trackChanges: false);
 
             var accountId = _userAccessor.getAccountId();
 
-            if (post == null) 
+            if (post == null)
                 throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "No post matches with post id");
 
             var account = await _repositoryManager.Account.GetAccountById(accountId, trackChanges: false);
 
-            if(account == null)
+            if (account == null)
                 throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "No account matches with account id");
 
             //account is reacted
@@ -153,7 +160,9 @@ namespace ToyWorldSystem.Controller
                 //un react
                 _repositoryManager.ReactPost.DeleteReact(
                     new Entities.Models.ReactPost { AccountId = accountId, PostId = post_id });
-            }else
+                isLiked = false;
+            }
+            else
             {
                 //react
                 _repositoryManager.ReactPost.CreateReact(
@@ -162,7 +171,14 @@ namespace ToyWorldSystem.Controller
 
             await _repositoryManager.SaveAsync();
 
-            return Ok(new {message = "Save changes success"});
+            var numOfReact = await _repositoryManager.Post.GetNumOfReact(post_id, trackChanges: false);
+
+            return Ok(new
+            {
+                Message = "Save changes success",
+                NumOfReact = numOfReact,
+                IsLiked = isLiked
+            });
         }
 
         /// <summary>
@@ -231,7 +247,7 @@ namespace ToyWorldSystem.Controller
             if (post == null) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid post");
 
             //check not owner, not manager
-            if(post.AccountId != accountId && account.Role != 1)
+            if (post.AccountId != accountId && account.Role != 1)
             {
                 throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid request");
             }

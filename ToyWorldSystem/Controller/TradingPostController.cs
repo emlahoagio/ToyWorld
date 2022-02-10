@@ -32,7 +32,9 @@ namespace ToyWorldSystem.Controller
         [HttpGet]
         public async Task<IActionResult> GetListTradingPost([FromQuery] PagingParameters paging)
         {
-            var result = await _repositoryManager.TradingPost.GetList(paging, trackChanges: false);
+            var account_id = _userAccessor.getAccountId();
+
+            var result = await _repositoryManager.TradingPost.GetList(paging, trackChanges: false, account_id);
 
             return Ok(result);
         }

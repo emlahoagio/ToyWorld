@@ -48,7 +48,7 @@ namespace Repository
             Create(post);
         }
 
-        public async Task<Pagination<PostInList>> GetPostByGroupId(int groupId, bool trackChanges, PagingParameters paging)
+        public async Task<Pagination<PostInList>> GetPostByGroupId(int groupId, bool trackChanges, PagingParameters paging, int accountId)
         {
             var listPost = await FindByCondition(post => post.GroupId == groupId && post.IsPublic == true && post.IsDeleted == false, trackChanges)
                 .Include(x => x.Account)
@@ -81,6 +81,7 @@ namespace Repository
                 Content = x.Content,
                 OwnerId = x.AccountId,
                 OwnerAvatar = x.Account.Avatar,
+                IsLikedPost = x.ReactPosts.Where(y => y.AccountId == accountId).Count() == 0 ? false : true,
                 OwnerName = x.Account.Name,
                 PublicDate = x.PublicDate
             }).ToList();
@@ -107,7 +108,7 @@ namespace Repository
             return result;
         }
 
-        public async Task<PostDetail> GetPostDetail(int post_id, bool trackChanges)
+        public async Task<PostDetail> GetPostDetail(int post_id, bool trackChanges, int account_id)
         {
             var post = await FindByCondition(x => x.Id == post_id && x.IsPublic == true && x.IsDeleted == false, trackChanges)
                 .Include(x => x.Account)
@@ -141,7 +142,8 @@ namespace Repository
                 OwnerAvatar = post.Account.Avatar,
                 OwnerName = post.Account.Name,
                 PublicDate = post.PublicDate,
-                Content = post.Content
+                Content = post.Content,
+                IsLiked = post.ReactPosts.Where(y => y.AccountId == account_id).Count() == 0 ? false : true
             };
 
             return result;
@@ -305,7 +307,8 @@ namespace Repository
                 OwnerId = x.AccountId,
                 OwnerAvatar = x.Account.Avatar,
                 OwnerName = x.Account.Name,
-                PublicDate = x.PublicDate
+                PublicDate = x.PublicDate,
+                IsLikedPost = x.ReactPosts.Where(y => y.AccountId == accountId).Count() == 0 ? false : true,
             }).ToList();
 
             var pagingNation = new Pagination<PostInList>
@@ -317,6 +320,18 @@ namespace Repository
             };
 
             return pagingNation;
+        }
+
+        public async Task<int> GetNumOfReact(int post_id, bool trackChanges)
+        {
+            var post = await FindByCondition(x => x.Id == post_id, trackChanges)
+                .Include(x => x.ReactPosts)
+                .FirstOrDefaultAsync();
+
+            if (post == null)
+                return 0;
+
+            return post.ReactPosts.Count;
         }
     }
 }
