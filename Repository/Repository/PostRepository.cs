@@ -143,7 +143,7 @@ namespace Repository
                 OwnerName = post.Account.Name,
                 PublicDate = post.PublicDate,
                 Content = post.Content,
-                IsLiked = post.ReactPosts.Where(y => y.AccountId == account_id).Count() == 0 ? false : true
+                IsLikedPost = post.ReactPosts.Where(y => y.AccountId == account_id).Count() == 0 ? false : true
             };
 
             return result;
