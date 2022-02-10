@@ -68,6 +68,8 @@ namespace Entities.Models
                     .HasMaxLength(10)
                     .IsUnicode(false);
 
+                entity.Property(e => e.Gender).IsUnicode(false);
+
                 entity.Property(e => e.Uid).IsUnicode(false);
             });
 

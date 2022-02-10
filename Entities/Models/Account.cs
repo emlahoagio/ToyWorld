@@ -34,6 +34,7 @@ namespace Entities.Models
         public string Biography { get; set; }
         public string Password { get; set; }
         public string Avatar { get; set; }
+        public string Gender { get; set; }
         public bool Status { get; set; }
         public int? Role { get; set; }
 
