@@ -23,6 +23,7 @@ namespace Contracts
         IFollowAccountRepository FollowAccount { get; }
         IProposalRepository Proposal { get; }
         IPrizeContestRepository PrizeContest {get;}
+        IPrizeRepository Prize { get; }
         Task SaveAsync();
     }
 }
