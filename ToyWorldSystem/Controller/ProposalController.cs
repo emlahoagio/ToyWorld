@@ -91,5 +91,21 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+
+        /// <summary>
+        /// Get proposal is waiting to approve or deny
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("waiting")]
+        public async Task<IActionResult> GetWaitingProposal([FromQuery] PagingParameters paging)
+        {
+            var proposals = await _repository.Proposal.GetWaitingProposal(paging, trackChanges: false);
+
+            if (proposals == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more waiting proposal");
+
+            return (Ok(proposals));
+        }
     }
 }
