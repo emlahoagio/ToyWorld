@@ -24,6 +24,11 @@ namespace ToyWorldSystem.Controller
             _userAccessor = userAccessor;
         }
 
+        /// <summary>
+        /// Get list prize for add to contest and proposal
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> getPrizeList([FromQuery]PagingParameters paging)
         {
@@ -32,6 +37,11 @@ namespace ToyWorldSystem.Controller
             return Ok(pagignationPrize);
         }
 
+        /// <summary>
+        /// Create new prize
+        /// </summary>
+        /// <param name="newPrize"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> createPrize(NewPrizeParameters newPrize)
         {

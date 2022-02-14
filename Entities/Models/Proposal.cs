@@ -19,6 +19,7 @@ namespace Entities.Models
         public int? MinRegister { get; set; }
         public int? MaxRegister { get; set; }
         public string ContestDescription { get; set; }
+        public bool? IsWaiting { get; set; }
         public bool? Status { get; set; }
         public int? AccountId { get; set; }
         public int? TypeId { get; set; }

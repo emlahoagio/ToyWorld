@@ -33,6 +33,7 @@ namespace Repository
         private IProposalRepository _proposalRepository;
         private IPrizeContestRepository _prizeContestRepository;
         private IPrizeRepository _prizeRepository;
+        private IProposalPrizeRepository _proposalPrizeRepository;
 
         public RepositoryManager(DataContext context, IConfiguration configuration)
         {
@@ -231,6 +232,16 @@ namespace Repository
                     _prizeRepository = new PrizeRepository(_context);
                 }
                 return _prizeRepository;
+            }
+        }
+
+        public IProposalPrizeRepository ProposalPrize
+        {
+            get
+            {
+                if (_proposalPrizeRepository == null)
+                    _proposalPrizeRepository = new ProposalPrizeRepository(_context);
+                return _proposalPrizeRepository;
             }
         }
 
