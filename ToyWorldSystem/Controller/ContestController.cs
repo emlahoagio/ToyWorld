@@ -40,6 +40,12 @@ namespace ToyWorldSystem.Controller
             return Ok(result);
         }
 
+        /// <summary>
+        /// Get contest by group id
+        /// </summary>
+        /// <param name="group_id"></param>
+        /// <param name="paging"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("group/{group_id}")]
         public async Task<IActionResult> getContestByGroup(int group_id, [FromQuery] PagingParameters paging)
