@@ -31,6 +31,9 @@ namespace Repository
         private IReactCommentRepository _reactCommentRepository;
         private IFollowAccountRepository _followAccountRepository;
         private IProposalRepository _proposalRepository;
+        private IPrizeContestRepository _prizeContestRepository;
+        private IPrizeRepository _prizeRepository;
+        private IProposalPrizeRepository _proposalPrizeRepository;
 
         public RepositoryManager(DataContext context, IConfiguration configuration)
         {
@@ -205,6 +208,40 @@ namespace Repository
                     _proposalRepository = new ProposalRepository(_context);
                 }
                 return _proposalRepository;
+            }
+        }
+
+        public IPrizeContestRepository PrizeContest
+        {
+            get
+            {
+                if(_prizeContestRepository == null)
+                {
+                    _prizeContestRepository = new PrizeContestRepository(_context);
+                }
+                return _prizeContestRepository;
+            }
+        }
+
+        public IPrizeRepository Prize
+        {
+            get
+            {
+                if(_prizeRepository == null)
+                {
+                    _prizeRepository = new PrizeRepository(_context);
+                }
+                return _prizeRepository;
+            }
+        }
+
+        public IProposalPrizeRepository ProposalPrize
+        {
+            get
+            {
+                if (_proposalPrizeRepository == null)
+                    _proposalPrizeRepository = new ProposalPrizeRepository(_context);
+                return _proposalPrizeRepository;
             }
         }
 
