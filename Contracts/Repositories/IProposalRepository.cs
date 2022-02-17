@@ -10,5 +10,7 @@ namespace Contracts.Repositories
         void CreateProposal(Proposal proposal);
         Task<Proposal> GetProposalToAddPrize(int proposal_id, bool trachChanges);
         Task<Pagination<ProposalInList>>GetWaitingProposal(PagingParameters paging, bool trackChanges);
+        Task<Proposal> GetProposalToDeny(int proposal_id, bool trackChanges);
+        void DenyProposal(Proposal proposal);
     }
 }

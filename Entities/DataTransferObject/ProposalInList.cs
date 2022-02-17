@@ -11,6 +11,7 @@ namespace Entities.DataTransferObject
         public int? MinRegister { get; set; }
         public int? MaxRegister { get; set; }
         public string Description { get; set; }
+        public int? TakePlace { get; set; }
         public int OwnerId { get; set; }
         public string OwnerName { get; set; }
         public string OwnerAvatar { get; set; }

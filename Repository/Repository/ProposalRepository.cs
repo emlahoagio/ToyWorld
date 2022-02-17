@@ -19,6 +19,13 @@ namespace Repository.Repository
 
         public void CreateProposal(Proposal proposal) => Create(proposal);
 
+        public void DenyProposal(Proposal proposal)
+        {
+            proposal.IsWaiting = false;
+            proposal.Status = false;
+            Update(proposal);
+        }
+
         public async Task<Proposal> GetProposalToAddPrize(int proposal_id, bool trachChanges)
         {
             var proposal = await FindByCondition(x => x.Id == proposal_id, trachChanges)
@@ -26,6 +33,13 @@ namespace Repository.Repository
                 .FirstOrDefaultAsync();
 
             if (proposal == null) return null;
+
+            return proposal;
+        }
+
+        public async Task<Proposal> GetProposalToDeny(int proposal_id, bool trackChanges)
+        {
+            var proposal = await FindByCondition(x => x.Id == proposal_id, trackChanges).FirstOrDefaultAsync();
 
             return proposal;
         }
@@ -51,6 +65,7 @@ namespace Repository.Repository
                 MinRegister = x.MinRegister,
                 OwnerAvatar = x.Account.Avatar,
                 OwnerId = x.Account.Id,
+                TakePlace = x.TakePlace,
                 OwnerName = x.Account.Name,
                 Title = x.Title,
                 TypeName = x.Type == null ? null : x.Type.Name

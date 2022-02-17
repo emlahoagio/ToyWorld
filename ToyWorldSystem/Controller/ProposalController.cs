@@ -48,6 +48,7 @@ namespace ToyWorldSystem.Controller
                 AccountId = accountId,
                 TypeId = type.Id,
                 BrandId = brand.Id,
+                TakePlace = parameters.TakePlace,
                 Images = parameters.ImagesUrl
                 .Select(x =>
                 new Entities.Models.Image
@@ -106,6 +107,24 @@ namespace ToyWorldSystem.Controller
             if (proposals == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more waiting proposal");
 
             return (Ok(proposals));
+        }
+
+        [HttpPut]
+        [Route("deny/{proposal_id}")]
+        public async Task<IActionResult> DenyProposal(int proposal_id)
+        {
+            var account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            if (account.Role != 1) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "You're not allow to deny");
+
+            var proposal = await _repository.Proposal.GetProposalToDeny(proposal_id, trackChanges: false);
+
+            if (proposal == null) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Invalid Proposal");
+
+            _repository.Proposal.DenyProposal(proposal);
+            await _repository.SaveAsync();
+
+            return Ok("Save changes success");
         }
     }
 }

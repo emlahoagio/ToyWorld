@@ -18,6 +18,10 @@ namespace Entities.Models
         public string Title { get; set; }
         public int? MinRegister { get; set; }
         public int? MaxRegister { get; set; }
+        /// <summary>
+        /// Unit: Days
+        /// </summary>
+        public int? TakePlace { get; set; }
         public string ContestDescription { get; set; }
         public bool? IsWaiting { get; set; }
         public bool? Status { get; set; }
