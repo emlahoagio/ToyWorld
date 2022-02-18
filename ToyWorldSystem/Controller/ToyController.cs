@@ -125,7 +125,15 @@ namespace ToyWorldSystem.Controller
             foreach (var i in listLinkToy)
             {
                 Toy dto = await _kingdom.GetToyDetail(i);
-                _repository.Toy.CreateToy(dto);
+                var existToy = await _repository.Toy.GetExistToy(dto.Name);
+                if (existToy == null)
+                {
+                    _repository.Toy.CreateToy(dto);
+                }
+                else
+                {
+                    _repository.Toy.UpdateToy(dto);
+                }
             }
             await _repository.SaveAsync();
             return Ok();
