@@ -50,15 +50,16 @@ namespace Repository.Repository
             Update(tradingPost);
         }
 
-        public async Task<Pagination<TradingPostInList>> GetList(PagingParameters paging, bool trackChanges, int account_id)
+        public async Task<Pagination<TradingPostInList>> GetTradingPostInGroup(int group_id, PagingParameters paging, bool trackChanges, int account_id)
         {
-            var tradingPosts = await FindByCondition(x => x.IsExchanged == false && x.IsDeleted == false, trackChanges)
+            var tradingPosts = await FindByCondition(x => x.IsExchanged == false && x.IsDeleted == false && x.GroupId == group_id, trackChanges)
                 .Include(x => x.Toy).ThenInclude(x => x.Brand)
                 .Include(x => x.Toy).ThenInclude(x => x.Type)
                 .Include(x => x.ReactTradingPosts)
+                .Include(x => x.Images)
                 .Include(x => x.Account)
                 .Include(x => x.Comments)
-                .OrderBy(x => x.PostDate)
+                .OrderByDescending(x => x.PostDate)
                 .ToListAsync();
 
             var count = tradingPosts.Count;

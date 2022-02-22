@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Repository.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,14 +24,16 @@ namespace ToyWorldSystem.Controller
         private readonly IUserAccessor _userAccessor;
         private readonly ICrawlDataJapanFigureServices _crawlDataJapanFigure;
         private readonly IConfiguration _configuration;
+        private readonly ICrawlDataMyKingdomService _kingdom;
 
-        public ToyController(IRepositoryManager repository, IUserAccessor userAccessor, 
-            ICrawlDataJapanFigureServices crawlDataJapanFigure, IConfiguration configuration)
+        public ToyController(IRepositoryManager repository, IUserAccessor userAccessor,
+            ICrawlDataJapanFigureServices crawlDataJapanFigure, IConfiguration configuration, ICrawlDataMyKingdomService kingdom)
         {
             _repository = repository;
             _userAccessor = userAccessor;
             _crawlDataJapanFigure = crawlDataJapanFigure;
             _configuration = configuration;
+            _kingdom = kingdom;
         }
 
         /// <summary>
@@ -54,9 +57,9 @@ namespace ToyWorldSystem.Controller
         /// <returns></returns>
         [HttpGet]
         [Route("type/{type_name}")]
-        public async Task<IActionResult> GetToysByType(string type_name,[FromQuery] PagingParameters toyParameters)
+        public async Task<IActionResult> GetToysByType(string type_name, [FromQuery] PagingParameters toyParameters)
         {
-            var toys = await _repository.Toy.GetToysByType(toyParameters ,type_name, trackChanges: false);
+            var toys = await _repository.Toy.GetToysByType(toyParameters, type_name, trackChanges: false);
 
             return Ok(toys);
         }
@@ -89,14 +92,14 @@ namespace ToyWorldSystem.Controller
             var toyList = await _crawlDataJapanFigure.getToy(link_crawl);
 
             var type = await _repository.Type.GetTypeByName(toy_type, trackChanges: false);
-            if(type == null)
+            if (type == null)
             {
-                _repository.Type.CreateType(new Entities.Models.Type { Name = toy_type});
+                _repository.Type.CreateType(new Entities.Models.Type { Name = toy_type });
                 await _repository.SaveAsync();
                 type = await _repository.Type.GetTypeByName(toy_type, trackChanges: false);
             }
 
-            foreach(var toy in toyList)
+            foreach (var toy in toyList)
             {
                 toy.TypeId = type.Id;
                 var existToy = await _repository.Toy.GetExistToy(toy.Name);
@@ -110,6 +113,29 @@ namespace ToyWorldSystem.Controller
             }
             await _repository.SaveAsync();
 
+            return Ok();
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        [Route("crawl/mykingdom")]
+        public async Task<IActionResult> KingdomCrawl(string url)
+        {
+            List<String> listLinkToy = _kingdom.GetListLink(url);
+            foreach (var i in listLinkToy)
+            {
+                Toy dto = await _kingdom.GetToyDetail(i);
+                var existToy = await _repository.Toy.GetExistToy(dto.Name);
+                if (existToy == null)
+                {
+                    _repository.Toy.CreateToy(dto);
+                }
+                else
+                {
+                    _repository.Toy.UpdateToy(dto);
+                }
+            }
+            await _repository.SaveAsync();
             return Ok();
         }
     }

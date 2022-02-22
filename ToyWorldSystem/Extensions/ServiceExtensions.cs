@@ -55,5 +55,9 @@ namespace ToyWorldSystem.Extensions
         //Crawl Japan Figure services
         public static void ConfigureCrawlDataFromJapanFigure(this IServiceCollection services)
             => services.AddScoped<ICrawlDataJapanFigureServices, CrawlDataJapanFigureServices>();
+
+        //Crawl MyKingdom
+        public static void ConfigureMyKingdomCrawlers(this IServiceCollection services)
+            => services.AddScoped<ICrawlDataMyKingdomService, CrawlDataMyKingdomService>();
     }
 }

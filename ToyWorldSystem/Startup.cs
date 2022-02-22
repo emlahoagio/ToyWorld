@@ -48,6 +48,8 @@ namespace ToyWorldSystem
 
             services.ConfigureCrawlDataFromJapanFigure();
 
+            services.ConfigureMyKingdomCrawlers();
+
             services.AddHttpContextAccessor();
 
             //Add verify jwt services
