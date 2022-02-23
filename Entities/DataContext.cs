@@ -39,6 +39,8 @@ namespace Entities.Models
         public virtual DbSet<Toy> Toys { get; set; }
         public virtual DbSet<TradingPost> TradingPosts { get; set; }
         public virtual DbSet<Type> Types { get; set; }
+        public virtual DbSet<PostOfContest> PostOfContests { get; set; }
+        public virtual DbSet<Rate> Rates { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -476,6 +478,26 @@ namespace Entities.Models
                 entity.ToTable("Type");
 
                 entity.Property(e => e.Id).HasColumnName("id");
+            });
+
+            modelBuilder.Entity<PostOfContest>(entity =>
+            {
+                entity.ToTable("PostOfContest");
+
+                entity.HasOne(d => d.Contest)
+                    .WithMany(p => p.Posts)
+                    .HasForeignKey(d => d.ContestId)
+                    .HasConstraintName("FK_PostOfContest_Contest");
+            });
+
+            modelBuilder.Entity<Rate>(entity =>
+            {
+                entity.ToTable("Rate");
+
+                entity.HasOne(d => d.PostOfContest)
+                    .WithMany(p => p.Rates)
+                    .HasForeignKey(d => d.PostOfContestId)
+                    .HasConstraintName("FK_Rate_PostOfContest");
             });
 
             OnModelCreatingPartial(modelBuilder);
