@@ -34,9 +34,9 @@ namespace ToyWorldSystem.Controller
         {
             var accountId = _userAccessor.getAccountId();
 
-            var brand = _repository.Brand.GetBrandByName(parameters.BrandName, trackChanges: false);
+            var brand = await _repository.Brand.GetBrandByName(parameters.BrandName, trackChanges: false);
 
-            var type = _repository.Type.GetTypeByName(parameters.TypeName, trackChanges: false);
+            var type = await _repository.Type.GetTypeByName(parameters.TypeName, trackChanges: false);
 
             var proposal = new Proposal
             {
