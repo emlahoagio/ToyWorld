@@ -17,6 +17,13 @@ namespace Repository.Repository
         {
         }
 
+        public void ApproveProposal(Proposal proposal)
+        {
+            proposal.IsWaiting = false;
+            proposal.Status = true;
+            Update(proposal);
+        }
+
         public void CreateProposal(Proposal proposal) => Create(proposal);
 
         public void DenyProposal(Proposal proposal)
@@ -24,6 +31,30 @@ namespace Repository.Repository
             proposal.IsWaiting = false;
             proposal.Status = false;
             Update(proposal);
+        }
+
+        public async Task<ProposalCreateContest> GetInformationToCreateContest(int proposal_id, bool trackChanges)
+        {
+            var proposal = await FindByCondition(x => x.Id == proposal_id, trackChanges)
+                .Include(x => x.Brand)
+                .Include(x => x.Type)
+                .FirstOrDefaultAsync();
+
+            if (proposal == null) return null;
+
+            var result = new ProposalCreateContest
+            {
+                BrandName = proposal.Brand.Name,
+                Description = proposal.ContestDescription,
+                Duration = proposal.Duration,
+                Location = proposal.Location,
+                MaxRegistration = proposal.MaxRegister,
+                MinRegistration = proposal.MinRegister,
+                Title = proposal.Title,
+                TypeName = proposal.Type.Name
+            };
+
+            return result;
         }
 
         public async Task<Proposal> GetProposalToAddPrize(int proposal_id, bool trachChanges)
@@ -37,7 +68,7 @@ namespace Repository.Repository
             return proposal;
         }
 
-        public async Task<Proposal> GetProposalToDeny(int proposal_id, bool trackChanges)
+        public async Task<Proposal> GetProposalToDenyOrApprove(int proposal_id, bool trackChanges)
         {
             var proposal = await FindByCondition(x => x.Id == proposal_id, trackChanges).FirstOrDefaultAsync();
 
@@ -65,7 +96,8 @@ namespace Repository.Repository
                 MinRegister = x.MinRegister,
                 OwnerAvatar = x.Account.Avatar,
                 OwnerId = x.Account.Id,
-                TakePlace = x.TakePlace,
+                Location = x.Location,
+                Duration = x.Duration,
                 OwnerName = x.Account.Name,
                 Title = x.Title,
                 TypeName = x.Type == null ? null : x.Type.Name
