@@ -1,5 +1,6 @@
 ﻿using Contracts;
 using Entities.ErrorModel;
+using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -28,7 +29,7 @@ namespace ToyWorldSystem.Controller
         /// <returns></returns>
         [HttpGet]
         [Route("highlight")]
-        public async Task<IActionResult> getHighlightContest()
+        public async Task<IActionResult> GetHighlightContest()
         {
             var result = await _repositoryManager.Contest.getHightlightContest(trackChanges: false);
 
@@ -48,7 +49,7 @@ namespace ToyWorldSystem.Controller
         /// <returns></returns>
         [HttpGet]
         [Route("group/{group_id}")]
-        public async Task<IActionResult> getContestByGroup(int group_id, [FromQuery] PagingParameters paging)
+        public async Task<IActionResult> GetContestByGroup(int group_id, [FromQuery] PagingParameters paging)
         {
             var contest_have_not_prize = await _repositoryManager.Contest.GetContestInGroup(group_id, trackChanges: false, paging);
 
@@ -60,6 +61,59 @@ namespace ToyWorldSystem.Controller
             }
 
             return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("create/proposal/{proposal_id}")]
+        public async Task<IActionResult> GetProposalToCreateContest(int proposal_id)
+        {
+            var proposal_information = await _repositoryManager.Proposal.GetInformationToCreateContest(proposal_id, trackChanges: false);
+
+            if (proposal_information == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No proposal matches with id: " + proposal_id);
+
+            return Ok(proposal_information);
+        }
+
+        /// <summary>
+        /// Create contest (don't have prize, can't use)
+        /// </summary>
+        /// <param name="param"></param>
+        /// <param name="group_id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("group/{group_id}")]
+        public async Task<IActionResult> CreateContest(CreateContestParameters param, int group_id)
+        {
+            var brand = await _repositoryManager.Brand.GetBrandByName(param.BrandName, trackChanges: false);
+
+            var type = await _repositoryManager.Type.GetTypeByName(param.TypeName, trackChanges: false);
+
+            var contest = new Contest
+            {
+                Title = param.Title,
+                Description = param.Description,
+                Venue = param.Location,
+                CoverImage = param.CoverImage,
+                Slogan = param.Slogan,
+                IsOnlineContest = param.IsOnlineContest,
+                RegisterCost = param.RegisterCost,
+                MinRegistration = param.MinRegistration,
+                MaxRegistration = param.MaxRegistration,
+                StartRegistration = param.StartRegistration,
+                EndRegistration = param.EndRegistration,
+                StartDate = param.StartDate,
+                EndDate = param.EndDate,
+                GroupId = group_id,
+                ProposalId = param.ProposalId,
+                BrandId = brand.Id,
+                TypeId = type.Id,
+                Status = 0
+            };
+
+            _repositoryManager.Contest.Create(contest);
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Save changes success!");
         }
     }
 }
