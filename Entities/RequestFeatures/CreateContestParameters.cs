@@ -23,7 +23,6 @@ namespace Entities.RequestFeatures
         public string BrandName { get; set; }
         public string TypeName { get; set; }
         public int ProposalId { get; set; }
-        public List<Prize> Prizes { get; set; }
         public List<string> ImagesUrl { get; set; }
     }
 }

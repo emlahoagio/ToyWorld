@@ -133,7 +133,28 @@ namespace ToyWorldSystem.Controller
             _repositoryManager.Contest.Create(contest);
             await _repositoryManager.SaveAsync();
 
-            return Ok("Save changes success!");
+            var createdContest = await _repositoryManager.Contest.GetCreatedContest(group_id, param.Title, param.StartRegistration, trackChanges: false);
+
+            return Ok(new {contestId = createdContest.Id});
+        }
+
+        /// <summary>
+        /// Add prizes to contest
+        /// </summary>
+        /// <param name="contest_id">Contest id return after create contest success</param>
+        /// <param name="prizes_id"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("{contest_id}/prizes")]
+        public async Task<IActionResult> AddPrizeToContest(int contest_id, List<int> prizes_id)
+        {
+            foreach(var prizeId in prizes_id)
+            {
+                _repositoryManager.PrizeContest.Create(new PrizeContest { ContestId = contest_id, PrizeId = prizeId });
+            }
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Saves change success");
         }
     }
 }
