@@ -1,6 +1,9 @@
-﻿using Entities.ErrorModel;
+﻿using Contracts;
+using Entities.ErrorModel;
+using Entities.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,11 +45,6 @@ namespace ToyWorldSystem.Extensions
                     logger.LogError(ex, "Internal Sever Error");
                     errors = err.Error;
                     context.Response.StatusCode = (int)err.StatusCode;
-                    break;
-                case ArgumentException aggEx:
-                    logger.LogError(aggEx, "Internal Sever Error");
-                    errors = aggEx.InnerException;
-                    context.Response.StatusCode = (int)aggEx.InnerException?.HResult;
                     break;
                 case Exception e:
                     logger.LogError(e, "Sever error");

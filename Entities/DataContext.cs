@@ -41,6 +41,7 @@ namespace Entities.Models
         public virtual DbSet<Type> Types { get; set; }
         public virtual DbSet<PostOfContest> PostOfContests { get; set; }
         public virtual DbSet<Rate> Rates { get; set; }
+        public virtual DbSet<ErrorLogs> Error { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
