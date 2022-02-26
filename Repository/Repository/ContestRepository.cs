@@ -65,6 +65,15 @@ namespace Repository
             return result;
         }
 
+        public async Task<Contest> GetCreatedContest(int group_id, string title, DateTime? startRegistration, bool trackChanges)
+        {
+            var result = await FindByCondition(x => x.GroupId == group_id
+                && x.Title == title
+                && x.StartRegistration == startRegistration, trackChanges).FirstOrDefaultAsync();
+
+            return result;
+        }
+
         public async Task<IEnumerable<HighlightContest>> getHightlightContest(bool trackChanges)
         {
             var listContest = await FindByCondition(c => c.CanAttempt == true && c.EndRegistration >= DateTime.Now, trackChanges)
