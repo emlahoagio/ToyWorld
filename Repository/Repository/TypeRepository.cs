@@ -16,11 +16,11 @@ namespace Repository
         }
 
         public async Task<Entities.Models.Type> GetTypeByName(string name, bool trackChanges)
-        {
+        { 
             var type = await FindByCondition(x => x.Name == name.Trim(), trackChanges).FirstOrDefaultAsync();
 
             if (type == null)
-                type = await FindByCondition(x => x.Id == 5, trackChanges).FirstOrDefaultAsync();
+                return null;
 
             return type;
         }

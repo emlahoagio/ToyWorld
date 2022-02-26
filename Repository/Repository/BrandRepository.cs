@@ -19,7 +19,7 @@ namespace Repository
             var result = await FindByCondition(brand => brand.Name == name, trackChanges).SingleOrDefaultAsync();
 
             if (result == null)
-                result = await FindByCondition(brand => brand.Id == 5, trackChanges).FirstOrDefaultAsync();
+                return null;
 
             return result;
         }

@@ -34,6 +34,12 @@ namespace Repository
         private IPrizeContestRepository _prizeContestRepository;
         private IPrizeRepository _prizeRepository;
         private IProposalPrizeRepository _proposalPrizeRepository;
+        private IErrorLogsRepository _errorLogsRepository;
+
+        public RepositoryManager(DataContext context)
+        {
+            _context = context;
+        }
 
         public RepositoryManager(DataContext context, IConfiguration configuration)
         {
@@ -242,6 +248,18 @@ namespace Repository
                 if (_proposalPrizeRepository == null)
                     _proposalPrizeRepository = new ProposalPrizeRepository(_context);
                 return _proposalPrizeRepository;
+            }
+        }
+
+        public IErrorLogsRepository ErrorLog
+        {
+            get
+            {
+                if(_errorLogsRepository == null)
+                {
+                    _errorLogsRepository = new ErrorLogsRepository(_context);
+                }
+                return _errorLogsRepository;
             }
         }
 

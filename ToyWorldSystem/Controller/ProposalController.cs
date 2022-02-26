@@ -25,6 +25,33 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Get proposal is waiting to approve or deny (Role: manager)
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("waiting")]
+        public async Task<IActionResult> GetWaitingProposal([FromQuery] PagingParameters paging)
+        {
+            var proposals = await _repository.Proposal.GetWaitingProposal(paging, trackChanges: false);
+
+            if (proposals == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more waiting proposal");
+
+            return (Ok(proposals));
+        }
+
+        [HttpGet]
+        [Route("{proposal_id}/prizes")]
+        public async Task<IActionResult> GetPrizesOfProposal(int proposal_id)
+        {
+            var prizes = await _repository.ProposalPrize.GetPrizesOfProposal(proposal_id, trackChanges: false);
+
+            if (prizes == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more prize of this proposal");
+
+            return Ok(prizes);
+        }
+
+        /// <summary>
         /// Create new proposal (don't have prize)
         /// </summary>
         /// <param name="parameters"></param>
@@ -34,9 +61,15 @@ namespace ToyWorldSystem.Controller
         {
             var accountId = _userAccessor.getAccountId();
 
-            var brand = await _repository.Brand.GetBrandByName(parameters.BrandName, trackChanges: false);
+            var brand = await _repository.Brand.GetBrandByName(parameters.BrandName == null ? "Unknow Brand" : parameters.BrandName, trackChanges: false);
+            if (brand == null)
+            {
+                _repository.Brand.CreateBrand(new Brand { Name = parameters.BrandName });
+                await _repository.SaveAsync();
+                brand = await _repository.Brand.GetBrandByName(parameters.BrandName, trackChanges: false);
+            }
 
-            var type = await _repository.Type.GetTypeByName(parameters.TypeName, trackChanges: false);
+            var type = await _repository.Type.GetTypeByName(parameters.TypeName == null ? "Unknow Type" : parameters.TypeName, trackChanges: false);
 
             var proposal = new Proposal
             {
@@ -92,22 +125,6 @@ namespace ToyWorldSystem.Controller
             await _repository.SaveAsync();
 
             return Ok("Save changes success");
-        }
-
-        /// <summary>
-        /// Get proposal is waiting to approve or deny
-        /// </summary>
-        /// <param name="paging"></param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("waiting")]
-        public async Task<IActionResult> GetWaitingProposal([FromQuery] PagingParameters paging)
-        {
-            var proposals = await _repository.Proposal.GetWaitingProposal(paging, trackChanges: false);
-
-            if (proposals == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more waiting proposal");
-
-            return (Ok(proposals));
         }
 
         /// <summary>

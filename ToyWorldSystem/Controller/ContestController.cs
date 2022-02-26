@@ -42,7 +42,7 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
-        /// Get contest by group id
+        /// Get contest by group id (Role: Manager, Member)
         /// </summary>
         /// <param name="group_id"></param>
         /// <param name="paging"></param>
@@ -63,6 +63,12 @@ namespace ToyWorldSystem.Controller
             return Ok(result);
         }
 
+        /// <summary>
+        /// Get information of proposal to create contest (Role: Manager)
+        /// </summary>
+        /// <param name="proposal_id"></param>
+        /// <returns></returns>
+        /// <exception cref="ErrorDetails"></exception>
         [HttpGet]
         [Route("create/proposal/{proposal_id}")]
         public async Task<IActionResult> GetProposalToCreateContest(int proposal_id)
@@ -75,7 +81,7 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
-        /// Create contest (don't have prize, can't use)
+        /// Create contest (Role: Manager)
         /// </summary>
         /// <param name="param"></param>
         /// <param name="group_id"></param>
@@ -84,9 +90,23 @@ namespace ToyWorldSystem.Controller
         [Route("group/{group_id}")]
         public async Task<IActionResult> CreateContest(CreateContestParameters param, int group_id)
         {
-            var brand = await _repositoryManager.Brand.GetBrandByName(param.BrandName, trackChanges: false);
+            var brand = await _repositoryManager.Brand
+                .GetBrandByName(param.BrandName == null ? "Unknow Brand" : param.BrandName, trackChanges: false);
+            if(brand == null)
+            {
+                _repositoryManager.Brand.CreateBrand(new Brand { Name = param.BrandName });
+                await _repositoryManager.SaveAsync();
+                brand = await _repositoryManager.Brand.GetBrandByName(param.BrandName, trackChanges: false);
+            }
 
-            var type = await _repositoryManager.Type.GetTypeByName(param.TypeName, trackChanges: false);
+            var type = await _repositoryManager.Type
+                .GetTypeByName(param.TypeName == null ? "Unknow Type" : param.TypeName, trackChanges: false);
+            if (type == null)
+            {
+                _repositoryManager.Type.CreateType(new Entities.Models.Type { Name = param.TypeName });
+                await _repositoryManager.SaveAsync();
+                type = await _repositoryManager.Type.GetTypeByName(param.BrandName, trackChanges: false);
+            }
 
             var contest = new Contest
             {
