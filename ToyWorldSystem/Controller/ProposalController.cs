@@ -40,6 +40,12 @@ namespace ToyWorldSystem.Controller
             return (Ok(proposals));
         }
 
+        /// <summary>
+        /// Get all prize of the proposal (Role: Manager, Member)
+        /// </summary>
+        /// <param name="proposal_id"></param>
+        /// <returns></returns>
+        /// <exception cref="ErrorDetails"></exception>
         [HttpGet]
         [Route("{proposal_id}/prizes")]
         public async Task<IActionResult> GetPrizesOfProposal(int proposal_id)
@@ -52,7 +58,7 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
-        /// Create new proposal (don't have prize)
+        /// Create new proposal (don't have prize)(Role: Member)
         /// </summary>
         /// <param name="parameters"></param>
         /// <returns></returns>

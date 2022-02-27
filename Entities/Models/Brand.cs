@@ -12,11 +12,13 @@ namespace Entities.Models
             Contests = new HashSet<Contest>();
             Proposals = new HashSet<Proposal>();
             Toys = new HashSet<Toy>();
+            TradingPosts = new HashSet<TradingPost>();
         }
 
         public int Id { get; set; }
         public string Name { get; set; }
 
+        public virtual ICollection<TradingPost> TradingPosts { get; set; }
         public virtual ICollection<Contest> Contests { get; set; }
         public virtual ICollection<Proposal> Proposals { get; set; }
         public virtual ICollection<Toy> Toys { get; set; }

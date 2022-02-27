@@ -42,6 +42,7 @@ namespace Entities.Models
         public virtual DbSet<PostOfContest> PostOfContests { get; set; }
         public virtual DbSet<Rate> Rates { get; set; }
         public virtual DbSet<ErrorLogs> Error { get; set; }
+        public virtual DbSet<JoinedToContest> JoinedToContest { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -74,6 +75,7 @@ namespace Entities.Models
                 entity.Property(e => e.Gender).IsUnicode(false);
 
                 entity.Property(e => e.Uid).IsUnicode(false);
+
             });
 
             modelBuilder.Entity<Brand>(entity =>
@@ -499,6 +501,21 @@ namespace Entities.Models
                     .WithMany(p => p.Rates)
                     .HasForeignKey(d => d.PostOfContestId)
                     .HasConstraintName("FK_Rate_PostOfContest");
+            });
+
+            modelBuilder.Entity<JoinedToContest>(entity =>
+            {
+                entity.HasKey(e => new { e.AccountId, e.ContestId });
+
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.ContestJoined)
+                    .HasForeignKey(d => d.AccountId)
+                    .HasConstraintName("FK_Account_JoinedContest");
+
+                entity.HasOne(d => d.Contest)
+                    .WithMany(p => p.AccountJoined)
+                    .HasForeignKey(d => d.ContestId)
+                    .HasConstraintName("FK_Contest_JoinedAccount");
             });
 
             OnModelCreatingPartial(modelBuilder);

@@ -10,7 +10,7 @@ namespace Contracts.Repositories
 {
     public interface ITradingPostRepository
     {
-        void CreateTradingPost(NewTradingPostParameters tradingPost, int group_id, int account_id, int toy_id);
+        void CreateTradingPost(NewTradingPostParameters tradingPost, int group_id, int account_id, int toy_id, int brand_id, int type_id);
         void ExchangedTradingPost(TradingPost tradingPost);
         void UpdateTradingPost(UpdateTradingPostParameters update_infor, TradingPost tradingPost);
         void Disable(TradingPost tradingPost);

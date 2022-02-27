@@ -8,6 +8,8 @@ namespace Entities.RequestFeatures
     {
         public string Title { get; set; }
         public string ToyName { get; set; }
+        public string BrandName { get; set; }
+        public string TypeName { get; set; }
         public string Content { get; set; }
         public string Address { get; set; }
         public string Exchange { get; set; }

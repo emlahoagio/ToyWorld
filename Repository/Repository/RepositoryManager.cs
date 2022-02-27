@@ -35,6 +35,8 @@ namespace Repository
         private IPrizeRepository _prizeRepository;
         private IProposalPrizeRepository _proposalPrizeRepository;
         private IErrorLogsRepository _errorLogsRepository;
+        private IJoinedContestRepository _joinedContestRepository;
+        private IPostOfContestRepository _postOfContestRepository;
 
         public RepositoryManager(DataContext context)
         {
@@ -260,6 +262,28 @@ namespace Repository
                     _errorLogsRepository = new ErrorLogsRepository(_context);
                 }
                 return _errorLogsRepository;
+            }
+        }
+
+        public IJoinedContestRepository JoinContest
+        {
+            get
+            {
+                if(_joinedContestRepository == null)
+                {
+                    _joinedContestRepository = new JoinedContestRepository(_context);
+                }
+                return _joinedContestRepository;
+            }
+        }
+
+        public IPostOfContestRepository PostOfContest
+        {
+            get
+            {
+                if (_postOfContestRepository == null)
+                    _postOfContestRepository = new PostOfContestRepository(_context);
+                return _postOfContestRepository;
             }
         }
 
