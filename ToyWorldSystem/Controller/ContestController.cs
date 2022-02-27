@@ -43,6 +43,11 @@ namespace ToyWorldSystem.Controller
             return Ok(result);
         }
 
+        /// <summary>
+        /// Check is user attended to the contest (Role: Manager, Member)
+        /// </summary>
+        /// <param name="contest_id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("{contest_id}/attended")]
         public async Task<IActionResult> CheckAccountInTheContest(int contest_id)

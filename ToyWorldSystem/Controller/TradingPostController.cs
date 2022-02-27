@@ -108,12 +108,16 @@ namespace ToyWorldSystem.Controller
 
             var toy = await _repositoryManager.Toy.GetToyByName(tradingPost.ToyName, trackChanges: false);
 
+            var brand = await _repositoryManager.Brand.GetBrandByName(tradingPost.BrandName, trackChanges: false);
+
+            var type = await _repositoryManager.Type.GetTypeByName(tradingPost.TypeName, trackChanges: false);
+            
             if (toy != null)
             {
-                _repositoryManager.TradingPost.CreateTradingPost(tradingPost, group_id, account_id, toy.Id);
+                _repositoryManager.TradingPost.CreateTradingPost(tradingPost, group_id, account_id, toy.Id, brand.Id, type.Id);
             }else
             {
-                _repositoryManager.TradingPost.CreateTradingPost(tradingPost, group_id, account_id, 3);
+                _repositoryManager.TradingPost.CreateTradingPost(tradingPost, group_id, account_id, 3, brand.Id, type.Id);
             }
 
             await _repositoryManager.SaveAsync();
