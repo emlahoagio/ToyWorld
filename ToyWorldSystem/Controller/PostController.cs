@@ -1,6 +1,7 @@
 ﻿using Contracts;
 using Entities.DataTransferObject;
 using Entities.ErrorModel;
+using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -127,6 +128,31 @@ namespace ToyWorldSystem.Controller
             await _repositoryManager.SaveAsync();
 
             return Ok("Save changes success");
+        }
+
+        /// <summary>
+        /// Create post in contest, call after check is user in the contest (Role: Manager, Member)
+        /// </summary>
+        /// <param name="param"></param>
+        /// <param name="contest_id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("contest/{contest_id}")]
+        public async Task<IActionResult> CreatePostOfContest(NewPostOfContestParameters param, int contest_id)
+        {
+            var accountId = _userAccessor.getAccountId();
+
+            var postOfContest = new PostOfContest
+            {
+                Content = param.Content,
+                ContestId = contest_id,
+                Images = param.ImagesUrl.Select(x => new Image { Url = x }).ToList()
+            };
+
+            _repositoryManager.PostOfContest.Create(postOfContest);
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Save change success");
         }
 
         /// <summary>

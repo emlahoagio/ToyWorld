@@ -17,10 +17,12 @@ namespace ToyWorldSystem.Controller
     public class ContestController : ControllerBase
     {
         private readonly IRepositoryManager _repositoryManager;
+        private readonly IUserAccessor _userAccessor;
 
-        public ContestController(IRepositoryManager repositoryManager)
+        public ContestController(IRepositoryManager repositoryManager, IUserAccessor userAccessor)
         {
             _repositoryManager = repositoryManager;
+            _userAccessor = userAccessor;
         }
 
         /// <summary>
@@ -33,12 +35,23 @@ namespace ToyWorldSystem.Controller
         {
             var result = await _repositoryManager.Contest.getHightlightContest(trackChanges: false);
 
-            if(result == null || result.Count() == 0)
+            if (result == null || result.Count() == 0)
             {
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No contest is available");
             }
 
             return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("{contest_id}/attended")]
+        public async Task<IActionResult> CheckAccountInTheContest(int contest_id)
+        {
+            var account_id = _userAccessor.getAccountId();
+
+            var isInContest = await _repositoryManager.JoinContest.IsJoinedToContest(contest_id, account_id, trackChanges: false);
+
+            return Ok(new {IsJoinedToContest = isInContest});
         }
 
         /// <summary>
@@ -92,7 +105,7 @@ namespace ToyWorldSystem.Controller
         {
             var brand = await _repositoryManager.Brand
                 .GetBrandByName(param.BrandName == null ? "Unknow Brand" : param.BrandName, trackChanges: false);
-            if(brand == null)
+            if (brand == null)
             {
                 _repositoryManager.Brand.CreateBrand(new Brand { Name = param.BrandName });
                 await _repositoryManager.SaveAsync();
@@ -135,7 +148,29 @@ namespace ToyWorldSystem.Controller
 
             var createdContest = await _repositoryManager.Contest.GetCreatedContest(group_id, param.Title, param.StartRegistration, trackChanges: false);
 
-            return Ok(new {contestId = createdContest.Id});
+            return Ok(new { contestId = createdContest.Id });
+        }
+
+        /// <summary>
+        /// Join to contest after payment (Role: Manager, Member)
+        /// </summary>
+        /// <param name="contest_id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("{contest_id}/join")]
+        public async Task<IActionResult> JoinToContest(int contest_id)
+        {
+            var account_id = _userAccessor.getAccountId();
+
+            _repositoryManager.JoinContest.Create(
+                new JoinedToContest
+                {
+                    AccountId = account_id,
+                    ContestId = contest_id
+                });
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Save change success");
         }
 
         /// <summary>
@@ -148,7 +183,7 @@ namespace ToyWorldSystem.Controller
         [Route("{contest_id}/prizes")]
         public async Task<IActionResult> AddPrizeToContest(int contest_id, List<int> prizes_id)
         {
-            foreach(var prizeId in prizes_id)
+            foreach (var prizeId in prizes_id)
             {
                 _repositoryManager.PrizeContest.Create(new PrizeContest { ContestId = contest_id, PrizeId = prizeId });
             }
