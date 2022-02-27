@@ -24,6 +24,7 @@ namespace Entities.Models
             ReactPosts = new HashSet<ReactPost>();
             ReactTradingPosts = new HashSet<ReactTradingPost>();
             TradingPosts = new HashSet<TradingPost>();
+            ContestJoined = new HashSet<JoinedToContest>();
         }
 
         public int Id { get; set; }
@@ -53,5 +54,6 @@ namespace Entities.Models
         public virtual ICollection<ReactPost> ReactPosts { get; set; }
         public virtual ICollection<ReactTradingPost> ReactTradingPosts { get; set; }
         public virtual ICollection<TradingPost> TradingPosts { get; set; }
+        public virtual ICollection<JoinedToContest> ContestJoined { get; set; }
     }
 }
