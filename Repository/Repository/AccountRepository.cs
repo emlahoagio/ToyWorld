@@ -102,7 +102,7 @@ namespace Repository
                 Name = account.Name,
                 NoOfFollower = account.FollowAccountAccountFollows.Count,
                 NoOfFollowing = account.FollowAccountAccounts.Count,
-                NoOfPost = account.Posts.Count
+                NoOfPost = account.Posts.Where(x => x.IsPublic == true).Count()
             };
 
             return result;
