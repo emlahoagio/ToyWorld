@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Entities.Models
+{
+    public partial class Rate
+    {
+        public int Id { get; set; }
+        public int NumOfStart { get; set; }
+        public string Note { get; set; }
+        public int PostOfContestId { get; set; }
+        public virtual PostOfContest PostOfContest { get; set; }
+    }
+}

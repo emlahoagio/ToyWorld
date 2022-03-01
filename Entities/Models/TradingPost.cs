@@ -28,9 +28,13 @@ namespace Entities.Models
         public int GroupId { get; set; }
         public int? AccountId { get; set; }
         public int? ToyId { get; set; }
+        public int? BrandId { get; set; }
+        public int? TypeId { get; set; }
 
         public virtual Account Account { get; set; }
         public virtual Toy Toy { get; set; }
+        public virtual Brand Brand { get; set; }
+        public virtual Type Type { get; set; }
         public virtual Group Group { get; set; }
         public virtual ICollection<Image> Images { get; set; }
         public virtual ICollection<ReactTradingPost> ReactTradingPosts { get; set; }

@@ -12,7 +12,8 @@ namespace Entities.RequestFeatures
         public string Description { get; set; }
         public string TypeName { get; set; }
         public string BrandName { get; set; }
-        public int TakePlace { get; set; }
+        public string Location { get; set; }
+        public int Duration { get; set; }
         public List<string> ImagesUrl { get; set; }
     }
 }

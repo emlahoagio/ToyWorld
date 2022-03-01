@@ -4,14 +4,16 @@ using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Entities.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class TWSContextModelSnapshot : ModelSnapshot
+    [Migration("20220223083239_add table post of contest and rate")]
+    partial class addtablepostofcontestandrate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -158,7 +160,7 @@ namespace Entities.Migrations
                     b.Property<int?>("ProposalId")
                         .HasColumnType("int");
 
-                    b.Property<double?>("RegisterCost")
+                    b.Property<double?>("RegistrationCost")
                         .HasColumnType("float");
 
                     b.Property<string>("Slogan")
@@ -191,24 +193,6 @@ namespace Entities.Migrations
                     b.HasIndex("TypeId");
 
                     b.ToTable("Contest");
-                });
-
-            modelBuilder.Entity("Entities.Models.ErrorLogs", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("ErrorCode")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Message")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Error");
                 });
 
             modelBuilder.Entity("Entities.Models.Evaluate", b =>
@@ -373,21 +357,6 @@ namespace Entities.Migrations
                     b.ToTable("Image");
                 });
 
-            modelBuilder.Entity("Entities.Models.JoinedToContest", b =>
-                {
-                    b.Property<int>("AccountId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ContestId")
-                        .HasColumnType("int");
-
-                    b.HasKey("AccountId", "ContestId");
-
-                    b.HasIndex("ContestId");
-
-                    b.ToTable("JoinedToContest");
-                });
-
             modelBuilder.Entity("Entities.Models.ManageGroup", b =>
                 {
                     b.Property<int>("AccountId")
@@ -523,14 +492,8 @@ namespace Entities.Migrations
                     b.Property<string>("ContestDescription")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Duration")
-                        .HasColumnType("int");
-
                     b.Property<bool?>("IsWaiting")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Location")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("MaxRegister")
                         .HasColumnType("int");
@@ -540,6 +503,9 @@ namespace Entities.Migrations
 
                     b.Property<bool?>("Status")
                         .HasColumnType("bit");
+
+                    b.Property<int?>("TakePlace")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
@@ -690,9 +656,6 @@ namespace Entities.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("BrandId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
@@ -725,9 +688,6 @@ namespace Entities.Migrations
                     b.Property<string>("Trading")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TypeId")
-                        .HasColumnType("int");
-
                     b.Property<decimal?>("Value")
                         .HasColumnType("decimal(9,2)");
 
@@ -735,13 +695,9 @@ namespace Entities.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.HasIndex("BrandId");
-
                     b.HasIndex("GroupId");
 
                     b.HasIndex("ToyId");
-
-                    b.HasIndex("TypeId");
 
                     b.ToTable("TradingPost");
                 });
@@ -944,27 +900,6 @@ namespace Entities.Migrations
                     b.Navigation("Toy");
 
                     b.Navigation("TradingPost");
-                });
-
-            modelBuilder.Entity("Entities.Models.JoinedToContest", b =>
-                {
-                    b.HasOne("Entities.Models.Account", "Account")
-                        .WithMany("ContestJoined")
-                        .HasForeignKey("AccountId")
-                        .HasConstraintName("FK_Account_JoinedContest")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Entities.Models.Contest", "Contest")
-                        .WithMany("AccountJoined")
-                        .HasForeignKey("ContestId")
-                        .HasConstraintName("FK_Contest_JoinedAccount")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Account");
-
-                    b.Navigation("Contest");
                 });
 
             modelBuilder.Entity("Entities.Models.ManageGroup", b =>
@@ -1177,10 +1112,6 @@ namespace Entities.Migrations
                         .HasForeignKey("AccountId")
                         .HasConstraintName("FK_TradingPost_Account");
 
-                    b.HasOne("Entities.Models.Brand", "Brand")
-                        .WithMany("TradingPosts")
-                        .HasForeignKey("BrandId");
-
                     b.HasOne("Entities.Models.Group", "Group")
                         .WithMany("TradingPosts")
                         .HasForeignKey("GroupId")
@@ -1193,26 +1124,16 @@ namespace Entities.Migrations
                         .HasForeignKey("ToyId")
                         .HasConstraintName("FK_TradingPost_Toy");
 
-                    b.HasOne("Entities.Models.Type", "Type")
-                        .WithMany("TradingPosts")
-                        .HasForeignKey("TypeId");
-
                     b.Navigation("Account");
-
-                    b.Navigation("Brand");
 
                     b.Navigation("Group");
 
                     b.Navigation("Toy");
-
-                    b.Navigation("Type");
                 });
 
             modelBuilder.Entity("Entities.Models.Account", b =>
                 {
                     b.Navigation("Comments");
-
-                    b.Navigation("ContestJoined");
 
                     b.Navigation("Evaluates");
 
@@ -1250,8 +1171,6 @@ namespace Entities.Migrations
                     b.Navigation("Proposals");
 
                     b.Navigation("Toys");
-
-                    b.Navigation("TradingPosts");
                 });
 
             modelBuilder.Entity("Entities.Models.Comment", b =>
@@ -1261,8 +1180,6 @@ namespace Entities.Migrations
 
             modelBuilder.Entity("Entities.Models.Contest", b =>
                 {
-                    b.Navigation("AccountJoined");
-
                     b.Navigation("Evaluates");
 
                     b.Navigation("Images");
@@ -1344,8 +1261,6 @@ namespace Entities.Migrations
                     b.Navigation("Proposals");
 
                     b.Navigation("Toys");
-
-                    b.Navigation("TradingPosts");
                 });
 #pragma warning restore 612, 618
         }

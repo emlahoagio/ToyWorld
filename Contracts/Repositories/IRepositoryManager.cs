@@ -25,6 +25,9 @@ namespace Contracts
         IPrizeContestRepository PrizeContest {get;}
         IPrizeRepository Prize { get; }
         IProposalPrizeRepository ProposalPrize { get; }
+        IErrorLogsRepository ErrorLog { get; }
+        IJoinedContestRepository JoinContest { get; }
+        IPostOfContestRepository PostOfContest { get; }
         Task SaveAsync();
     }
 }

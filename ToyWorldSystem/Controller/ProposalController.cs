@@ -25,7 +25,40 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
-        /// Create new proposal (don't have prize)
+        /// Get proposal is waiting to approve or deny (Role: manager)
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("waiting")]
+        public async Task<IActionResult> GetWaitingProposal([FromQuery] PagingParameters paging)
+        {
+            var proposals = await _repository.Proposal.GetWaitingProposal(paging, trackChanges: false);
+
+            if (proposals == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more waiting proposal");
+
+            return (Ok(proposals));
+        }
+
+        /// <summary>
+        /// Get all prize of the proposal (Role: Manager, Member)
+        /// </summary>
+        /// <param name="proposal_id"></param>
+        /// <returns></returns>
+        /// <exception cref="ErrorDetails"></exception>
+        [HttpGet]
+        [Route("{proposal_id}/prizes")]
+        public async Task<IActionResult> GetPrizesOfProposal(int proposal_id)
+        {
+            var prizes = await _repository.ProposalPrize.GetPrizesOfProposal(proposal_id, trackChanges: false);
+
+            if (prizes == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more prize of this proposal");
+
+            return Ok(prizes);
+        }
+
+        /// <summary>
+        /// Create new proposal (don't have prize)(Role: Member)
         /// </summary>
         /// <param name="parameters"></param>
         /// <returns></returns>
@@ -34,9 +67,15 @@ namespace ToyWorldSystem.Controller
         {
             var accountId = _userAccessor.getAccountId();
 
-            var brand = _repository.Brand.GetBrandByName(parameters.BrandName, trackChanges: false);
+            var brand = await _repository.Brand.GetBrandByName(parameters.BrandName == null ? "Unknow Brand" : parameters.BrandName, trackChanges: false);
+            if (brand == null)
+            {
+                _repository.Brand.CreateBrand(new Brand { Name = parameters.BrandName });
+                await _repository.SaveAsync();
+                brand = await _repository.Brand.GetBrandByName(parameters.BrandName, trackChanges: false);
+            }
 
-            var type = _repository.Type.GetTypeByName(parameters.TypeName, trackChanges: false);
+            var type = await _repository.Type.GetTypeByName(parameters.TypeName == null ? "Unknow Type" : parameters.TypeName, trackChanges: false);
 
             var proposal = new Proposal
             {
@@ -48,7 +87,8 @@ namespace ToyWorldSystem.Controller
                 AccountId = accountId,
                 TypeId = type.Id,
                 BrandId = brand.Id,
-                TakePlace = parameters.TakePlace,
+                Location = parameters.Location,
+                Duration = parameters.Duration,
                 Images = parameters.ImagesUrl
                 .Select(x =>
                 new Entities.Models.Image
@@ -94,21 +134,11 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
-        /// Get proposal is waiting to approve or deny
+        /// Deny waiting proposal (Role: Manager)
         /// </summary>
-        /// <param name="paging"></param>
+        /// <param name="proposal_id"></param>
         /// <returns></returns>
-        [HttpGet]
-        [Route("waiting")]
-        public async Task<IActionResult> GetWaitingProposal([FromQuery] PagingParameters paging)
-        {
-            var proposals = await _repository.Proposal.GetWaitingProposal(paging, trackChanges: false);
-
-            if (proposals == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more waiting proposal");
-
-            return (Ok(proposals));
-        }
-
+        /// <exception cref="ErrorDetails"></exception>
         [HttpPut]
         [Route("deny/{proposal_id}")]
         public async Task<IActionResult> DenyProposal(int proposal_id)
@@ -117,7 +147,7 @@ namespace ToyWorldSystem.Controller
 
             if (account.Role != 1) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "You're not allow to deny");
 
-            var proposal = await _repository.Proposal.GetProposalToDeny(proposal_id, trackChanges: false);
+            var proposal = await _repository.Proposal.GetProposalToDenyOrApprove(proposal_id, trackChanges: false);
 
             if (proposal == null) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Invalid Proposal");
 
@@ -126,5 +156,30 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+
+        /// <summary>
+        /// Approve waiting proposal (Role: Manager)
+        /// </summary>
+        /// <param name="proposal_id"></param>
+        /// <returns></returns>
+        /// <exception cref="ErrorDetails"></exception>
+        [HttpPut]
+        [Route("approve/{proposal_id}")]
+        public async Task<IActionResult> ApproveProposal(int proposal_id)
+        {
+            var account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            if (account.Role != 1) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "You're not allow to approve");
+
+            var proposal = await _repository.Proposal.GetProposalToDenyOrApprove(proposal_id, trackChanges: false);
+
+            if (proposal == null) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Invalid Proposal");
+
+            _repository.Proposal.ApproveProposal(proposal);
+            await _repository.SaveAsync();
+
+            return Ok("Save changes success");
+        }
     }
 }
+ 

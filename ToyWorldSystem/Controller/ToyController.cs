@@ -79,6 +79,33 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Crawl data from MyKingdom
+        /// </summary>
+        /// <param name="url">My Kingdom URL</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("crawl/mykingdom")]
+        public async Task<IActionResult> KingdomCrawl(string url)
+        {
+            List<String> listLinkToy = _kingdom.GetListLink(url);
+            foreach (var i in listLinkToy)
+            {
+                Toy dto = await _kingdom.GetToyDetail(i);
+                var existToy = await _repository.Toy.GetExistToy(dto.Name);
+                if (existToy == null)
+                {
+                    _repository.Toy.CreateToy(dto);
+                }
+                else
+                {
+                    _repository.Toy.UpdateToy(dto);
+                }
+            }
+            await _repository.SaveAsync();
+            return Ok();
+        }
+
+        /// <summary>
         /// Crawl data from Japan Figure (Still not done)
         /// </summary>
         /// <param name="link_crawl">JapanFigure link</param>
@@ -113,29 +140,6 @@ namespace ToyWorldSystem.Controller
             }
             await _repository.SaveAsync();
 
-            return Ok();
-        }
-
-        [AllowAnonymous]
-        [HttpGet]
-        [Route("crawl/mykingdom")]
-        public async Task<IActionResult> KingdomCrawl(string url)
-        {
-            List<String> listLinkToy = _kingdom.GetListLink(url);
-            foreach (var i in listLinkToy)
-            {
-                Toy dto = await _kingdom.GetToyDetail(i);
-                var existToy = await _repository.Toy.GetExistToy(dto.Name);
-                if (existToy == null)
-                {
-                    _repository.Toy.CreateToy(dto);
-                }
-                else
-                {
-                    _repository.Toy.UpdateToy(dto);
-                }
-            }
-            await _repository.SaveAsync();
             return Ok();
         }
     }

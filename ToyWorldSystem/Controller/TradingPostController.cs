@@ -28,13 +28,15 @@ namespace ToyWorldSystem.Controller
         /// Get list trading post (Role: Manager, Member)
         /// </summary>
         /// <param name="paging"></param>
+        /// <param name="group_id"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> GetListTradingPost([FromQuery] PagingParameters paging)
+        [Route("group/{group_id}")]
+        public async Task<IActionResult> GetListTradingPost([FromQuery] PagingParameters paging, int group_id)
         {
             var account_id = _userAccessor.getAccountId();
 
-            var result = await _repositoryManager.TradingPost.GetList(paging, trackChanges: false, account_id);
+            var result = await _repositoryManager.TradingPost.GetTradingPostInGroup(group_id, paging, trackChanges: false, account_id);
 
             return Ok(result);
         }
@@ -106,12 +108,16 @@ namespace ToyWorldSystem.Controller
 
             var toy = await _repositoryManager.Toy.GetToyByName(tradingPost.ToyName, trackChanges: false);
 
+            var brand = await _repositoryManager.Brand.GetBrandByName(tradingPost.BrandName, trackChanges: false);
+
+            var type = await _repositoryManager.Type.GetTypeByName(tradingPost.TypeName, trackChanges: false);
+            
             if (toy != null)
             {
-                _repositoryManager.TradingPost.CreateTradingPost(tradingPost, group_id, account_id, toy.Id);
+                _repositoryManager.TradingPost.CreateTradingPost(tradingPost, group_id, account_id, toy.Id, brand.Id, type.Id);
             }else
             {
-                _repositoryManager.TradingPost.CreateTradingPost(tradingPost, group_id, account_id, 3);
+                _repositoryManager.TradingPost.CreateTradingPost(tradingPost, group_id, account_id, 3, brand.Id, type.Id);
             }
 
             await _repositoryManager.SaveAsync();

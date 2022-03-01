@@ -17,7 +17,7 @@ namespace Repository.Repository
         {
         }
 
-        public void CreateTradingPost(NewTradingPostParameters tradingPost, int group_id, int account_id, int toy_id)
+        public void CreateTradingPost(NewTradingPostParameters tradingPost, int group_id, int account_id, int toy_id, int brand_id, int type_id)
         {
             var newTradingPost = new TradingPost
             {
@@ -32,6 +32,8 @@ namespace Repository.Repository
                 IsDeleted = false,
                 IsExchanged = false,
                 ToyId = toy_id,
+                BrandId = brand_id,
+                TypeId = type_id,
                 Images = tradingPost.ImagesLink.Select(x => new Image { Url = x }).ToList()
             };
 
@@ -50,15 +52,17 @@ namespace Repository.Repository
             Update(tradingPost);
         }
 
-        public async Task<Pagination<TradingPostInList>> GetList(PagingParameters paging, bool trackChanges, int account_id)
+        public async Task<Pagination<TradingPostInList>> GetTradingPostInGroup(int group_id, PagingParameters paging, bool trackChanges, int account_id)
         {
-            var tradingPosts = await FindByCondition(x => x.IsExchanged == false && x.IsDeleted == false, trackChanges)
-                .Include(x => x.Toy).ThenInclude(x => x.Brand)
-                .Include(x => x.Toy).ThenInclude(x => x.Type)
+            var tradingPosts = await FindByCondition(x => x.IsExchanged == false && x.IsDeleted == false && x.GroupId == group_id, trackChanges)
+                .Include(x => x.Toy)
+                .Include(x => x.Brand)
+                .Include(x => x.Type)
                 .Include(x => x.ReactTradingPosts)
+                .Include(x => x.Images)
                 .Include(x => x.Account)
                 .Include(x => x.Comments)
-                .OrderBy(x => x.PostDate)
+                .OrderByDescending(x => x.PostDate)
                 .ToListAsync();
 
             var count = tradingPosts.Count;
@@ -74,7 +78,7 @@ namespace Repository.Repository
                 Data = tradingPosts.Select(x => new TradingPostInList
                 {
                     Address = x.Address,
-                    Brand = x.Toy.Brand.Name,
+                    Brand = x.Brand == null ? "Unknow" : x.Brand.Name,
                     Exchange = x.Trading,
                     Id = x.Id,
                     Images = x.Images.Select(x => new ImageReturn { Id = x.Id, Url = x.Url }).ToList(),
@@ -85,7 +89,7 @@ namespace Repository.Repository
                     OwnerName = x.Account.Name,
                     PostDate = x.PostDate,
                     ToyName = x.ToyName,
-                    Type = x.Toy.Type.Name,
+                    Type = x.Type == null ? "Unknow" : x.Type.Name,
                     IsLikedPost = x.ReactTradingPosts.Where(y => y.AccountId == account_id).Count() == 0 ? false : true,
                 })
             };

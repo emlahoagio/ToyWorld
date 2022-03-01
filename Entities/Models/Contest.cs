@@ -12,6 +12,8 @@ namespace Entities.Models
             Evaluates = new HashSet<Evaluate>();
             Images = new HashSet<Image>();
             PrizeContests = new HashSet<PrizeContest>();
+            Posts = new HashSet<PostOfContest>();
+            AccountJoined = new HashSet<JoinedToContest>();
         }
 
         public int Id { get; set; }
@@ -20,6 +22,8 @@ namespace Entities.Models
         public string Venue { get; set; }
         public string CoverImage { get; set; }
         public string Slogan { get; set; }
+        public bool IsOnlineContest { get; set; }
+        public double? RegisterCost { get; set; }
         public int? MinRegistration { get; set; }
         public int? MaxRegistration { get; set; }
         public DateTime? StartRegistration { get; set; }
@@ -31,6 +35,7 @@ namespace Entities.Models
         public int? ProposalId { get; set; }
         public int? BrandId { get; set; }
         public int? TypeId { get; set; }
+        public int? Status { get; set; }
 
         public virtual Brand Brand { get; set; }
         public virtual Proposal Proposal { get; set; }
@@ -38,5 +43,7 @@ namespace Entities.Models
         public virtual ICollection<Evaluate> Evaluates { get; set; }
         public virtual ICollection<Image> Images { get; set; }
         public virtual ICollection<PrizeContest> PrizeContests { get; set; }
+        public virtual ICollection<PostOfContest> Posts { get; set; }
+        public virtual ICollection<JoinedToContest> AccountJoined { get; set; }
     }
 }
