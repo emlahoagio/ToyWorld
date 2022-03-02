@@ -4,14 +4,16 @@ using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Entities.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class TWSContextModelSnapshot : ModelSnapshot
+    [Migration("20220302094929_edit table post of contest")]
+    partial class edittablepostofcontest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -667,9 +669,6 @@ namespace Entities.Migrations
                     b.Property<int>("ContestId")
                         .HasColumnType("int");
 
-                    b.Property<int>("PostOfContestId")
-                        .HasColumnType("int");
-
                     b.Property<int>("PrizeId")
                         .HasColumnType("int");
 
@@ -678,8 +677,6 @@ namespace Entities.Migrations
                     b.HasIndex("AccountId");
 
                     b.HasIndex("ContestId");
-
-                    b.HasIndex("PostOfContestId");
 
                     b.HasIndex("PrizeId");
 
@@ -1229,12 +1226,6 @@ namespace Entities.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Entities.Models.PostOfContest", "PostOfContest")
-                        .WithMany()
-                        .HasForeignKey("PostOfContestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Entities.Models.Prize", "Prize")
                         .WithMany("Rewards")
                         .HasForeignKey("PrizeId")
@@ -1245,8 +1236,6 @@ namespace Entities.Migrations
                     b.Navigation("Account");
 
                     b.Navigation("Contest");
-
-                    b.Navigation("PostOfContest");
 
                     b.Navigation("Prize");
                 });

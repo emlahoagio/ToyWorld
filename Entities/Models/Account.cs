@@ -27,6 +27,7 @@ namespace Entities.Models
             ContestJoined = new HashSet<JoinedToContest>();
             PostOfContests = new HashSet<PostOfContest>();
             Rewards = new HashSet<Reward>();
+            Rates = new HashSet<Rate>();
         }
 
         public int Id { get; set; }
@@ -59,5 +60,6 @@ namespace Entities.Models
         public virtual ICollection<JoinedToContest> ContestJoined { get; set; }
         public virtual ICollection<PostOfContest> PostOfContests { get; set; }
         public virtual ICollection<Reward> Rewards { get; set; }
+        public virtual ICollection<Rate> Rates { get; set; }
     }
 }

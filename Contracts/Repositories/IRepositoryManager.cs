@@ -28,6 +28,7 @@ namespace Contracts
         IErrorLogsRepository ErrorLog { get; }
         IJoinedContestRepository JoinContest { get; }
         IPostOfContestRepository PostOfContest { get; }
+        IRewardRepository Reward { get; }
         Task SaveAsync();
     }
 }

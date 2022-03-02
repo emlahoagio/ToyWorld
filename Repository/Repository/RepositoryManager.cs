@@ -37,6 +37,7 @@ namespace Repository
         private IErrorLogsRepository _errorLogsRepository;
         private IJoinedContestRepository _joinedContestRepository;
         private IPostOfContestRepository _postOfContestRepository;
+        private IRewardRepository _rewardRepository;
 
         public RepositoryManager(DataContext context)
         {
@@ -284,6 +285,16 @@ namespace Repository
                 if (_postOfContestRepository == null)
                     _postOfContestRepository = new PostOfContestRepository(_context);
                 return _postOfContestRepository;
+            }
+        }
+
+        public IRewardRepository Reward
+        {
+            get
+            {
+                if (_rewardRepository == null)
+                    _rewardRepository = new RewardRepository(_context);
+                return _rewardRepository;
             }
         }
 

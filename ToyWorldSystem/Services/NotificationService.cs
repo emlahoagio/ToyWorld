@@ -80,6 +80,7 @@ namespace ToyWorldSystem.Services
             {
                 response.IsSuccess = false;
                 response.Message = "Something went wrong";
+                Console.WriteLine(ex.Message);
                 return response;
             }
         }
