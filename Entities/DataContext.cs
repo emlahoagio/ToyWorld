@@ -518,6 +518,24 @@ namespace Entities.Models
                     .HasConstraintName("FK_Contest_JoinedAccount");
             });
 
+            modelBuilder.Entity<Reward>(entity =>
+            {
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.Rewards)
+                    .HasForeignKey(d => d.AccountId)
+                    .HasConstraintName("FK_Reward_Account");
+
+                entity.HasOne(d => d.Contest)
+                    .WithMany(p => p.Rewards)
+                    .HasForeignKey(d => d.ContestId)
+                    .HasConstraintName("FK_Reward_Contest");
+
+                entity.HasOne(d => d.Prize)
+                    .WithMany(p => p.Rewards)
+                    .HasForeignKey(d => d.PrizeId)
+                    .HasConstraintName("FK_Reward_Prize");
+            });
+
             OnModelCreatingPartial(modelBuilder);
         }
 

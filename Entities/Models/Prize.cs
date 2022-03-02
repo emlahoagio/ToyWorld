@@ -12,6 +12,7 @@ namespace Entities.Models
             Images = new HashSet<Image>();
             PrizeContests = new HashSet<PrizeContest>();
             ProposalPrizes = new HashSet<ProposalPrize>();
+            Rewards = new HashSet<Reward>();
         }
 
         public int Id { get; set; }
@@ -22,5 +23,6 @@ namespace Entities.Models
         public virtual ICollection<Image> Images { get; set; }
         public virtual ICollection<PrizeContest> PrizeContests { get; set; }
         public virtual ICollection<ProposalPrize> ProposalPrizes { get; set; }
+        public virtual ICollection<Reward> Rewards { get; set; }
     }
 }

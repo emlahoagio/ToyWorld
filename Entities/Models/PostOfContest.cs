@@ -14,8 +14,10 @@ namespace Entities.Models
 
         public int Id { get; set; }
         public int ContestId { get; set; }
+        public int AccountId { get; set; }
         public string Content { get; set; }
         public virtual Contest Contest { get; set; } 
+        public virtual Account Account { get; set; }
         public virtual ICollection<Rate> Rates { get; set; }
         public virtual ICollection<Image> Images { get; set; }
     }

@@ -99,6 +99,22 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Get detail information of contest (Role: Manager, Member)
+        /// </summary>
+        /// <param name="contest_id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{contest_id}/details")]
+        public async Task<IActionResult> GetContestDetail(int contest_id)
+        {
+            var contest_detail = await _repositoryManager.Contest.GetContestDetailInformation(contest_id, trackChanges: false);
+
+            if (contest_detail == null) return NotFound("No contest matches with the id");
+
+            return Ok(contest_detail);
+        }
+
+        /// <summary>
         /// Create contest (Role: Manager)
         /// </summary>
         /// <param name="param"></param>

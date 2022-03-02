@@ -18,6 +18,53 @@ namespace Repository
 
         }
 
+        public async Task<ContestDetail> GetContestDetailInformation(int contest_id, bool trackChanges)
+        {
+            var contest = await FindByCondition(x => x.Id == contest_id, trackChanges)
+                .Include(x => x.Brand)
+                .Include(x => x.Type)
+                .Include(x => x.Evaluates).ThenInclude(y => y.Account)
+                .Include(x => x.Images)
+                .FirstOrDefaultAsync();
+
+            if (contest == null) return null;
+
+            var result = new ContestDetail
+            {
+                BrandName = contest.Brand == null ? "Unknown" : contest.Brand.Name,
+                CoverImage = contest.CoverImage,
+                Description = contest.Description,
+                EndDate = contest.EndDate,
+                EndRegistration = contest.EndRegistration,
+                Evaluates = contest.Evaluates.Select(x => new EvaluateInContestDetail
+                {
+                    AccountId = x.AccountId,
+                    Comment = x.Comment,
+                    NoOfStart = x.NoOfStart,
+                    OwnerAvatar = x.Account.Avatar,
+                    OwnerName = x.Account.Name
+                }).ToList(),
+                Id = contest.Id,
+                Images = contest.Images.Select(x => new ImageReturn
+                {
+                    Id = x.Id,
+                    Url = x.Url
+                }).ToList(),
+                IsOnlineContest = contest.IsOnlineContest,
+                MaxRegistration = contest.MaxRegistration,
+                MinRegistration = contest.MinRegistration,
+                RegisterCost = contest.RegisterCost,
+                Slogan = contest.Slogan,
+                StartDate = contest.StartDate,
+                StartRegistration = contest.StartRegistration,
+                Title = contest.Title,
+                TypeName = contest.Type == null ? "Unknown" : contest.Type.Name,
+                Venue = contest.Venue
+            };
+
+            return result;
+        }
+
         public async Task<Pagination<ContestInGroup>> GetContestInGroup(int group_id, bool trackChanges, PagingParameters paging)
         {
             var contest_in_group = await FindByCondition(x => x.GroupId == group_id && x.StartRegistration >= DateTime.Now.AddDays(-5), trackChanges)
@@ -51,7 +98,7 @@ namespace Repository
                 {
                     Id = y.Id,
                     Url = y.Url
-                }).ToList(),
+                }).ToList()
             }).ToList();
 
             var result = new Pagination<ContestInGroup>
