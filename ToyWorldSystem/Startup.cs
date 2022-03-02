@@ -1,3 +1,5 @@
+using CorePush.Apple;
+using CorePush.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -16,6 +18,8 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using ToyWorldSystem.Extensions;
+using ToyWorldSystem.Models;
+using ToyWorldSystem.Services;
 
 namespace ToyWorldSystem
 {
@@ -48,7 +52,7 @@ namespace ToyWorldSystem
 
             services.ConfigureCrawlDataFromJapanFigure();
 
-            services.ConfigureMyKingdomCrawlers();
+            services.ConfigureMyKingdomCrawlers(); //quandtm code
 
             services.AddHttpContextAccessor();
 
@@ -83,6 +87,15 @@ namespace ToyWorldSystem
                 config.RespectBrowserAcceptHeader = true;
                 config.ReturnHttpNotAcceptable = true;
             });
+            //quandtm code FCM
+            services.AddTransient<INotificationService, NotificationService>();
+            services.AddHttpClient<FcmSender>();
+            services.AddHttpClient<ApnSender>();
+
+            // Configure strongly typed settings objects
+            var appSettingsSection = Configuration.GetSection("FcmNotification");
+            services.Configure<FcmNotificationSetting>(appSettingsSection);
+            //end
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ToyWorldSystem", Version = "v1" });
