@@ -501,6 +501,11 @@ namespace Entities.Models
                     .WithMany(p => p.Rates)
                     .HasForeignKey(d => d.PostOfContestId)
                     .HasConstraintName("FK_Rate_PostOfContest");
+
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.Rates)
+                    .HasForeignKey(d => d.AccountId)
+                    .HasConstraintName("FK_RateContest_Account");
             });
 
             modelBuilder.Entity<JoinedToContest>(entity =>

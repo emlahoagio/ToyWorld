@@ -115,6 +115,63 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Get post of contest (Role: Manager, Member)
+        /// </summary>
+        /// <param name="contest_id"></param>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{contest_id}/posts")]
+        public async Task<IActionResult> GetPostsOfContest(int contest_id, [FromQuery]PagingParameters paging)
+        {
+            var posts = await _repositoryManager.PostOfContest.GetPostOfContest(contest_id, paging, trackChanges: false);
+
+            if (posts == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "This contest has no post");
+
+            return Ok(posts);
+        }
+
+        [HttpGet]
+        [Route("{contest_id}/rewards")]
+        public async Task<IActionResult> GetRewardOfContest(int contest_id)
+        {
+            var rewards_post_no_image = await _repositoryManager.Reward.GetContestReward(contest_id, trackChanges: false);
+
+            var rewards = await _repositoryManager.Image.GetImageForRewards(rewards_post_no_image, trackChanges: false);
+
+            if (rewards == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "This contest has no reward");
+
+            return Ok(rewards);
+        }
+
+        /// <summary>
+        /// Create post in contest, call after check is user in the contest (Role: Manager, Member)
+        /// </summary>
+        /// <param name="param"></param>
+        /// <param name="contest_id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("{contest_id}/post")]
+        public async Task<IActionResult> CreatePostOfContest(NewPostOfContestParameters param, int contest_id)
+        {
+            var accountId = _userAccessor.getAccountId();
+
+            var postOfContest = new PostOfContest
+            {
+                AccountId = accountId,
+                Content = param.Content,
+                ContestId = contest_id,
+                Images = param.ImagesUrl.Select(x => new Image { Url = x }).ToList(),
+                DateCreate = DateTime.Now
+            };
+
+            _repositoryManager.PostOfContest.Create(postOfContest);
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Save change success");
+        }
+
+        /// <summary>
         /// Create contest (Role: Manager)
         /// </summary>
         /// <param name="param"></param>

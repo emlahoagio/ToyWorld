@@ -9,7 +9,9 @@ namespace Entities.Models
         public int Id { get; set; }
         public int NumOfStart { get; set; }
         public string Note { get; set; }
+        public int? AccountId { get; set; }
         public int PostOfContestId { get; set; }
+        public virtual Account Account { get; set; }
         public virtual PostOfContest PostOfContest { get; set; }
     }
 }

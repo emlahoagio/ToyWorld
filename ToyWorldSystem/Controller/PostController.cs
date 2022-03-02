@@ -131,31 +131,6 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
-        /// Create post in contest, call after check is user in the contest (Role: Manager, Member)
-        /// </summary>
-        /// <param name="param"></param>
-        /// <param name="contest_id"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [Route("contest/{contest_id}")]
-        public async Task<IActionResult> CreatePostOfContest(NewPostOfContestParameters param, int contest_id)
-        {
-            var accountId = _userAccessor.getAccountId();
-
-            var postOfContest = new PostOfContest
-            {
-                Content = param.Content,
-                ContestId = contest_id,
-                Images = param.ImagesUrl.Select(x => new Image { Url = x }).ToList()
-            };
-
-            _repositoryManager.PostOfContest.Create(postOfContest);
-            await _repositoryManager.SaveAsync();
-
-            return Ok("Save change success");
-        }
-
-        /// <summary>
         /// React Post
         /// </summary>
         /// <param name="post_id">Id of post return in detail, or get list</param>
