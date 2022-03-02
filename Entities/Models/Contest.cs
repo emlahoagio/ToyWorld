@@ -14,6 +14,7 @@ namespace Entities.Models
             PrizeContests = new HashSet<PrizeContest>();
             Posts = new HashSet<PostOfContest>();
             AccountJoined = new HashSet<JoinedToContest>();
+            Rewards = new HashSet<Reward>();
         }
 
         public int Id { get; set; }
@@ -45,5 +46,6 @@ namespace Entities.Models
         public virtual ICollection<PrizeContest> PrizeContests { get; set; }
         public virtual ICollection<PostOfContest> Posts { get; set; }
         public virtual ICollection<JoinedToContest> AccountJoined { get; set; }
+        public virtual ICollection<Reward> Rewards { get; set; }
     }
 }

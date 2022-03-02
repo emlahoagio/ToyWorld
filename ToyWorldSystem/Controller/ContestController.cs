@@ -98,6 +98,13 @@ namespace ToyWorldSystem.Controller
             return Ok(proposal_information);
         }
 
+        //[HttpGet]
+        //[Route("{contest_id}/details")]
+        //public async Task<IActionResult> GetContestDetail(int contest_id)
+        //{
+
+        //}
+
         /// <summary>
         /// Create contest (Role: Manager)
         /// </summary>

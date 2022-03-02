@@ -51,7 +51,7 @@ namespace Repository
                 {
                     Id = y.Id,
                     Url = y.Url
-                }).ToList(),
+                }).ToList()
             }).ToList();
 
             var result = new Pagination<ContestInGroup>
