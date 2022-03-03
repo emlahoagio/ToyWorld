@@ -11,6 +11,7 @@ namespace Contracts.Repositories
     {
         Task<Pagination<ContestInGroup>> GetPrizeForContest(Pagination<ContestInGroup> param);
         Task<List<PrizeReturn>> GetPrizeForContestDetail(int contest_id, bool trackChanges);
+        Task<List<Prize>> GetPrizeForEndContest(int contest_id, bool trackChanges);
         void Create(PrizeContest prizeContest);
     }
 }

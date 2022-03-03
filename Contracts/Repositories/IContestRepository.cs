@@ -15,5 +15,6 @@ namespace Contracts
         Task<Contest> GetCreatedContest(int group_id, string title, DateTime? startRegistration, bool trackChanges);
         Task<ContestDetail> GetContestDetailInformation(int contest_id, bool trackChanges);
         void Create(Contest contest);
+        Task EndContest(int contestId, bool trackChanges);
     }
 }

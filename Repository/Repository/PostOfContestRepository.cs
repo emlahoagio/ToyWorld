@@ -61,5 +61,20 @@ namespace Repository.Repository
 
             return result;
         }
+
+        public async Task<List<PostOfContestToEndContest>> GetPostOfContestForEndContest(int contest_id, bool trackChanges)
+        {
+            var list_post = await FindByCondition(x => x.ContestId == contest_id, trackChanges)
+                .ToListAsync();
+
+            var result = list_post.Select(x => new PostOfContestToEndContest
+            {
+                AccountId = x.AccountId,
+                Id = x.Id,
+                SumOfStart = x.Rates.Select(x => x.NumOfStart).Sum()
+            }).OrderByDescending(y => y.SumOfStart).ToList();
+
+            return result;
+        }
     }
 }

@@ -59,12 +59,26 @@ namespace Repository.Repository
 
             var result = prize_list.Select(x => new PrizeReturn
             {
-                Description = x.Prize.Description,
                 Id = x.Prize.Id,
-                Images = x.Prize.Images.Select(y => new ImageReturn { Id = y.Id, Url = y.Url }).ToList(),
-                Name = x.Prize.Name,
                 Value = x.Prize.Value
             }).ToList();
+
+            return result;
+        }
+
+        public async Task<List<Prize>> GetPrizeForEndContest(int contest_id, bool trackChanges)
+        {
+            var prizesContest = await FindByCondition(x => x.ContestId == contest_id, trackChanges)
+                .Include(x => x.Prize)
+                .ToListAsync();
+
+            var result = prizesContest.Select(x => new Prize
+            {
+                Description = x.Prize.Description,
+                Name = x.Prize.Name,
+                Id = x.Prize.Id,
+                Value = x.Prize.Value
+            }).OrderByDescending(y => y.Value).ToList();
 
             return result;
         }
