@@ -131,6 +131,27 @@ namespace ToyWorldSystem.Controller
             return Ok(posts);
         }
 
+        /// <summary>
+        /// Get prize for contest detail page (Role: Manager, Member)
+        /// </summary>
+        /// <param name="contest_id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{contest_id}/prizes")]
+        public async Task<IActionResult> GetPrizeOfContest(int contest_id)
+        {
+            var rewards = await _repositoryManager.PrizeContest.GetPrizeForContestDetail(contest_id, trackChanges: false);
+
+            if (rewards == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "This contest has not prize");
+
+            return Ok(rewards);
+        }
+
+        /// <summary>
+        /// Get Reward of contest (Role: Manager, Member)
+        /// </summary>
+        /// <param name="contest_id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("{contest_id}/rewards")]
         public async Task<IActionResult> GetRewardOfContest(int contest_id)

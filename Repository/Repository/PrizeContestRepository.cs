@@ -50,5 +50,23 @@ namespace Repository.Repository
 
             return result;
         }
+
+        public async Task<List<PrizeReturn>> GetPrizeForContestDetail(int contest_id, bool trackChanges)
+        {
+            var prize_list = await FindByCondition(x => x.ContestId == contest_id, trackChanges)
+                .Include(x => x.Prize).ThenInclude(x => x.Images)
+                .ToListAsync();
+
+            var result = prize_list.Select(x => new PrizeReturn
+            {
+                Description = x.Prize.Description,
+                Id = x.Prize.Id,
+                Images = x.Prize.Images.Select(y => new ImageReturn { Id = y.Id, Url = y.Url }).ToList(),
+                Name = x.Prize.Name,
+                Value = x.Prize.Value
+            }).ToList();
+
+            return result;
+        }
     }
 }
