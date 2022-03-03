@@ -166,6 +166,23 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Get list subscribers of contest (Role: Manager)
+        /// </summary>
+        /// <param name="contest_id"></param>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{contest_id}/subscribers")]
+        public async Task<IActionResult> GetListSubscribers(int contest_id, PagingParameters paging)
+        {
+            var subscribers = await _repositoryManager.JoinContest.GetListSubscribers(contest_id, paging, trackChanges: false);
+
+            if (subscribers == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No subscribers in this contest");
+
+            return Ok(subscribers);
+        }
+
+        /// <summary>
         /// Create post in contest, call after check is user in the contest (Role: Manager, Member)
         /// </summary>
         /// <param name="param"></param>
