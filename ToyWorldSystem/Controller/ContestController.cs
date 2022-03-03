@@ -183,6 +183,24 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Remove subscribers of contest (Role: Manager)
+        /// </summary>
+        /// <param name="contest_id"></param>
+        /// <param name="account_id"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("{contest_id}/subscribers/{account_id}")]
+        public async Task<IActionResult> RemoveSubscribers(int contest_id, int account_id)
+        {
+            var joinContest = await _repositoryManager.JoinContest.GetSubsCriberToDelete(contest_id, account_id, trackChanges: false);
+
+            _repositoryManager.JoinContest.Delete(joinContest);
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
         /// Create post in contest, call after check is user in the contest (Role: Manager, Member)
         /// </summary>
         /// <param name="param"></param>

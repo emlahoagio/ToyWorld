@@ -48,6 +48,13 @@ namespace Repository.Repository
             return result;
         }
 
+        public Task<JoinedToContest> GetSubsCriberToDelete(int contest_id, int account_id, bool trackChanges)
+        {
+            var result = FindByCondition(x => x.AccountId == account_id && x.ContestId == contest_id, trackChanges).FirstOrDefaultAsync();
+
+            return result;
+        }
+
         public async Task<bool> IsJoinedToContest(int contest_id, int account_id, bool trackChanges)
         {
             var joinedContest = await FindByCondition(x => x.ContestId == contest_id && x.AccountId == account_id, trackChanges)
