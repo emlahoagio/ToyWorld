@@ -307,6 +307,26 @@ namespace ToyWorldSystem.Controller
             return Ok("Save change success");
         }
 
+        [HttpPost]
+        [Route("rate/{post_of_contest_id}")]
+        public async Task<IActionResult> RateTheContest(int post_of_contest_id, RateContestParameters parameters)
+        {
+            var account_id = _userAccessor.getAccountId();
+
+            var rate = new Rate
+            {
+                AccountId = account_id,
+                Note = parameters.Note,
+                NumOfStart = parameters.NumOfStart,
+                PostOfContestId = post_of_contest_id
+            };
+
+            _repositoryManager.Rate.Create(rate);
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Save changes success");
+        }
+
         /// <summary>
         /// Add prizes to contest
         /// </summary>

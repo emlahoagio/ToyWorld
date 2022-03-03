@@ -38,6 +38,7 @@ namespace Repository
         private IJoinedContestRepository _joinedContestRepository;
         private IPostOfContestRepository _postOfContestRepository;
         private IRewardRepository _rewardRepository;
+        private IRateRepository _rateRepository;
 
         public RepositoryManager(DataContext context)
         {
@@ -295,6 +296,16 @@ namespace Repository
                 if (_rewardRepository == null)
                     _rewardRepository = new RewardRepository(_context);
                 return _rewardRepository;
+            }
+        }
+
+        public IRateRepository Rate
+        {
+            get
+            {
+                if (_rateRepository == null)
+                    _rateRepository = new RateRepository(_context);
+                return _rateRepository;
             }
         }
 
