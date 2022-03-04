@@ -125,7 +125,9 @@ namespace ToyWorldSystem.Controller
         [Route("{contest_id}/posts")]
         public async Task<IActionResult> GetPostsOfContest(int contest_id, [FromQuery]PagingParameters paging)
         {
-            var posts = await _repositoryManager.PostOfContest.GetPostOfContest(contest_id, paging, trackChanges: false);
+            var account_id = _userAccessor.getAccountId();
+
+            var posts = await _repositoryManager.PostOfContest.GetPostOfContest(contest_id, paging, account_id, trackChanges: false);
 
             if (posts == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "This contest has no post");
 
@@ -280,6 +282,8 @@ namespace ToyWorldSystem.Controller
         [Route("group/{group_id}")]
         public async Task<IActionResult> CreateContest(CreateContestParameters param, int group_id)
         {
+            DateTime startDate, endDate, startRegis, endRegis;
+
             var brand = await _repositoryManager.Brand
                 .GetBrandByName(param.BrandName == null ? "Unknow Brand" : param.BrandName, trackChanges: false);
             if (brand == null)
@@ -332,17 +336,49 @@ namespace ToyWorldSystem.Controller
 
             var createdContest = await _repositoryManager.Contest.GetCreatedContest(group_id, param.Title, param.StartRegistration, trackChanges: false);
 
+            //schedule for contest
             if (contest.StartRegistration.Value.Day != DateTime.Now.Day)
             {
-               BackgroundJob.Schedule(() => StartRegisContest(createdContest.Id), DateTime.SpecifyKind(contest.StartRegistration.Value, DateTimeKind.Local));
+                startRegis = contest.StartRegistration.Value;
+               BackgroundJob.Schedule(() => StartRegisContest(createdContest.Id), new DateTime(startRegis.Year, startRegis.Month, startRegis.Day, 0, 0, 1, DateTimeKind.Local));
             }
+
+            endRegis = contest.EndRegistration.Value;
+            BackgroundJob.Schedule(() => ClosedRegisContest(createdContest.Id), new DateTime(endRegis.Year, endRegis.Month, endRegis.Day, 23, 59, 59, DateTimeKind.Local));
+            startDate = contest.StartDate.Value;
+            BackgroundJob.Schedule(() => OpenContest(createdContest.Id), new DateTime(startDate.Year, startDate.Month, startDate.Day, 0, 0, 1, DateTimeKind.Local));
+            endDate = contest.EndDate.Value;
+            BackgroundJob.Schedule(() => ClosedContest(createdContest.Id), new DateTime(endDate.Year, endDate.Month, endDate.Day, 23, 59, 59, DateTimeKind.Local));
 
             return Ok(new { contestId = createdContest.Id });
         }
 
-        private void StartRegisContest(int contest_id)
+        [HttpPut("startregis")]
+        public void StartRegisContest(int contest_id)
         {
             _repositoryManager.Contest.StartRegistration(contest_id, trackChanges: false).Wait();
+            _repositoryManager.SaveAsync().Wait();
+        }
+
+        [HttpPut("endregis")]
+        public void ClosedRegisContest(int contest_id)
+        {
+            _repositoryManager.Contest.EndRegistration(contest_id, trackChanges: false).Wait();
+            _repositoryManager.SaveAsync().Wait();
+        }
+
+        [HttpPut("open")]
+        public void OpenContest(int contest_id)
+        {
+            _repositoryManager.Contest.StartContest(contest_id, trackChanges: false).Wait();
+            _repositoryManager.SaveAsync().Wait();
+        }
+
+        [HttpPut("closed")]
+        public void ClosedContest(int contest_id)
+        {
+            _repositoryManager.Contest.EndContest(contest_id, trackChanges: false).Wait();
+            _repositoryManager.SaveAsync().Wait();
         }
 
         /// <summary>
