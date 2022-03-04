@@ -10,6 +10,7 @@ namespace Entities.Models
         {
             Images = new HashSet<Image>();
             Rates = new HashSet<Rate>();
+            Notifications = new HashSet<Notification>();
         }
 
         public int Id { get; set; }
@@ -21,5 +22,6 @@ namespace Entities.Models
         public virtual Account Account { get; set; }
         public virtual ICollection<Rate> Rates { get; set; }
         public virtual ICollection<Image> Images { get; set; }
+        public virtual ICollection<Notification> Notifications { get; set; }
     }
 }

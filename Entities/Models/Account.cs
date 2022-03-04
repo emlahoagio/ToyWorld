@@ -28,6 +28,7 @@ namespace Entities.Models
             PostOfContests = new HashSet<PostOfContest>();
             Rewards = new HashSet<Reward>();
             Rates = new HashSet<Rate>();
+            Notifications = new HashSet<Notification>();
         }
 
         public int Id { get; set; }
@@ -61,5 +62,6 @@ namespace Entities.Models
         public virtual ICollection<PostOfContest> PostOfContests { get; set; }
         public virtual ICollection<Reward> Rewards { get; set; }
         public virtual ICollection<Rate> Rates { get; set; }
+        public virtual ICollection<Notification> Notifications { get; set; }
     }
 }

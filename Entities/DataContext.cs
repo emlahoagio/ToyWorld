@@ -35,7 +35,7 @@ namespace Entities.Models
         public virtual DbSet<ProposalPrize> ProposalPrizes { get; set; }
         public virtual DbSet<ReactComment> ReactComments { get; set; }
         public virtual DbSet<ReactPost> ReactPosts { get; set; }
-        public virtual DbSet<ReactTradingPost> ReactTradingPosts {get; set;}
+        public virtual DbSet<ReactTradingPost> ReactTradingPosts { get; set; }
         public virtual DbSet<Toy> Toys { get; set; }
         public virtual DbSet<TradingPost> TradingPosts { get; set; }
         public virtual DbSet<Type> Types { get; set; }
@@ -43,6 +43,7 @@ namespace Entities.Models
         public virtual DbSet<Rate> Rates { get; set; }
         public virtual DbSet<ErrorLogs> Error { get; set; }
         public virtual DbSet<JoinedToContest> JoinedToContest { get; set; }
+        public virtual DbSet<Notification> Notification { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -415,7 +416,7 @@ namespace Entities.Models
                 entity.HasKey(e => new { e.AccountId, e.TradingPostId });
 
                 entity.ToTable("ReactTradingPost");
-                
+
                 entity.HasOne(d => d.Account)
                     .WithMany(p => p.ReactTradingPosts)
                     .HasForeignKey(d => d.AccountId)
@@ -539,6 +540,29 @@ namespace Entities.Models
                     .WithMany(p => p.Rewards)
                     .HasForeignKey(d => d.PrizeId)
                     .HasConstraintName("FK_Reward_Prize");
+            });
+
+            modelBuilder.Entity<Notification>(entity =>
+            {
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.Notifications)
+                    .HasForeignKey(d => d.AccountId)
+                    .HasConstraintName("FK_Notification_Account");
+
+                entity.HasOne(d => d.Post)
+                    .WithMany(p => p.Notifications)
+                    .HasForeignKey(d => d.PostId)
+                    .HasConstraintName("FK_Notification_Post");
+
+                entity.HasOne(d => d.TradingPost)
+                    .WithMany(p => p.Notifications)
+                    .HasForeignKey(d => d.TradingPostId)
+                    .HasConstraintName("FK_Notification_TradingPost");
+
+                entity.HasOne(d => d.Contest)
+                    .WithMany(p => p.Notifications)
+                    .HasForeignKey(d => d.ContestId)
+                    .HasConstraintName("FK_Notification_Contest");
             });
 
             OnModelCreatingPartial(modelBuilder);

@@ -33,5 +33,6 @@ namespace Entities.Models
         public virtual ICollection<Feedback> Feedbacks { get; set; }
         public virtual ICollection<Image> Images { get; set; }
         public virtual ICollection<ReactPost> ReactPosts { get; set; }
+        public virtual ICollection<Notification> Notifications { get; set; }
     }
 }
