@@ -31,6 +31,7 @@ namespace Repository.Repository
         public async Task<Comment> GetUpdateCommentById(int comment_id, bool trackChanges)
         {
             var comment = await FindByCondition(x => x.Id == comment_id, trackChanges)
+                .Include(x => x.Post)
                 .FirstOrDefaultAsync();
 
             if (comment == null) return null;
