@@ -129,6 +129,7 @@ namespace Repository
                     Id = x.Id,
                     Content = x.Content,
                     NumOfReact = x.ReactComments.Count,
+                    OwnerId = x.Account.Id,
                     OwnerAvatar = x.Account.Avatar,
                     OwnerName = x.Account.Name
                 }).ToList(),

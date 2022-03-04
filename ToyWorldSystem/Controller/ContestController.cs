@@ -70,7 +70,9 @@ namespace ToyWorldSystem.Controller
         [Route("group/{group_id}")]
         public async Task<IActionResult> GetContestByGroup(int group_id, [FromQuery] PagingParameters paging)
         {
-            var contest_have_not_prize = await _repositoryManager.Contest.GetContestInGroup(group_id, trackChanges: false, paging);
+            var account_id = _userAccessor.getAccountId();
+
+            var contest_have_not_prize = await _repositoryManager.Contest.GetContestInGroup(group_id, account_id, trackChanges: false, paging);
 
             var result = await _repositoryManager.PrizeContest.GetPrizeForContest(contest_have_not_prize);
 

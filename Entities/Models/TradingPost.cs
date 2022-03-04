@@ -12,6 +12,7 @@ namespace Entities.Models
             Images = new HashSet<Image>();
             ReactTradingPosts = new HashSet<ReactTradingPost>();
             Comments = new HashSet<Comment>();
+            Notifications = new HashSet<Notification>();
         }
 
         public int Id { get; set; }
@@ -39,5 +40,6 @@ namespace Entities.Models
         public virtual ICollection<Image> Images { get; set; }
         public virtual ICollection<ReactTradingPost> ReactTradingPosts { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<Notification> Notifications { get; set; }
     }
 }

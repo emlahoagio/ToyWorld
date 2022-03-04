@@ -14,10 +14,12 @@ namespace Contracts
         Task<AccountReturnAfterLogin> getAccountByEmail(string email, string password, bool trackChanges);
         Task<Pagination<AccountInList>> GetListAccount(PagingParameters paging, bool trackChanges);
         Task<Account> GetAccountById(int account_id, bool trackChanges);
-        Task<AccountDetail> GetAccountDetail(int account_id, bool trackChanges);
+        Task<AccountDetail> GetAccountDetail(int account_id, int current_acc_id, bool trackChanges);
+        Task<Profile> GetProfile(int account_id, bool trackChanges);
         void DisableAccount(Account account);
         void EnableAccount(Account account);
         void UpdateAccountToManager(Account account);
         void UpdateAccountToMember(Account account);
+        void Update(Account account);
     }
 }

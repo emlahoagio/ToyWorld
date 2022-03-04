@@ -85,7 +85,7 @@ namespace Repository
             return result;
         }
 
-        public async Task<AccountDetail> GetAccountDetail(int account_id, bool trackChanges)
+        public async Task<AccountDetail> GetAccountDetail(int account_id, int current_acc_id, bool trackChanges)
         {
             var account = await FindByCondition(x => x.Id == account_id, trackChanges)
                 .Include(x => x.Posts)
@@ -102,7 +102,8 @@ namespace Repository
                 Name = account.Name,
                 NoOfFollower = account.FollowAccountAccountFollows.Count,
                 NoOfFollowing = account.FollowAccountAccounts.Count,
-                NoOfPost = account.Posts.Where(x => x.IsPublic == true).Count()
+                NoOfPost = account.Posts.Where(x => x.IsPublic == true).Count(),
+                IsFollowed = account.FollowAccountAccountFollows.Where(x => x.AccountId == current_acc_id).Count() == 0 ? false : true
             };
 
             return result;
@@ -137,6 +138,26 @@ namespace Repository
             };
 
             return result;
+        }
+
+        public async Task<Profile> GetProfile(int account_id, bool trackChanges)
+        {
+            var account = await FindByCondition(x => x.Id == account_id, trackChanges).FirstOrDefaultAsync();
+
+            if (account == null) return null;
+
+            var profile = new Profile
+            {
+                Avatar = account.Avatar,
+                Biography = account.Biography,
+                Email = account.Email,
+                Gender = account.Gender,
+                Id = account.Id,
+                Name = account.Name,
+                Phone = account.Phone
+            };
+
+            return profile;
         }
 
         public void UpdateAccountToManager(Account account)

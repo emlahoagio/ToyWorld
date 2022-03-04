@@ -55,7 +55,9 @@ namespace ToyWorldSystem.Controller
         [Route("detail/{account_id}")]
         public async Task<IActionResult> GetAccountDetail(int account_id)
         {
-            var account = await _repository.Account.GetAccountDetail(account_id, trackChanges: false);
+            var current_account_id = _userAccessor.getAccountId();
+
+            var account = await _repository.Account.GetAccountDetail(account_id, current_account_id, trackChanges: false);
 
             if (account == null) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid account");
 
@@ -126,6 +128,22 @@ namespace ToyWorldSystem.Controller
             return Ok(account);
         }
         
+        /// <summary>
+        /// Get profile (Role: Manager, Member, Admin)
+        /// </summary>
+        /// <param name="account_id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{account_id}/profile")]
+        public async Task<IActionResult> GetProfile(int account_id)
+        {
+            var profile = await _repository.Account.GetProfile(account_id, trackChanges: false);
+
+            if (profile == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No account match with id");
+
+            return Ok(profile);
+        }
+
         /// <summary>
         /// Login by google mail (Role: ALL)
         /// </summary>
@@ -281,6 +299,33 @@ namespace ToyWorldSystem.Controller
 
             _repository.Account.UpdateAccountToMember(update_account);
 
+            await _repository.SaveAsync();
+
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
+        /// Update profile (Role: Member, Manager)
+        /// </summary>
+        /// <param name="account_id"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("{account_id}/profile")]
+        public async Task<IActionResult> UpdateProfile(int account_id, UpdateAccountParameters param)
+        {
+            var curent_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(),trackChanges: false);
+
+            if (account_id != curent_account.Id) throw new ErrorDetails(HttpStatusCode.BadRequest, "Can't update another user profile");
+
+            curent_account.Name = param.Name;
+            curent_account.Email = param.Email;
+            curent_account.Phone = param.Phone;
+            curent_account.Avatar = param.Avatar;
+            curent_account.Biography = param.Biography;
+            curent_account.Gender = param.Gender;
+
+            _repository.Account.Update(curent_account);
             await _repository.SaveAsync();
 
             return Ok("Save changes success");
