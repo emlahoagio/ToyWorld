@@ -11,6 +11,7 @@ namespace Entities.DataTransferObject
         public string OwnerAvatar { get; set; }
         public string OwnerName { get; set; }
         public double AverageStar { get; set; }
+        public bool IsRated { get; set; }
         public virtual List<RateReturn> Rates { get; set; }
         public virtual List<ImageReturn> Images { get; set; }
     }
