@@ -140,6 +140,26 @@ namespace Repository
             return result;
         }
 
+        public async Task<Profile> GetProfile(int account_id, bool trackChanges)
+        {
+            var account = await FindByCondition(x => x.Id == account_id, trackChanges).FirstOrDefaultAsync();
+
+            if (account == null) return null;
+
+            var profile = new Profile
+            {
+                Avatar = account.Avatar,
+                Biography = account.Biography,
+                Email = account.Email,
+                Gender = account.Gender,
+                Id = account.Id,
+                Name = account.Name,
+                Phone = account.Phone
+            };
+
+            return profile;
+        }
+
         public void UpdateAccountToManager(Account account)
         {
             account.Role = 1;
