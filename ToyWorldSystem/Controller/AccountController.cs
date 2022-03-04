@@ -55,7 +55,9 @@ namespace ToyWorldSystem.Controller
         [Route("detail/{account_id}")]
         public async Task<IActionResult> GetAccountDetail(int account_id)
         {
-            var account = await _repository.Account.GetAccountDetail(account_id, trackChanges: false);
+            var current_account_id = _userAccessor.getAccountId();
+
+            var account = await _repository.Account.GetAccountDetail(account_id, current_account_id, trackChanges: false);
 
             if (account == null) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid account");
 
