@@ -41,11 +41,12 @@ namespace Repository.Repository
                 }).ToList(),
                 OwnerAvatar = x.Account.Avatar,
                 OwnerName = x.Account.Name,
+                AverageStar = x.Rates.Select(x => x.NumOfStart).ToList().Average(),
                 Rates = x.Rates.Select(y => new RateReturn
                 {
                     Id = y.Id,
                     Note = y.Note,
-                    NumOfStart = y.NumOfStart,
+                    NumOfStar = y.NumOfStart,
                     OwnerAvatar = y.Account.Avatar,
                     OwnerName = y.Account.Name
                 }).ToList()
