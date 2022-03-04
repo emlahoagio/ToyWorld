@@ -148,7 +148,14 @@ namespace ToyWorldSystem
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ToyWorldSystem v1"));
 
-            app.UseHangfireDashboard("/hangfire_schedule");
+            app.UseHangfireDashboard("/hangfire_schedule", new DashboardOptions
+            {
+                DashboardTitle = "Contest schedule jobs",
+                Authorization = new[]
+                {
+                    new HangfireAuthorizationFilter("admin")
+                }
+            });
 
             app.UseHttpsRedirection();
 
