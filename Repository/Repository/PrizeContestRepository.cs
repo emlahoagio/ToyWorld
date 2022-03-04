@@ -59,6 +59,8 @@ namespace Repository.Repository
 
             var result = prize_list.Select(x => new PrizeReturn
             {
+                Description = x.Prize.Description,
+                Name = x.Prize.Name,
                 Id = x.Prize.Id,
                 Value = x.Prize.Value
             }).ToList();
@@ -74,8 +76,6 @@ namespace Repository.Repository
 
             var result = prizesContest.Select(x => new Prize
             {
-                Description = x.Prize.Description,
-                Name = x.Prize.Name,
                 Id = x.Prize.Id,
                 Value = x.Prize.Value
             }).OrderByDescending(y => y.Value).ToList();

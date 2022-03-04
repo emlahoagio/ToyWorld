@@ -157,5 +157,34 @@ namespace Repository
 
             return result;
         }
+
+        public async Task StartRegistration(int contest_id, bool trackChanges)
+        {
+            var contest = await FindByCondition(x => x.Id == contest_id, trackChanges).FirstOrDefaultAsync();
+
+            contest.CanAttempt = true;
+            contest.Status = 1;
+
+            Update(contest);
+        } 
+        
+        public async Task EndRegistration(int contest_id, bool trackChanges)
+        {
+            var contest = await FindByCondition(x => x.Id == contest_id, trackChanges).FirstOrDefaultAsync();
+
+            contest.CanAttempt = false;
+            contest.Status = 2;
+
+            Update(contest);
+        }
+        
+        public async Task StartContest(int contest_id, bool trackChanges)
+        {
+            var contest = await FindByCondition(x => x.Id == contest_id, trackChanges).FirstOrDefaultAsync();
+
+            contest.Status = 3;
+
+            Update(contest);
+        }
     }
 }
