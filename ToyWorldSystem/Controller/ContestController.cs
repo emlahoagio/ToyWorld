@@ -131,6 +131,27 @@ namespace ToyWorldSystem.Controller
             return Ok(posts);
         }
 
+        /// <summary>
+        /// Get prize for contest detail page (Role: Manager, Member)
+        /// </summary>
+        /// <param name="contest_id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{contest_id}/prizes")]
+        public async Task<IActionResult> GetPrizeOfContest(int contest_id)
+        {
+            var rewards = await _repositoryManager.PrizeContest.GetPrizeForContestDetail(contest_id, trackChanges: false);
+
+            if (rewards == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "This contest has not prize");
+
+            return Ok(rewards);
+        }
+
+        /// <summary>
+        /// Get Reward of contest (Role: Manager, Member)
+        /// </summary>
+        /// <param name="contest_id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("{contest_id}/rewards")]
         public async Task<IActionResult> GetRewardOfContest(int contest_id)
@@ -142,6 +163,78 @@ namespace ToyWorldSystem.Controller
             if (rewards == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "This contest has no reward");
 
             return Ok(rewards);
+        }
+
+        /// <summary>
+        /// Get list subscribers of contest (Role: Manager)
+        /// </summary>
+        /// <param name="contest_id"></param>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{contest_id}/subscribers")]
+        public async Task<IActionResult> GetListSubscribers(int contest_id, PagingParameters paging)
+        {
+            var subscribers = await _repositoryManager.JoinContest.GetListSubscribers(contest_id, paging, trackChanges: false);
+
+            if (subscribers == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No subscribers in this contest");
+
+            return Ok(subscribers);
+        }
+
+        /// <summary>
+        /// Remove subscribers of contest (Role: Manager)
+        /// </summary>
+        /// <param name="contest_id"></param>
+        /// <param name="account_id"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("{contest_id}/subscribers/{account_id}")]
+        public async Task<IActionResult> RemoveSubscribers(int contest_id, int account_id)
+        {
+            var joinContest = await _repositoryManager.JoinContest.GetSubsCriberToDelete(contest_id, account_id, trackChanges: false);
+
+            _repositoryManager.JoinContest.Delete(joinContest);
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Save changes success");
+        }
+
+        [HttpPost]
+        [Route("{contest_id}/end")]
+        public async Task<IActionResult> EndContest(int contest_id)
+        {
+            //get list prize descending by value
+            var prizesList = await _repositoryManager.PrizeContest.GetPrizeForEndContest(contest_id, trackChanges: false);
+
+            //Get list post of contest count star
+            var postsOfContestList = await _repositoryManager.PostOfContest.GetPostOfContestForEndContest(contest_id, trackChanges: false);
+
+            //For prize get highest star contest
+            foreach(var prize in prizesList)
+            {
+                var post = postsOfContestList.First();
+                if(post != null)
+                {
+                    _repositoryManager.Reward.Create(new Reward
+                    {
+                        AccountId = post.AccountId,
+                        ContestId = contest_id,
+                        PostOfContestId = post.Id,
+                        PrizeId = prize.Id
+                    });
+                }else
+                {
+                    break;
+                }
+                //Bỏ highest ra for prize tiếp
+                postsOfContestList.Remove(post);
+            }
+
+            await _repositoryManager.Contest.EndContest(contest_id, trackChanges: false);
+
+            await _repositoryManager.SaveAsync();
+            return Ok("Save changes success");
         }
 
         /// <summary>
@@ -249,6 +342,32 @@ namespace ToyWorldSystem.Controller
             await _repositoryManager.SaveAsync();
 
             return Ok("Save change success");
+        }
+
+        /// <summary>
+        /// Rate post of contest (Role: Manager, Member)
+        /// </summary>
+        /// <param name="post_of_contest_id"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("rate/{post_of_contest_id}")]
+        public async Task<IActionResult> RateTheContest(int post_of_contest_id, RateContestParameters parameters)
+        {
+            var account_id = _userAccessor.getAccountId();
+
+            var rate = new Rate
+            {
+                AccountId = account_id,
+                Note = parameters.Note,
+                NumOfStart = parameters.NumOfStart,
+                PostOfContestId = post_of_contest_id
+            };
+
+            _repositoryManager.Rate.Create(rate);
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Save changes success");
         }
 
         /// <summary>

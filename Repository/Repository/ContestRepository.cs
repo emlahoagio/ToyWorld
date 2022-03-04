@@ -18,6 +18,16 @@ namespace Repository
 
         }
 
+        public async Task EndContest(int contestId, bool trackChanges)
+        {
+            var contest = await FindByCondition(x => x.Id == contestId, trackChanges).FirstOrDefaultAsync();
+
+            contest.EndDate = DateTime.Now;
+            contest.Status = 4;
+
+            Update(contest);
+        }
+
         public async Task<ContestDetail> GetContestDetailInformation(int contest_id, bool trackChanges)
         {
             var contest = await FindByCondition(x => x.Id == contest_id, trackChanges)

@@ -29,6 +29,7 @@ namespace Contracts
         IJoinedContestRepository JoinContest { get; }
         IPostOfContestRepository PostOfContest { get; }
         IRewardRepository Reward { get; }
+        IRateRepository Rate { get; }
         Task SaveAsync();
     }
 }

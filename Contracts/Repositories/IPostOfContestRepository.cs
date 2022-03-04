@@ -12,5 +12,6 @@ namespace Contracts.Repositories
     {
         void Create(PostOfContest postOfContest);
         Task<Pagination<PostOfContestInList>> GetPostOfContest(int contest_id, PagingParameters paging , bool trackChanges);
+        Task<List<PostOfContestToEndContest>> GetPostOfContestForEndContest(int contest_id, bool trackChanges);
     }
 }
