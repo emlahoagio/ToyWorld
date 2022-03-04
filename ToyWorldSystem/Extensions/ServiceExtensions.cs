@@ -1,6 +1,7 @@
 ﻿using Contracts;
 using Contracts.Services;
 using Entities.Models;
+using Hangfire;
 using LoggerService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -59,5 +60,12 @@ namespace ToyWorldSystem.Extensions
         //Crawl MyKingdom
         public static void ConfigureMyKingdomCrawlers(this IServiceCollection services)
             => services.AddScoped<ICrawlDataMyKingdomService, CrawlDataMyKingdomService>();
+
+        //Hangfire scheduling
+        public static void ConfigureHangFire(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddHangfire(x => x.UseSqlServerStorage(configuration.GetConnectionString("sqlConnection")));
+            services.AddHangfireServer();
+        }
     }
 }

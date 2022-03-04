@@ -2,6 +2,7 @@
 using Entities.ErrorModel;
 using Entities.Models;
 using Entities.RequestFeatures;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -200,6 +201,11 @@ namespace ToyWorldSystem.Controller
             return Ok("Save changes success");
         }
 
+        /// <summary>
+        /// End contest (Role: Manager)
+        /// </summary>
+        /// <param name="contest_id"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("{contest_id}/end")]
         public async Task<IActionResult> EndContest(int contest_id)
@@ -311,15 +317,32 @@ namespace ToyWorldSystem.Controller
                 ProposalId = param.ProposalId,
                 BrandId = brand.Id,
                 TypeId = type.Id,
+                CanAttempt = false,
                 Status = 0
             };
+
+            if(contest.StartRegistration.Value.Day == DateTime.Now.Day)
+            {
+                contest.CanAttempt = true;
+                contest.Status = 1;
+            }
 
             _repositoryManager.Contest.Create(contest);
             await _repositoryManager.SaveAsync();
 
             var createdContest = await _repositoryManager.Contest.GetCreatedContest(group_id, param.Title, param.StartRegistration, trackChanges: false);
 
+            if (contest.StartRegistration.Value.Day != DateTime.Now.Day)
+            {
+               BackgroundJob.Schedule(() => StartRegisContest(createdContest.Id), DateTime.SpecifyKind(contest.StartRegistration.Value, DateTimeKind.Local));
+            }
+
             return Ok(new { contestId = createdContest.Id });
+        }
+
+        private void StartRegisContest(int contest_id)
+        {
+            _repositoryManager.Contest.StartRegistration(contest_id, trackChanges: false).Wait();
         }
 
         /// <summary>

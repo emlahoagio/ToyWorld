@@ -1,5 +1,6 @@
 using CorePush.Apple;
 using CorePush.Google;
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -55,6 +56,8 @@ namespace ToyWorldSystem
             services.ConfigureMyKingdomCrawlers(); //quandtm code
 
             services.AddHttpContextAccessor();
+
+            services.ConfigureHangFire(Configuration);
 
             //Add verify jwt services
             var tokenValidationParams = new TokenValidationParameters
@@ -144,6 +147,8 @@ namespace ToyWorldSystem
 
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ToyWorldSystem v1"));
+
+            app.UseHangfireDashboard("/hangfire_schedule");
 
             app.UseHttpsRedirection();
 
