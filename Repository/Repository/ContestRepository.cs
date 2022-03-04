@@ -75,7 +75,7 @@ namespace Repository
             return result;
         }
 
-        public async Task<Pagination<ContestInGroup>> GetContestInGroup(int group_id, bool trackChanges, PagingParameters paging)
+        public async Task<Pagination<ContestInGroup>> GetContestInGroup(int group_id, int account_id, bool trackChanges, PagingParameters paging)
         {
             var contest_in_group = await FindByCondition(x => x.GroupId == group_id && x.StartRegistration >= DateTime.Now.AddDays(-5), trackChanges)
                 .Include(x => x.Images)
@@ -108,7 +108,8 @@ namespace Repository
                 {
                     Id = y.Id,
                     Url = y.Url
-                }).ToList()
+                }).ToList(),
+                IsJoined = x.AccountJoined.Where(x => x.AccountId == account_id).Count() == 0 ? false : true
             }).ToList();
 
             var result = new Pagination<ContestInGroup>
