@@ -53,6 +53,10 @@ namespace ToyWorldSystem.Extensions
         public static void ConfigureFirebaseServices(this IServiceCollection services)
             => services.AddScoped<IFirebaseSupport, Repository.Services.FirebaseServices>();
 
+        //Hasing services
+        public static void ConfigureHasingServices(this IServiceCollection services)
+            => services.AddScoped<IHasingServices, HasingServices>();
+
         //Crawl Japan Figure services
         public static void ConfigureCrawlDataFromJapanFigure(this IServiceCollection services)
             => services.AddScoped<ICrawlDataJapanFigureServices, CrawlDataJapanFigureServices>();

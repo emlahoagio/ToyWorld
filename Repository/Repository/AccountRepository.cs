@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using Contracts.Services;
 using Entities.DataTransferObject;
 using Entities.Models;
 using Entities.RequestFeatures;
@@ -12,10 +13,12 @@ namespace Repository
     public class AccountRepository : RepositoryBase<Account>, IAccountRepository
     {
         private readonly IJwtSupport _jwtSupport;
+        private readonly IHasingServices _hasing;
 
-        public AccountRepository(DataContext context, IJwtSupport jwtSupport) : base(context)
+        public AccountRepository(DataContext context, IJwtSupport jwtSupport, IHasingServices hasing) : base(context)
         {
             _jwtSupport = jwtSupport;
+            _hasing = hasing;
         }
 
         public void DisableAccount(Account account)
@@ -55,7 +58,9 @@ namespace Repository
 
         public async Task<AccountReturnAfterLogin> getAccountByEmail(string email, string password, bool trackChanges)
         {
-            var account = await FindByCondition(account => account.Email == email && account.Password == password, trackChanges).SingleOrDefaultAsync();
+            var hasing_pw = _hasing.encriptSHA256(password);
+
+            var account = await FindByCondition(account => account.Email == email && account.Password == hasing_pw, trackChanges).SingleOrDefaultAsync();
 
             if (account == null) return null;
 
