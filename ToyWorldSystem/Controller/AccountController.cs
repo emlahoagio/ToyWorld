@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using Contracts.Services;
 using Entities.ErrorModel;
 using Entities.Models;
 using Entities.RequestFeatures;
@@ -20,12 +21,14 @@ namespace ToyWorldSystem.Controller
         private readonly IRepositoryManager _repository;
         private readonly IFirebaseSupport _firebaseSupport;
         private readonly IUserAccessor _userAccessor;
+        private readonly IHasingServices _hasingServices;
 
-        public AccountController(IRepositoryManager repository, IFirebaseSupport firebaseSupport, IUserAccessor userAccessor)
+        public AccountController(IRepositoryManager repository, IFirebaseSupport firebaseSupport, IUserAccessor userAccessor, IHasingServices hasingServices)
         {
             _repository = repository;
             _firebaseSupport = firebaseSupport;
             _userAccessor = userAccessor;
+            _hasingServices = hasingServices;
         }
 
         /// <summary>
@@ -341,6 +344,45 @@ namespace ToyWorldSystem.Controller
             curent_account.Gender = param.Gender;
 
             _repository.Account.Update(curent_account);
+            await _repository.SaveAsync();
+
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
+        /// Use for account doesn't has password (All role)
+        /// </summary>
+        /// <param name="new_password"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("new_password")]
+        public async Task<IActionResult> UpdateNewPassword(string new_password)
+        {
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            _repository.Account.UpdateNewPassword(current_account, new_password);
+            await _repository.SaveAsync();
+
+            return Ok("Save changes async");
+        }
+
+        /// <summary>
+        /// Use for change the password of account (All role)
+        /// </summary>
+        /// <param name="old_password"></param>
+        /// <param name="new_password"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("change_password")]
+        public async Task<IActionResult> ChangePassword(string old_password, string new_password)
+        {
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            var hash_old_pw = _hasingServices.encriptSHA256(old_password);
+
+            if (current_account.Password != hash_old_pw) throw new ErrorDetails(HttpStatusCode.BadRequest, "Old password is not true");
+
+            _repository.Account.UpdateNewPassword(current_account, new_password);
             await _repository.SaveAsync();
 
             return Ok("Save changes success");
