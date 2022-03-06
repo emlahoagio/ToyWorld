@@ -21,5 +21,7 @@ namespace Contracts
         void UpdateAccountToManager(Account account);
         void UpdateAccountToMember(Account account);
         void Update(Account account);
+        void Create(Account account);
+        void UpdateNewPassword(Account account, string new_password);
     }
 }

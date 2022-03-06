@@ -1,5 +1,7 @@
 ﻿using Contracts;
+using Contracts.Services;
 using Entities.ErrorModel;
+using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -19,12 +21,14 @@ namespace ToyWorldSystem.Controller
         private readonly IRepositoryManager _repository;
         private readonly IFirebaseSupport _firebaseSupport;
         private readonly IUserAccessor _userAccessor;
+        private readonly IHasingServices _hasingServices;
 
-        public AccountController(IRepositoryManager repository, IFirebaseSupport firebaseSupport, IUserAccessor userAccessor)
+        public AccountController(IRepositoryManager repository, IFirebaseSupport firebaseSupport, IUserAccessor userAccessor, IHasingServices hasingServices)
         {
             _repository = repository;
             _firebaseSupport = firebaseSupport;
             _userAccessor = userAccessor;
+            _hasingServices = hasingServices;
         }
 
         /// <summary>
@@ -157,15 +161,29 @@ namespace ToyWorldSystem.Controller
             //init firebase
             _firebaseSupport.initFirebase();
             //get email
-            var email = await _firebaseSupport.getEmailFromToken(firebaseToken);
-            if(email.Contains("Get email from token error: "))
+            var firebaseProfile = await _firebaseSupport.getEmailFromToken(firebaseToken);
+            if(firebaseProfile.Email.Contains("Get email from token error: "))
             {
-                throw new ErrorDetails(HttpStatusCode.BadRequest, email);
+                throw new ErrorDetails(HttpStatusCode.BadRequest, firebaseProfile.Email);
             }
-            var account = await _repository.Account.getAccountByEmail(email, trackChanges: false);
+
+            var account = await _repository.Account.getAccountByEmail(firebaseProfile.Email, trackChanges: false);
             if(account == null)
             {
-                throw new ErrorDetails(HttpStatusCode.Unauthorized, "This account is not exist in our system");
+                //new account
+                var new_account = new Account
+                {
+                    Name = firebaseProfile.Name,
+                    Email = firebaseProfile.Email,
+                    Avatar = firebaseProfile.Avatar,
+                    Status = true,
+                    Biography = "Not Updated",
+                    Gender = "Not Updated"
+                };
+                _repository.Account.Create(new_account);
+                await _repository.SaveAsync();
+                //get account return
+                account = await _repository.Account.getAccountByEmail(firebaseProfile.Email, trackChanges: false);
             }
             if (!account.Status)
             {
@@ -326,6 +344,45 @@ namespace ToyWorldSystem.Controller
             curent_account.Gender = param.Gender;
 
             _repository.Account.Update(curent_account);
+            await _repository.SaveAsync();
+
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
+        /// Use for account doesn't has password (All role)
+        /// </summary>
+        /// <param name="new_password"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("new_password")]
+        public async Task<IActionResult> UpdateNewPassword(string new_password)
+        {
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            _repository.Account.UpdateNewPassword(current_account, new_password);
+            await _repository.SaveAsync();
+
+            return Ok("Save changes async");
+        }
+
+        /// <summary>
+        /// Use for change the password of account (All role)
+        /// </summary>
+        /// <param name="old_password"></param>
+        /// <param name="new_password"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("change_password")]
+        public async Task<IActionResult> ChangePassword(string old_password, string new_password)
+        {
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            var hash_old_pw = _hasingServices.encriptSHA256(old_password);
+
+            if (current_account.Password != hash_old_pw) throw new ErrorDetails(HttpStatusCode.BadRequest, "Old password is not true");
+
+            _repository.Account.UpdateNewPassword(current_account, new_password);
             await _repository.SaveAsync();
 
             return Ok("Save changes success");

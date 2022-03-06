@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using Entities.DataTransferObject;
 using FirebaseAdmin;
 using FirebaseAdmin.Auth;
 using Google.Apis.Auth.OAuth2;
@@ -18,22 +19,27 @@ namespace Repository.Services
         {
             this.configuration = configuration;
         }
-        public async Task<string> getEmailFromToken(string firebaseToken)
+        public async Task<FirebaseProfile> getEmailFromToken(string firebaseToken)
         {
             try
             {
                 FirebaseToken decodeToken = await FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(firebaseToken);
-                return decodeToken.Claims.GetValueOrDefault("email").ToString();
+                return new FirebaseProfile
+                {
+                    Email = decodeToken.Claims.GetValueOrDefault("email").ToString(),
+                    Avatar = decodeToken.Claims.GetValueOrDefault("picture").ToString(),
+                    Name = decodeToken.Claims.GetValueOrDefault("name").ToString()
+                };
             }
             catch (Exception ex)
             {
-                return "Get email from token error: " + ex.Message;
+                return new FirebaseProfile { Email = ex.Message};
             }
         }
 
         public void initFirebase()
         {
-            if(FirebaseApp.DefaultInstance == null)
+            if (FirebaseApp.DefaultInstance == null)
             {
                 string path = configuration["Firebase:CridentialPath"];
                 FirebaseApp.Create(new AppOptions()

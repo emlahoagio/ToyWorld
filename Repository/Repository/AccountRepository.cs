@@ -50,7 +50,8 @@ namespace Repository
                 Email = account.Email,
                 Gender = account.Gender,
                 Name = account.Name,
-                PhoneNumber = account.Phone
+                PhoneNumber = account.Phone,
+                IsHasPassword = account.Password == null ? false : true
             };
 
             return result;
@@ -75,7 +76,8 @@ namespace Repository
                 Email = account.Email,
                 Gender = account.Gender,
                 Name = account.Name,
-                PhoneNumber = account.Phone
+                PhoneNumber = account.Phone,
+                IsHasPassword = account.Password == null ? false : true
             };
 
             return result;
@@ -181,6 +183,13 @@ namespace Repository
         {
             if (status == true) return "Active";
             return "Disabled";
+        }
+
+        public void UpdateNewPassword(Account account, string new_password)
+        {
+            var hasing_pw = _hasing.encriptSHA256(new_password);
+            account.Password = hasing_pw;
+            Update(account);
         }
     }
 }
