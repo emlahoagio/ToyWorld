@@ -16,5 +16,6 @@ namespace Entities.DataTransferObject
         public int Role { get; set; }
         public bool Status { get; set; }
         public string Token { get; set; }
+        public bool IsHasPassword { get; set; }
     }
 }

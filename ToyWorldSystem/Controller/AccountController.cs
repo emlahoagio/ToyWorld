@@ -1,5 +1,6 @@
 ﻿using Contracts;
 using Entities.ErrorModel;
+using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -157,15 +158,29 @@ namespace ToyWorldSystem.Controller
             //init firebase
             _firebaseSupport.initFirebase();
             //get email
-            var email = await _firebaseSupport.getEmailFromToken(firebaseToken);
-            if(email.Contains("Get email from token error: "))
+            var firebaseProfile = await _firebaseSupport.getEmailFromToken(firebaseToken);
+            if(firebaseProfile.Email.Contains("Get email from token error: "))
             {
-                throw new ErrorDetails(HttpStatusCode.BadRequest, email);
+                throw new ErrorDetails(HttpStatusCode.BadRequest, firebaseProfile.Email);
             }
-            var account = await _repository.Account.getAccountByEmail(email, trackChanges: false);
+
+            var account = await _repository.Account.getAccountByEmail(firebaseProfile.Email, trackChanges: false);
             if(account == null)
             {
-                throw new ErrorDetails(HttpStatusCode.Unauthorized, "This account is not exist in our system");
+                //new account
+                var new_account = new Account
+                {
+                    Name = firebaseProfile.Name,
+                    Email = firebaseProfile.Email,
+                    Avatar = firebaseProfile.Avatar,
+                    Status = true,
+                    Biography = "Not Updated",
+                    Gender = "Not Updated"
+                };
+                _repository.Account.Create(new_account);
+                await _repository.SaveAsync();
+                //get account return
+                account = await _repository.Account.getAccountByEmail(firebaseProfile.Email, trackChanges: false);
             }
             if (!account.Status)
             {

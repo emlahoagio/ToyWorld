@@ -50,7 +50,8 @@ namespace Repository
                 Email = account.Email,
                 Gender = account.Gender,
                 Name = account.Name,
-                PhoneNumber = account.Phone
+                PhoneNumber = account.Phone,
+                IsHasPassword = account.Password == null ? false : true
             };
 
             return result;
@@ -75,7 +76,8 @@ namespace Repository
                 Email = account.Email,
                 Gender = account.Gender,
                 Name = account.Name,
-                PhoneNumber = account.Phone
+                PhoneNumber = account.Phone,
+                IsHasPassword = account.Password == null ? false : true
             };
 
             return result;
