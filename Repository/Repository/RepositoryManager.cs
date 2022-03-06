@@ -1,5 +1,6 @@
 ﻿using Contracts;
 using Contracts.Repositories;
+using Contracts.Services;
 using Entities.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +17,7 @@ namespace Repository
     {
         private readonly DataContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IHasingServices _hasing;
         private IJwtSupport _jwtSupport;
         private IToyRepository _toyRepository;
         private IBrandRepository _brandRepository;
@@ -45,10 +47,11 @@ namespace Repository
             _context = context;
         }
 
-        public RepositoryManager(DataContext context, IConfiguration configuration)
+        public RepositoryManager(DataContext context, IConfiguration configuration, IHasingServices hasing)
         {
             _context = context;
             _configuration = configuration;
+            _hasing = hasing;
         }
 
         public IAccountRepository Account
@@ -61,7 +64,7 @@ namespace Repository
                     {
                         _jwtSupport = new JwtServices(_configuration);
                     }
-                    _accountRepository = new AccountRepository(_context, _jwtSupport);
+                    _accountRepository = new AccountRepository(_context, _jwtSupport, _hasing);
                 }
                 return _accountRepository;
             }

@@ -57,6 +57,8 @@ namespace ToyWorldSystem
 
             services.AddHttpContextAccessor();
 
+            services.ConfigureHasingServices();
+
             services.ConfigureHangFire(Configuration);
 
             //Add verify jwt services
