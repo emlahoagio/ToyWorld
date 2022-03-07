@@ -44,14 +44,14 @@ namespace Repository.Repository
 
             var result = new ProposalCreateContest
             {
-                BrandName = proposal.Brand.Name,
+                BrandName = proposal.Brand == null ? "Unknow Brand" : proposal.Brand.Name,
                 Description = proposal.ContestDescription,
                 Duration = proposal.Duration,
                 Location = proposal.Location,
                 MaxRegistration = proposal.MaxRegister,
                 MinRegistration = proposal.MinRegister,
                 Title = proposal.Title,
-                TypeName = proposal.Type.Name
+                TypeName = proposal.Type == null ? "Unknow Type" : proposal.Type.Name
             };
 
             return result;
