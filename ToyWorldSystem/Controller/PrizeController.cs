@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using Entities.ErrorModel;
 using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Http;
@@ -30,11 +31,27 @@ namespace ToyWorldSystem.Controller
         /// <param name="paging"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> getPrizeList([FromQuery]PagingParameters paging)
+        public async Task<IActionResult> getPrizeList([FromQuery] PagingParameters paging)
         {
             var pagignationPrize = await _repository.Prize.GetPrize(paging, trackChanges: false);
 
             return Ok(pagignationPrize);
+        }
+
+        /// <summary>
+        /// Get prize for update, call before update prize (Role: Manager)
+        /// </summary>
+        /// <param name="prize_id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{prize_id}/update")]
+        public async Task<IActionResult> GetPrizeForUpdate(int prize_id)
+        {
+            var prize = await _repository.Prize.GetUpdatePrize(prize_id, trackChanges: false);
+
+            if (prize == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "Invalid Prize Id");
+
+            return Ok(prize);
         }
 
         /// <summary>
@@ -62,5 +79,19 @@ namespace ToyWorldSystem.Controller
             return (Ok("Save changes success"));
         }
 
+        /// <summary>
+        /// Update prize (not contain image, Role: Manager)
+        /// </summary>
+        /// <param name="param"></param>
+        /// <param name="prize_id"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("{prize_id}")]
+        public async Task<IActionResult> EditPrize(EditPrizeParameters param, int prize_id)
+        {
+            await _repository.Prize.UpdatePrize(param, prize_id, trackChanges: false);
+            await _repository.SaveAsync();
+            return Ok("Save changes success");
+        }
     }
 }

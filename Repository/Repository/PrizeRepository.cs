@@ -51,5 +51,40 @@ namespace Repository.Repository
         }
 
         public void UpdatePrize(Prize prize) => Update(prize);
+
+        public async Task UpdatePrize(EditPrizeParameters param, int prize_id, bool trackChanges)
+        {
+            var update_prize = await FindByCondition(x => x.Id == prize_id, trackChanges).FirstOrDefaultAsync();
+
+            update_prize.Name = param.Name;
+            update_prize.Description = param.Description;
+            update_prize.Value = param.Value.ToString();
+
+            Update(update_prize);
+        }
+
+        public async Task<PrizeReturn> GetUpdatePrize(int prize_id, bool trackChanges)
+        {
+            var prize = await FindByCondition(x => x.Id == prize_id, trackChanges)
+                .Include(x => x.Images)
+                .FirstOrDefaultAsync();
+
+            if (prize == null) return null;
+
+            var result = new PrizeReturn
+            {
+                Description = prize.Description,
+                Id = prize.Id,
+                Images = prize.Images.Select(y => new ImageReturn
+                {
+                    Id = y.Id,
+                    Url = y.Url
+                }).ToList(),
+                Name = prize.Name,
+                Value = prize.Value
+            };
+
+            return result;
+        }
     }
 }
