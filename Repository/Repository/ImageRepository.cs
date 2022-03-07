@@ -16,6 +16,13 @@ namespace Repository
         {
         }
 
+        public async Task<Image> GetImageById(int image_id, bool trackChanges)
+        {
+            var image = await FindByCondition(x => x.Id == image_id, trackChanges).FirstOrDefaultAsync();
+
+            return image;
+        }
+
         public async Task<List<RewardReturn>> GetImageForRewards(List<RewardReturn> rewards_post_no_image, bool trackChanges)
         {
             var result = new List<RewardReturn>();
@@ -33,6 +40,13 @@ namespace Repository
             }
 
             return result;
+        }
+
+        public async Task Delete(int image_id, bool trackChanges)
+        {
+            var image = await FindByCondition(x => x.Id == image_id, trackChanges).FirstOrDefaultAsync();
+
+            Delete(image);
         }
     }
 }

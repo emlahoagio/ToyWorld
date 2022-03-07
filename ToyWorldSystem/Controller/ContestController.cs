@@ -417,6 +417,10 @@ namespace ToyWorldSystem.Controller
         {
             var account_id = _userAccessor.getAccountId();
 
+            var isRated = await _repositoryManager.Rate.IsRated(post_of_contest_id, account_id, trackChanges: false);
+
+            if (isRated) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Already rated this post");
+
             var rate = new Rate
             {
                 AccountId = account_id,
