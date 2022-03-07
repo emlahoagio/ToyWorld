@@ -75,6 +75,49 @@ namespace Repository.Repository
             return proposal;
         }
 
+        public async Task<Pagination<SendProposal>> GetSendProposal(PagingParameters paging, int account_id, bool trackChanges)
+        {
+            var proposals = await FindByCondition(x => x.AccountId == account_id, trackChanges)
+                .Include(x => x.Account)
+                .Include(x => x.Brand)
+                .Include(x => x.Type)
+                .OrderByDescending(x => x.CreateDate)
+                .ToListAsync();
+
+            var count = proposals.Count;
+
+            var take_items = proposals.Skip((paging.PageNumber - 1) * paging.PageSize).Take(paging.PageSize);
+
+            var list_result = take_items.Select(x => new SendProposal
+            {
+                BrandName = x.Brand == null ? "Unknow Brand" : x.Brand.Name,
+                ContestDescription = x.ContestDescription,
+                Duration = x.Duration,
+                Id = x.Id,
+                Images = x.Images.Select(y => new ImageReturn
+                {
+                    Id = y.Id,
+                    Url = y.Url
+                }).ToList(),
+                Location = x.Location,
+                MaxRegister = x.MaxRegister,
+                MinRegister = x.MinRegister,
+                Status = x.IsWaiting.Value ? "Waiting" : x.Status.Value ? "Accepted" : "Denied",
+                Title = x.Title,
+                TypeName = x.Type == null ? "Unknow Type" : x.Type.Name
+            }).ToList();
+
+            var result = new Pagination<SendProposal>
+            {
+                Count = count,
+                Data = list_result,
+                PageNumber = paging.PageNumber,
+                PageSize = paging.PageSize
+            };
+
+            return result;
+        }
+
         public async Task<Pagination<ProposalInList>> GetWaitingProposal(PagingParameters paging, bool trackChanges)
         {
             var proposals = await FindByCondition(x => x.IsWaiting == true, trackChanges)
