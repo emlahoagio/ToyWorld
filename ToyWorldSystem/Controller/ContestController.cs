@@ -188,6 +188,32 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Get brand to create contest (Role: Manager)
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("create/brand")]
+        public async Task<IActionResult> GetBrandCreateContest()
+        {
+            var brands = await _repositoryManager.Brand.GetBrandCreateContest(trackChanges: false);
+
+            return Ok(brands);
+        }
+        
+        /// <summary>
+        /// Get type to create contest (Role: Manager)
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("create/type")]
+        public async Task<IActionResult> GetTypeCreateContest()
+        {
+            var types = await _repositoryManager.Type.GetTypeCreateContest(trackChanges: false);
+
+            return Ok(types);
+        }
+
+        /// <summary>
         /// Remove subscribers of contest (Role: Manager)
         /// </summary>
         /// <param name="contest_id"></param>
@@ -214,10 +240,10 @@ namespace ToyWorldSystem.Controller
         [Route("{contest_id}/end")]
         public async Task<IActionResult> EndContest(int contest_id)
         {
-            //get list prize descending by value
+            //get list prize descending by value sort des prize
             var prizesList = await _repositoryManager.PrizeContest.GetPrizeForEndContest(contest_id, trackChanges: false);
 
-            //Get list post of contest count star
+            //Get list post of contest count star sort des prize
             var postsOfContestList = await _repositoryManager.PostOfContest.GetPostOfContestForEndContest(contest_id, trackChanges: false);
 
             //For prize get highest star contest
