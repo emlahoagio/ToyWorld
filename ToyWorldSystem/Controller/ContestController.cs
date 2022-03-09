@@ -285,6 +285,10 @@ namespace ToyWorldSystem.Controller
         {
             var accountId = _userAccessor.getAccountId();
 
+            var isOpenContest = await _repositoryManager.Contest.IsOpenContest(contest_id, trackChanges: false);
+
+            if (!isOpenContest) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "This contest is not open for post");
+
             var postOfContest = new PostOfContest
             {
                 AccountId = accountId,
@@ -420,6 +424,13 @@ namespace ToyWorldSystem.Controller
         {
             var account_id = _userAccessor.getAccountId();
 
+            bool can_attemp = await _repositoryManager.Contest.CanJoin(contest_id, trackChanges: false);
+
+            if (!can_attemp)
+            {
+                throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Contest has closed attemp");
+            }
+
             _repositoryManager.JoinContest.Create(
                 new JoinedToContest
                 {
@@ -436,14 +447,19 @@ namespace ToyWorldSystem.Controller
         /// </summary>
         /// <param name="post_of_contest_id"></param>
         /// <param name="parameters"></param>
+        /// <param name="contest_id"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("rate/{post_of_contest_id}")]
-        public async Task<IActionResult> RateTheContest(int post_of_contest_id, RateContestParameters parameters)
+        [Route("{contest_id}/rate/{post_of_contest_id}")]
+        public async Task<IActionResult> RateTheContest(int post_of_contest_id, int contest_id , RateContestParameters parameters)
         {
             var account_id = _userAccessor.getAccountId();
 
             var isRated = await _repositoryManager.Rate.IsRated(post_of_contest_id, account_id, trackChanges: false);
+
+            var isOpenContest = await _repositoryManager.Contest.IsOpenContest(contest_id, trackChanges: false);
+
+            if (!isOpenContest) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Closed contest");
 
             if (isRated) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Already rated this post");
 

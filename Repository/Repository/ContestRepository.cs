@@ -187,5 +187,19 @@ namespace Repository
 
             Update(contest);
         }
+
+        public async Task<bool> CanJoin(int contest_id, bool trackChanges)
+        {
+            var contest = await FindByCondition(x => x.Id == contest_id, trackChanges).FirstOrDefaultAsync();
+
+            return contest.CanAttempt;
+        }
+
+        public async Task<bool> IsOpenContest(int contest_id, bool trackChanges)
+        {
+            var contest = await FindByCondition(x => x.Id == contest_id, trackChanges).FirstOrDefaultAsync();
+
+            return contest.Status == 3 ? true : false;
+        }
     }
 }
