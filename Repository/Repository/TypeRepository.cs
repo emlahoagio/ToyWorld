@@ -35,5 +35,12 @@ namespace Repository
 
             return result;
         }
+
+        public async Task<List<string>> GetTypeCreateContest(bool trackChanges)
+        {
+            var types = await FindAll(trackChanges).OrderBy(x => x.Name).Select(x => x.Name).ToListAsync();
+
+            return types;
+        }
     }
 }
