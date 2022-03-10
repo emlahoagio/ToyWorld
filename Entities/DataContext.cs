@@ -234,11 +234,6 @@ namespace Entities.Models
 
                 entity.Property(e => e.Url).IsUnicode(false);
 
-                entity.HasOne(d => d.Contest)
-                    .WithMany(p => p.Images)
-                    .HasForeignKey(d => d.ContestId)
-                    .HasConstraintName("FK_Image_Contest");
-
                 entity.HasOne(d => d.Post)
                     .WithMany(p => p.Images)
                     .HasForeignKey(d => d.PostId)

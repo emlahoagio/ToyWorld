@@ -10,7 +10,6 @@ namespace Entities.Models
         public Contest()
         {
             Evaluates = new HashSet<Evaluate>();
-            Images = new HashSet<Image>();
             PrizeContests = new HashSet<PrizeContest>();
             Posts = new HashSet<PostOfContest>();
             AccountJoined = new HashSet<JoinedToContest>();
@@ -43,7 +42,6 @@ namespace Entities.Models
         public virtual Proposal Proposal { get; set; }
         public virtual Type Type { get; set; }
         public virtual ICollection<Evaluate> Evaluates { get; set; }
-        public virtual ICollection<Image> Images { get; set; }
         public virtual ICollection<PrizeContest> PrizeContests { get; set; }
         public virtual ICollection<PostOfContest> Posts { get; set; }
         public virtual ICollection<JoinedToContest> AccountJoined { get; set; }
