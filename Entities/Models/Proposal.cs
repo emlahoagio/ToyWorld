@@ -29,6 +29,7 @@ namespace Entities.Models
         public int? AccountId { get; set; }
         public int? TypeId { get; set; }
         public int? BrandId { get; set; }
+        public DateTime CreateDate { get; set; }
 
         public virtual Account Account { get; set; }
         public virtual Brand Brand { get; set; }

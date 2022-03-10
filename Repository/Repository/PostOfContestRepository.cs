@@ -42,7 +42,7 @@ namespace Repository.Repository
                 OwnerAvatar = x.Account.Avatar,
                 OwnerName = x.Account.Name,
                 AverageStar = x.Rates.Select(x => x.NumOfStart).ToList().Average(),
-                IsRated = x.Rates.Where(x => x.AccountId.Value == current_account_id).Count() == 0 ? true : false,
+                IsRated = x.Rates.Where(x => x.AccountId.Value == current_account_id).Count() != 0 ? true : false,
                 Rates = x.Rates.Select(y => new RateReturn
                 {
                     Id = y.Id,

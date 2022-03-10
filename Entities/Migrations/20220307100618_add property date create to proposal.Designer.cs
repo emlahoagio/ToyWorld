@@ -4,14 +4,16 @@ using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Entities.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class TWSContextModelSnapshot : ModelSnapshot
+    [Migration("20220307100618_add property date create to proposal")]
+    partial class addpropertydatecreatetoproposal
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,38 +86,6 @@ namespace Entities.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Brand");
-                });
-
-            modelBuilder.Entity("Entities.Models.Chat", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("AccountId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsReaded")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ReceiverId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SenderId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("When")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountId");
-
-                    b.ToTable("Chat");
                 });
 
             modelBuilder.Entity("Entities.Models.Comment", b =>
@@ -361,6 +331,9 @@ namespace Entities.Migrations
                         .HasColumnName("id")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int?>("ContestId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("PostId")
                         .HasColumnType("int");
 
@@ -384,6 +357,8 @@ namespace Entities.Migrations
                         .HasColumnType("varchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ContestId");
 
                     b.HasIndex("PostId");
 
@@ -883,15 +858,6 @@ namespace Entities.Migrations
                     b.ToTable("Type");
                 });
 
-            modelBuilder.Entity("Entities.Models.Chat", b =>
-                {
-                    b.HasOne("Entities.Models.Account", "Account")
-                        .WithMany("Chats")
-                        .HasForeignKey("AccountId");
-
-                    b.Navigation("Account");
-                });
-
             modelBuilder.Entity("Entities.Models.Comment", b =>
                 {
                     b.HasOne("Entities.Models.Account", "Account")
@@ -1029,6 +995,11 @@ namespace Entities.Migrations
 
             modelBuilder.Entity("Entities.Models.Image", b =>
                 {
+                    b.HasOne("Entities.Models.Contest", "Contest")
+                        .WithMany("Images")
+                        .HasForeignKey("ContestId")
+                        .HasConstraintName("FK_Image_Contest");
+
                     b.HasOne("Entities.Models.Post", "Post")
                         .WithMany("Images")
                         .HasForeignKey("PostId")
@@ -1057,6 +1028,8 @@ namespace Entities.Migrations
                         .WithMany("Images")
                         .HasForeignKey("TradingPostId")
                         .HasConstraintName("FK_Image_TradingPost");
+
+                    b.Navigation("Contest");
 
                     b.Navigation("Post");
 
@@ -1425,8 +1398,6 @@ namespace Entities.Migrations
 
             modelBuilder.Entity("Entities.Models.Account", b =>
                 {
-                    b.Navigation("Chats");
-
                     b.Navigation("Comments");
 
                     b.Navigation("ContestJoined");
@@ -1489,6 +1460,8 @@ namespace Entities.Migrations
                     b.Navigation("AccountJoined");
 
                     b.Navigation("Evaluates");
+
+                    b.Navigation("Images");
 
                     b.Navigation("Notifications");
 

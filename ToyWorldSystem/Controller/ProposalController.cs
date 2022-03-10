@@ -58,6 +58,25 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Get Send proposal (Role: Member)
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("send")]
+        public async Task<IActionResult> GetSendProposal(PagingParameters paging)
+        {
+            int account_id = _userAccessor.getAccountId();
+
+            var proposals = await _repository.Proposal.GetSendProposal(paging, account_id, trackChanges: false);
+
+            if (proposals == null || proposals.Count == 0)
+                throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No proposal send");
+
+            return Ok(proposals);
+        }
+
+        /// <summary>
         /// Create new proposal (don't have prize)(Role: Member)
         /// </summary>
         /// <param name="parameters"></param>

@@ -4,14 +4,16 @@ using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Entities.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class TWSContextModelSnapshot : ModelSnapshot
+    [Migration("20220310084044_remove columm contestid in image")]
+    partial class removecolummcontestidinimage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,38 +86,6 @@ namespace Entities.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Brand");
-                });
-
-            modelBuilder.Entity("Entities.Models.Chat", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("AccountId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsReaded")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ReceiverId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SenderId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("When")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountId");
-
-                    b.ToTable("Chat");
                 });
 
             modelBuilder.Entity("Entities.Models.Comment", b =>
@@ -883,15 +853,6 @@ namespace Entities.Migrations
                     b.ToTable("Type");
                 });
 
-            modelBuilder.Entity("Entities.Models.Chat", b =>
-                {
-                    b.HasOne("Entities.Models.Account", "Account")
-                        .WithMany("Chats")
-                        .HasForeignKey("AccountId");
-
-                    b.Navigation("Account");
-                });
-
             modelBuilder.Entity("Entities.Models.Comment", b =>
                 {
                     b.HasOne("Entities.Models.Account", "Account")
@@ -1425,8 +1386,6 @@ namespace Entities.Migrations
 
             modelBuilder.Entity("Entities.Models.Account", b =>
                 {
-                    b.Navigation("Chats");
-
                     b.Navigation("Comments");
 
                     b.Navigation("ContestJoined");

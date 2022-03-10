@@ -237,23 +237,58 @@ namespace ToyWorldSystem.Controller
         /// </summary>
         /// <param name="post_id">Id of post return in get list, or get detail</param>
         /// <returns></returns>
-        [HttpPut]
-        [Route("disable/{post_id}")]
-        public async Task<IActionResult> DisablePost(int post_id)
+        [HttpDelete]
+        [Route("{post_id}")]
+        public async Task<IActionResult> Delete(int post_id)
         {
-            var accountId = _userAccessor.getAccountId();
-            var account = await _repositoryManager.Account.GetAccountById(accountId, trackChanges: false);
+            var current_account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
 
-            var post = await _repositoryManager.Post.GetDisablePost(post_id, trackChanges: false);
-            if (post == null) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid post");
+            //Get all id to delete
+            var post = await _repositoryManager.Post.GetDeletePost(post_id, trackChanges: false);
 
-            //check not owner, not manager
-            if (post.AccountId != accountId && account.Role != 1)
+            if (post.AccountId != current_account.Id && current_account.Role != 1)
+                throw new ErrorDetails(HttpStatusCode.BadRequest, "You don't have permission to delete");
+
+            //Delete Image
+            if (post.Images != null|| post.Images.Count > 0)
             {
-                throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid request");
+                foreach (var image in post.Images)
+                {
+                    _repositoryManager.Image.Delete(image);
+                }
+                await _repositoryManager.SaveAsync();
             }
 
-            _repositoryManager.Post.DisablePost(post);
+            var commentList = post.Comments;
+
+            //delete comment
+            if (commentList != null || commentList.Count > 0)
+            {
+                foreach (var comment in commentList)
+                {
+                    //delete react comment
+                    foreach (var reactComment in comment.ReactComments)
+                    {
+                        _repositoryManager.ReactComment.DeleteReact(reactComment);
+                    }
+                    await _repositoryManager.SaveAsync();
+                    _repositoryManager.Comment.DeleteComment(comment);
+                }
+                await _repositoryManager.SaveAsync();
+            }
+
+            //Delete react post
+            if(post.ReactPosts != null || post.ReactPosts.Count > 0)
+            {
+                foreach(var reactPost in post.ReactPosts)
+                {
+                    _repositoryManager.ReactPost.DeleteReact(reactPost);
+                }
+                await _repositoryManager.SaveAsync();
+            }
+
+            //delete post
+            _repositoryManager.Post.Delete(post);
             await _repositoryManager.SaveAsync();
 
             return Ok("Save changes success");

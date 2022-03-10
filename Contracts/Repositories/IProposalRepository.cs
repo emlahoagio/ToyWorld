@@ -12,6 +12,7 @@ namespace Contracts.Repositories
         Task<Pagination<ProposalInList>>GetWaitingProposal(PagingParameters paging, bool trackChanges);
         Task<Proposal> GetProposalToDenyOrApprove(int proposal_id, bool trackChanges);
         Task<ProposalCreateContest> GetInformationToCreateContest(int proposal_id, bool trackChanges);
+        Task<Pagination<SendProposal>> GetSendProposal(PagingParameters paging, int account_id, bool trackChanges);
         void DenyProposal(Proposal proposal);
         void ApproveProposal(Proposal proposal);
     }

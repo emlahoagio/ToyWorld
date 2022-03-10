@@ -3,6 +3,7 @@ using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,6 +21,13 @@ namespace Repository
 
             if (result == null)
                 return null;
+
+            return result;
+        }
+
+        public async Task<List<string>> GetBrandCreateContest(bool trackChanges)
+        {
+            var result = await FindAll(trackChanges).OrderBy(x => x.Name).Select(x => x.Name).ToListAsync();
 
             return result;
         }

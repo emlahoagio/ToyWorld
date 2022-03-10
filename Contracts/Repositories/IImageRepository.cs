@@ -13,5 +13,6 @@ namespace Contracts
         Task<Image> GetImageById(int image_id, bool trackChanges);
         void Create(Image image);
         Task Delete(int image_id, bool trackChanges);
+        void Delete(Image image);
     }
 }

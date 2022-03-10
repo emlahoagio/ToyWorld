@@ -259,19 +259,17 @@ namespace Repository
             return post;
         }
 
-        public async Task<Post> GetDisablePost(int post_id, bool trackChanges)
+        public async Task<Post> GetDeletePost(int post_id, bool trackChanges)
         {
-            var post = await FindByCondition(x => x.Id == post_id, trackChanges).FirstOrDefaultAsync();
+            var post = await FindByCondition(x => x.Id == post_id, trackChanges)
+                .Include(x => x.Images)
+                .Include(x => x.Comments).ThenInclude(y => y.ReactComments)
+                .Include(x => x.ReactPosts)
+                .FirstOrDefaultAsync();
 
             if (post == null) return null;
 
             return post;
-        }
-
-        public void DisablePost(Post post)
-        {
-            post.IsDeleted = true;
-            Update(post);
         }
 
         public async Task<Pagination<PostInList>> GetPostByAccountId(int accountId, bool trackChanges, PagingParameters paging)
