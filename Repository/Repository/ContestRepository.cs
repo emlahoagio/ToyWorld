@@ -34,7 +34,6 @@ namespace Repository
                 .Include(x => x.Brand)
                 .Include(x => x.Type)
                 .Include(x => x.Evaluates).ThenInclude(y => y.Account)
-                .Include(x => x.Images)
                 .FirstOrDefaultAsync();
 
             if (contest == null) return null;
@@ -55,11 +54,6 @@ namespace Repository
                     OwnerName = x.Account.Name
                 }).ToList(),
                 Id = contest.Id,
-                Images = contest.Images.Select(x => new ImageReturn
-                {
-                    Id = x.Id,
-                    Url = x.Url
-                }).ToList(),
                 IsOnlineContest = contest.IsOnlineContest,
                 MaxRegistration = contest.MaxRegistration,
                 MinRegistration = contest.MinRegistration,
@@ -78,7 +72,6 @@ namespace Repository
         public async Task<Pagination<ContestInGroup>> GetContestInGroup(int group_id, int account_id, bool trackChanges, PagingParameters paging)
         {
             var contest_in_group = await FindByCondition(x => x.GroupId == group_id && x.StartRegistration >= DateTime.Now.AddDays(-5), trackChanges)
-                .Include(x => x.Images)
                 .ToListAsync();
 
             if (contest_in_group == null) return null;
@@ -104,11 +97,6 @@ namespace Repository
                 StartRegistration = x.StartRegistration,
                 Title = x.Title,
                 Venue = x.Venue,
-                Images = x.Images.Select(y => new ImageReturn
-                {
-                    Id = y.Id,
-                    Url = y.Url
-                }).ToList(),
                 IsJoined = x.AccountJoined.Where(x => x.AccountId == account_id).Count() == 0 ? false : true
             }).ToList();
 
