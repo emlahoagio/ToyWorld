@@ -63,5 +63,6 @@ namespace Entities.Models
         public virtual ICollection<Reward> Rewards { get; set; }
         public virtual ICollection<Rate> Rates { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }
+        public virtual ICollection<Chat> Chats { get; set; }
     }
 }

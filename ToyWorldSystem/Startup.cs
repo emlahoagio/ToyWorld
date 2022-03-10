@@ -19,8 +19,6 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using ToyWorldSystem.Extensions;
-using ToyWorldSystem.Models;
-using ToyWorldSystem.Services;
 
 namespace ToyWorldSystem
 {
@@ -92,15 +90,7 @@ namespace ToyWorldSystem
                 config.RespectBrowserAcceptHeader = true;
                 config.ReturnHttpNotAcceptable = true;
             });
-            //quandtm code FCM
-            services.AddTransient<INotificationService, NotificationService>();
-            services.AddHttpClient<FcmSender>();
-            services.AddHttpClient<ApnSender>();
-
-            // Configure strongly typed settings objects
-            var appSettingsSection = Configuration.GetSection("FcmNotification");
-            services.Configure<FcmNotificationSetting>(appSettingsSection);
-            //end
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ToyWorldSystem", Version = "v1" });

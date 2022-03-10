@@ -22,7 +22,7 @@ namespace Contracts
         IReactCommentRepository ReactComment { get; }
         IFollowAccountRepository FollowAccount { get; }
         IProposalRepository Proposal { get; }
-        IPrizeContestRepository PrizeContest {get;}
+        IPrizeContestRepository PrizeContest { get; }
         IPrizeRepository Prize { get; }
         IProposalPrizeRepository ProposalPrize { get; }
         IErrorLogsRepository ErrorLog { get; }
@@ -30,6 +30,8 @@ namespace Contracts
         IPostOfContestRepository PostOfContest { get; }
         IRewardRepository Reward { get; }
         IRateRepository Rate { get; }
+        INotificationRepository Notification { get; } //quandtm add
+        IChatRepository Chat { get; } //quandtm add
         Task SaveAsync();
     }
 }

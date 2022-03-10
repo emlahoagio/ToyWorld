@@ -1,5 +1,4 @@
 ﻿using Contracts;
-using Contracts.Repositories;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +9,10 @@ namespace ToyWorldSystem.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class NotificationController : ControllerBase
+    public class ChatController : ControllerBase
     {
         private readonly IRepositoryManager _repositoryManager;
-        public NotificationController(IRepositoryManager repositoryManager)
+        public ChatController(IRepositoryManager repositoryManager)
         {
             _repositoryManager = repositoryManager;
         }
@@ -21,9 +20,9 @@ namespace ToyWorldSystem.Controller
         [AllowAnonymous]
         [Route("create")]
         [HttpPost]
-        public async Task<IActionResult> Create(CreateNotificationModel notificationModel)
+        public async Task<IActionResult> Create(CreateChatModel model)
         {
-            _repositoryManager.Notification.CreateNotification(notificationModel);
+            _repositoryManager.Chat.CreateChat(model);
             await _repositoryManager.SaveAsync();
             return Ok("Success");
         }
@@ -33,18 +32,26 @@ namespace ToyWorldSystem.Controller
         [HttpPut]
         public async Task<IActionResult> Update(int id)
         {
-            _repositoryManager.Notification.ChangeNotificationStatus(id);
+            _repositoryManager.Chat.ChangeStatusChat(id);
             await _repositoryManager.SaveAsync();
             return Ok("Success");
         }
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> GetNotificationByOwnerId(int ownerId, bool track)
+        public async Task<IActionResult> GetConversation(int senderId, int receiverId, bool track)
+        {
+            var result = _repositoryManager.Chat.GetConversation(senderId, receiverId, track);
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> Get(int senderId, int receiverId, bool track)
         {
             while (true)
             {
-                var result = _repositoryManager.Notification.GetByAccountId(ownerId, track);
+                var result = _repositoryManager.Chat.GetChatByReceiver(receiverId, track);
                 Thread.Sleep(5000);
                 return Ok(result);
             }
