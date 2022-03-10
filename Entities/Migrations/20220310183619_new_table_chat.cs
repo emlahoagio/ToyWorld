@@ -18,14 +18,20 @@ namespace Entities.Migrations
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     When = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsReaded = table.Column<bool>(type: "bit", nullable: false),
-                    AccountId = table.Column<int>(type: "int", nullable: true)
+                    //AccountId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Chat", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Chat_Account_AccountId",
-                        column: x => x.AccountId,
+                        column: x => x.SenderId,
+                        principalTable: "Account",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Chat_Account_AccountId",
+                        column: x => x.ReceiverId,
                         principalTable: "Account",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
