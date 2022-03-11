@@ -42,12 +42,11 @@ namespace ToyWorldSystem.Controller
         [HttpGet]
         public async Task<IActionResult> GetNotificationByOwnerId(int ownerId, [FromQuery] PagingParameters paging)
         {
-            while (true)
-            {
-                var result = await _repositoryManager.Notification.GetByAccountId(ownerId, paging);
-                Thread.Sleep(5000);
-                return Ok(result);
-            }
+
+            var result = await _repositoryManager.Notification.GetByAccountId(ownerId, paging);
+            //Thread.Sleep(5000);
+            return Ok(result);
+
         }
     }
 }
