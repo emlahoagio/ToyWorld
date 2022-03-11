@@ -1,9 +1,11 @@
 ﻿using Contracts.Repositories;
+using Entities.DataTransferObject;
 using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Repository.Repository
 {
@@ -13,10 +15,10 @@ namespace Repository.Repository
         {
 
         }
-        public void ChangeNotificationStatus(int id)
+        public async Task ChangeNotificationStatus(int id)
         {
-            var noti = FindByCondition(x => x.Id == id, true).FirstOrDefaultAsync();
-            noti.Result.IsReaded = true; //false read not yet, true read already.
+            var noti = await FindByCondition(x => x.Id == id, true).FirstOrDefaultAsync();
+            noti.IsReaded = true; //false read not yet, true read already.
         }
 
         public void CreateNotification(CreateNotificationModel model)
@@ -35,10 +37,26 @@ namespace Repository.Repository
             Create(noti);
         }
 
-        public IEnumerable<Notification> GetByAccountId(int accountId, bool track)
+        public async Task<Pagination<Notification>> GetByAccountId(int accountId, PagingParameters paging)
         {
-            var listNoti = FindByCondition(x => x.AccountId == accountId, track).ToListAsync();
-            return listNoti.Result;
+            var notifies = await FindByCondition(x => x.AccountId == accountId, false)
+                .Include(x => x.Account)
+                .Include(x => x.TradingPost)
+                .Include(x => x.Post)
+                .Include(x => x.PostOfContest)
+                .Include(x => x.Contest)
+                .OrderByDescending(x => x.CreateTime)
+                .ToListAsync();
+
+            var subNoti = notifies.Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize);
+
+            return new Pagination<Notification>
+            {
+                Data = subNoti,
+                PageNumber = paging.PageNumber,
+                PageSize = paging.PageSize
+            };
         }
     }
 }

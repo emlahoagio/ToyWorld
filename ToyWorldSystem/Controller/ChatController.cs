@@ -2,7 +2,6 @@
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace ToyWorldSystem.Controller
@@ -24,7 +23,7 @@ namespace ToyWorldSystem.Controller
         {
             _repositoryManager.Chat.CreateChat(model);
             await _repositoryManager.SaveAsync();
-            return Ok("Success");
+            return Ok("Created");
         }
 
         [AllowAnonymous]
@@ -32,29 +31,18 @@ namespace ToyWorldSystem.Controller
         [HttpPut]
         public async Task<IActionResult> Update(int id)
         {
-            _repositoryManager.Chat.ChangeStatusChat(id);
+            await _repositoryManager.Chat.ChangeStatusChat(id);
             await _repositoryManager.SaveAsync();
-            return Ok("Success");
+            return Ok("Updated");
         }
 
         [AllowAnonymous]
+        [Route("getconversation")]
         [HttpGet]
-        public async Task<IActionResult> GetConversation(int senderId, int receiverId, bool track)
+        public async Task<IActionResult> GetConversation(int senderId, int receiverId, [FromQuery] PagingParameters paging)
         {
-            var result = _repositoryManager.Chat.GetConversation(senderId, receiverId, track);
+            var result = await _repositoryManager.Chat.GetConversation(senderId, receiverId, paging);
             return Ok(result);
-        }
-
-        [AllowAnonymous]
-        [HttpGet]
-        public async Task<IActionResult> Get(int senderId, int receiverId, bool track)
-        {
-            while (true)
-            {
-                var result = _repositoryManager.Chat.GetChatByReceiver(receiverId, track);
-                Thread.Sleep(5000);
-                return Ok(result);
-            }
         }
     }
 }

@@ -1,9 +1,12 @@
 ﻿using Contracts.Repositories;
+using Entities.DataTransferObject;
 using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Repository.Repository
 {
@@ -13,10 +16,10 @@ namespace Repository.Repository
         {
 
         }
-        public void ChangeStatusChat(int id)
+        public async Task ChangeStatusChat(int id)
         {
-            var chat = FindByCondition(x => x.Id == id, false).FirstOrDefaultAsync();
-            chat.Result.IsReaded = true;
+            var chat = await FindByCondition(x => x.Id == id, false).FirstOrDefaultAsync();
+            chat.IsReaded = true;
         }
 
         public void CreateChat(CreateChatModel model)
@@ -32,16 +35,28 @@ namespace Repository.Repository
             Create(chat);
         }
 
-        public IEnumerable<Chat> GetChatByReceiver(int receiverId, bool track)
+        public Task<Pagination<Chat>> GetChatByReceiver(int receiverId)
         {
-            var result = FindByCondition(x => x.ReceiverId == receiverId, track).ToListAsync();
-            return result.Result;
+            throw new NotImplementedException();
         }
 
-        public IEnumerable<Chat> GetConversation(int senderId, int receiverId, bool track)
+        public async Task<Pagination<Chat>> GetConversation(int senderId, int receiverId, PagingParameters paging)
         {
-            var conversation = FindByCondition(x => x.ReceiverId == receiverId && x.SenderId == senderId, track).ToListAsync();
-            return conversation.Result;
+            var conversation = await FindByCondition(x => x.SenderId == senderId && x.ReceiverId == receiverId || x.SenderId == receiverId && x.ReceiverId == senderId, false)
+                .Include(x => x.Sender)
+                .Include(x => x.Receiver)
+                .OrderByDescending(x => x.When)
+                .ToListAsync();
+
+            var subConversation = conversation.Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize);
+
+            return new Pagination<Chat>
+            {
+                Data = subConversation,
+                PageNumber = paging.PageNumber,
+                PageSize = paging.PageSize
+            };
         }
     }
 }

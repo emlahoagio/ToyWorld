@@ -1,5 +1,4 @@
 ﻿using Contracts;
-using Contracts.Repositories;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -33,18 +32,19 @@ namespace ToyWorldSystem.Controller
         [HttpPut]
         public async Task<IActionResult> Update(int id)
         {
-            _repositoryManager.Notification.ChangeNotificationStatus(id);
+            await _repositoryManager.Notification.ChangeNotificationStatus(id);
             await _repositoryManager.SaveAsync();
             return Ok("Success");
         }
 
         [AllowAnonymous]
+        [Route("getnotification")]
         [HttpGet]
-        public async Task<IActionResult> GetNotificationByOwnerId(int ownerId, bool track)
+        public async Task<IActionResult> GetNotificationByOwnerId(int ownerId, [FromQuery] PagingParameters paging)
         {
             while (true)
             {
-                var result = _repositoryManager.Notification.GetByAccountId(ownerId, track);
+                var result = await _repositoryManager.Notification.GetByAccountId(ownerId, paging);
                 Thread.Sleep(5000);
                 return Ok(result);
             }
