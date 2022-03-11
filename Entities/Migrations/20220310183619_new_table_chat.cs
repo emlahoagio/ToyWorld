@@ -24,23 +24,18 @@ namespace Entities.Migrations
                 {
                     table.PrimaryKey("PK_Chat", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Chat_Account_AccountId",
+                        name: "FK_Chat_Account_Sender",
                         column: x => x.SenderId,
                         principalTable: "Account",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Chat_Account_AccountId",
+                        name: "FK_Chat_Account_Receiver",
                         column: x => x.ReceiverId,
                         principalTable: "Account",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Chat_AccountId",
-                table: "Chat",
-                column: "AccountId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

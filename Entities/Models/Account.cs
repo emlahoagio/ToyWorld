@@ -29,6 +29,8 @@ namespace Entities.Models
             Rewards = new HashSet<Reward>();
             Rates = new HashSet<Rate>();
             Notifications = new HashSet<Notification>();
+            ChatSenders = new HashSet<Chat>();
+            ChatReceivers = new HashSet<Chat>();
         }
 
         public int Id { get; set; }
@@ -63,6 +65,7 @@ namespace Entities.Models
         public virtual ICollection<Reward> Rewards { get; set; }
         public virtual ICollection<Rate> Rates { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }
-        public virtual ICollection<Chat> Chats { get; set; }
+        public virtual ICollection<Chat> ChatSenders { get; set; }
+        public virtual ICollection<Chat> ChatReceivers { get; set; }
     }
 }

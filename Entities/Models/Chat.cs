@@ -11,6 +11,7 @@ namespace Entities.Models
         public DateTime When { get; set; }
         public bool IsReaded { get; set; }
 
-        public virtual Account Account { get; set; }
+        public virtual Account Sender { get; set; }
+        public virtual Account Receiver { get; set; }
     }
 }

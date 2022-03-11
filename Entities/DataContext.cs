@@ -44,6 +44,7 @@ namespace Entities.Models
         public virtual DbSet<ErrorLogs> Error { get; set; }
         public virtual DbSet<JoinedToContest> JoinedToContest { get; set; }
         public virtual DbSet<Notification> Notification { get; set; }
+        public virtual DbSet<Chat> Chat { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -558,6 +559,19 @@ namespace Entities.Models
                     .WithMany(p => p.Notifications)
                     .HasForeignKey(d => d.ContestId)
                     .HasConstraintName("FK_Notification_Contest");
+            });
+
+            modelBuilder.Entity<Chat>(entity =>
+            {
+                entity.HasOne(d => d.Sender)
+                    .WithMany(p => p.ChatSenders)
+                    .HasForeignKey(d => d.SenderId)
+                    .HasConstraintName("FK_Chat_Account_Sender");
+
+                entity.HasOne(d => d.Receiver)
+                    .WithMany(p => p.ChatReceivers)
+                    .HasForeignKey(d => d.ReceiverId)
+                    .HasConstraintName("FK_Chat_Account_Receiver");
             });
 
             OnModelCreatingPartial(modelBuilder);
