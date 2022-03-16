@@ -1,4 +1,6 @@
 ﻿using Contracts;
+using Entities.DataTransferObject;
+using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

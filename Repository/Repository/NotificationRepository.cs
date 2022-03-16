@@ -40,23 +40,24 @@ namespace Repository.Repository
         public async Task<Pagination<Notification>> GetByAccountId(int accountId, PagingParameters paging)
         {
             var notifies = await FindByCondition(x => x.AccountId == accountId, false)
-                .Include(x => x.Account)
-                .Include(x => x.TradingPost)
-                .Include(x => x.Post)
-                .Include(x => x.PostOfContest)
-                .Include(x => x.Contest)
+                //.Include(x => x.Account)
+                //.Include(x => x.TradingPost)
+                //.Include(x => x.Post)
+                //.Include(x => x.PostOfContest)
+                //.Include(x => x.Contest)
                 .OrderByDescending(x => x.CreateTime)
                 .ToListAsync();
 
             var subNoti = notifies.Skip((paging.PageNumber - 1) * paging.PageSize)
                 .Take(paging.PageSize);
 
-            return new Pagination<Notification>
+            var result = new Pagination<Notification>
             {
                 Data = subNoti,
                 PageNumber = paging.PageNumber,
                 PageSize = paging.PageSize
             };
+            return result;
         }
     }
 }
