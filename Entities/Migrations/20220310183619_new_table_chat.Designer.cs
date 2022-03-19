@@ -4,14 +4,16 @@ using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Entities.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class TWSContextModelSnapshot : ModelSnapshot
+    [Migration("20220310183619_new_table_chat")]
+    partial class new_table_chat
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -70,51 +72,6 @@ namespace Entities.Migrations
                     b.ToTable("Account");
                 });
 
-            modelBuilder.Entity("Entities.Models.Bill", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("BuyerId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<double?>("ExchangeValue")
-                        .HasColumnType("float");
-
-                    b.Property<bool>("IsExchangeByMoney")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("SellerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ToyOfBuyerName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ToyOfSellerName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TradingPostId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BuyerId");
-
-                    b.HasIndex("SellerId");
-
-                    b.HasIndex("TradingPostId");
-
-                    b.ToTable("Bill");
-                });
-
             modelBuilder.Entity("Entities.Models.Brand", b =>
                 {
                     b.Property<int>("Id")
@@ -138,6 +95,9 @@ namespace Entities.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int?>("AccountId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
@@ -155,9 +115,7 @@ namespace Entities.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ReceiverId");
-
-                    b.HasIndex("SenderId");
+                    b.HasIndex("AccountId");
 
                     b.ToTable("Chat");
                 });
@@ -405,6 +363,9 @@ namespace Entities.Migrations
                         .HasColumnName("id")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int?>("ContestId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("PostId")
                         .HasColumnType("int");
 
@@ -428,6 +389,8 @@ namespace Entities.Migrations
                         .HasColumnType("varchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ContestId");
 
                     b.HasIndex("PostId");
 
@@ -647,9 +610,6 @@ namespace Entities.Migrations
 
                     b.Property<string>("ContestDescription")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("Duration")
                         .HasColumnType("int");
@@ -878,9 +838,6 @@ namespace Entities.Migrations
                     b.Property<DateTime>("PostDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
@@ -930,55 +887,13 @@ namespace Entities.Migrations
                     b.ToTable("Type");
                 });
 
-            modelBuilder.Entity("Entities.Models.Bill", b =>
-                {
-                    b.HasOne("Entities.Models.Account", "Buyer")
-                        .WithMany("BillsBuyer")
-                        .HasForeignKey("BuyerId")
-                        .HasConstraintName("FK_Bill_Account_Buyer")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Entities.Models.Account", "Seller")
-                        .WithMany("BillsSeler")
-                        .HasForeignKey("SellerId")
-                        .HasConstraintName("FK_Bill_Account_Seller")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Entities.Models.TradingPost", "TradingPost")
-                        .WithMany("Bills")
-                        .HasForeignKey("TradingPostId")
-                        .HasConstraintName("FK_Bill_TradingPost")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Buyer");
-
-                    b.Navigation("Seller");
-
-                    b.Navigation("TradingPost");
-                });
-
             modelBuilder.Entity("Entities.Models.Chat", b =>
                 {
-                    b.HasOne("Entities.Models.Account", "Receiver")
-                        .WithMany("ChatReceivers")
-                        .HasForeignKey("ReceiverId")
-                        .HasConstraintName("FK_Chat_Account_Receiver")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("Entities.Models.Account", "Account")
+                        .WithMany("Chats")
+                        .HasForeignKey("AccountId");
 
-                    b.HasOne("Entities.Models.Account", "Sender")
-                        .WithMany("ChatSenders")
-                        .HasForeignKey("SenderId")
-                        .HasConstraintName("FK_Chat_Account_Sender")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Receiver");
-
-                    b.Navigation("Sender");
+                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("Entities.Models.Comment", b =>
@@ -1118,6 +1033,11 @@ namespace Entities.Migrations
 
             modelBuilder.Entity("Entities.Models.Image", b =>
                 {
+                    b.HasOne("Entities.Models.Contest", "Contest")
+                        .WithMany("Images")
+                        .HasForeignKey("ContestId")
+                        .HasConstraintName("FK_Image_Contest");
+
                     b.HasOne("Entities.Models.Post", "Post")
                         .WithMany("Images")
                         .HasForeignKey("PostId")
@@ -1146,6 +1066,8 @@ namespace Entities.Migrations
                         .WithMany("Images")
                         .HasForeignKey("TradingPostId")
                         .HasConstraintName("FK_Image_TradingPost");
+
+                    b.Navigation("Contest");
 
                     b.Navigation("Post");
 
@@ -1514,13 +1436,7 @@ namespace Entities.Migrations
 
             modelBuilder.Entity("Entities.Models.Account", b =>
                 {
-                    b.Navigation("BillsBuyer");
-
-                    b.Navigation("BillsSeler");
-
-                    b.Navigation("ChatReceivers");
-
-                    b.Navigation("ChatSenders");
+                    b.Navigation("Chats");
 
                     b.Navigation("Comments");
 
@@ -1584,6 +1500,8 @@ namespace Entities.Migrations
                     b.Navigation("AccountJoined");
 
                     b.Navigation("Evaluates");
+
+                    b.Navigation("Images");
 
                     b.Navigation("Notifications");
 
@@ -1658,8 +1576,6 @@ namespace Entities.Migrations
 
             modelBuilder.Entity("Entities.Models.TradingPost", b =>
                 {
-                    b.Navigation("Bills");
-
                     b.Navigation("Comments");
 
                     b.Navigation("Images");

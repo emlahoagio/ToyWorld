@@ -1,20 +1,17 @@
 ﻿using Contracts;
-using Entities.DataTransferObject;
-using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace ToyWorldSystem.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class NotificationController : ControllerBase
+    public class ChatController : ControllerBase
     {
         private readonly IRepositoryManager _repositoryManager;
-        public NotificationController(IRepositoryManager repositoryManager)
+        public ChatController(IRepositoryManager repositoryManager)
         {
             _repositoryManager = repositoryManager;
         }
@@ -22,11 +19,11 @@ namespace ToyWorldSystem.Controller
         [AllowAnonymous]
         [Route("create")]
         [HttpPost]
-        public async Task<IActionResult> Create(CreateNotificationModel notificationModel)
+        public async Task<IActionResult> Create(CreateChatModel model)
         {
-            _repositoryManager.Notification.CreateNotification(notificationModel);
+            _repositoryManager.Chat.CreateChat(model);
             await _repositoryManager.SaveAsync();
-            return Ok("Success");
+            return Ok("Created");
         }
 
         [AllowAnonymous]
@@ -34,21 +31,18 @@ namespace ToyWorldSystem.Controller
         [HttpPut]
         public async Task<IActionResult> Update(int id)
         {
-            await _repositoryManager.Notification.ChangeNotificationStatus(id);
+            await _repositoryManager.Chat.ChangeStatusChat(id);
             await _repositoryManager.SaveAsync();
-            return Ok("Success");
+            return Ok("Updated");
         }
 
         [AllowAnonymous]
-        [Route("getnotification")]
+        [Route("getconversation")]
         [HttpGet]
-        public async Task<IActionResult> GetNotificationByOwnerId(int ownerId, [FromQuery] PagingParameters paging)
+        public async Task<IActionResult> GetConversation(int senderId, int receiverId, [FromQuery] PagingParameters paging)
         {
-
-            var result = await _repositoryManager.Notification.GetByAccountId(ownerId, paging);
-            //Thread.Sleep(5000);
+            var result = await _repositoryManager.Chat.GetConversation(senderId, receiverId, paging);
             return Ok(result);
-
         }
     }
 }

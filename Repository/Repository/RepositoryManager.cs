@@ -41,6 +41,9 @@ namespace Repository
         private IPostOfContestRepository _postOfContestRepository;
         private IRewardRepository _rewardRepository;
         private IRateRepository _rateRepository;
+        private IBillRepository _billRepository;
+        private INotificationRepository _notificationRepository;
+        private IChatRepository _chatRepository;
 
         public RepositoryManager(DataContext context)
         {
@@ -58,9 +61,9 @@ namespace Repository
         {
             get
             {
-                if(_accountRepository == null)
+                if (_accountRepository == null)
                 {
-                    if(_jwtSupport == null)
+                    if (_jwtSupport == null)
                     {
                         _jwtSupport = new JwtServices(_configuration);
                     }
@@ -74,7 +77,7 @@ namespace Repository
         {
             get
             {
-                if(_toyRepository == null)
+                if (_toyRepository == null)
                 {
                     _toyRepository = new ToyRepository(_context, _configuration, this);
                 }
@@ -86,7 +89,7 @@ namespace Repository
         {
             get
             {
-                if(_typeRepository == null)
+                if (_typeRepository == null)
                 {
                     _typeRepository = new TypeRepository(_context);
                 }
@@ -97,7 +100,7 @@ namespace Repository
         {
             get
             {
-                if(_brandRepository == null)
+                if (_brandRepository == null)
                 {
                     _brandRepository = new BrandRepository(_context);
                 }
@@ -120,7 +123,7 @@ namespace Repository
         {
             get
             {
-                if(_contestRepository == null)
+                if (_contestRepository == null)
                 {
                     _contestRepository = new ContestRepository(_context);
                 }
@@ -132,7 +135,7 @@ namespace Repository
         {
             get
             {
-                if(_imageRepository == null)
+                if (_imageRepository == null)
                 {
                     _imageRepository = new ImageRepository(_context);
                 }
@@ -144,7 +147,7 @@ namespace Repository
         {
             get
             {
-                if(_postRepository == null)
+                if (_postRepository == null)
                 {
                     _postRepository = new PostRepository(_context);
                 }
@@ -156,7 +159,7 @@ namespace Repository
         {
             get
             {
-                if(_reactPostRepository == null)
+                if (_reactPostRepository == null)
                 {
                     _reactPostRepository = new ReactPostRepository(_context);
                 }
@@ -168,7 +171,7 @@ namespace Repository
         {
             get
             {
-                if(_tradingPostRepository == null)
+                if (_tradingPostRepository == null)
                 {
                     _tradingPostRepository = new TradingPostRepository(_context);
                 }
@@ -180,19 +183,19 @@ namespace Repository
         {
             get
             {
-                if(_commentRepository == null)
+                if (_commentRepository == null)
                 {
                     _commentRepository = new CommentRepository(_context);
                 }
                 return _commentRepository;
             }
         }
-        
+
         public IReactCommentRepository ReactComment
         {
             get
             {
-                if(_reactCommentRepository == null)
+                if (_reactCommentRepository == null)
                 {
                     _reactCommentRepository = new ReactCommentRepository(_context);
                 }
@@ -204,7 +207,7 @@ namespace Repository
         {
             get
             {
-                if(_followAccountRepository == null)
+                if (_followAccountRepository == null)
                 {
                     _followAccountRepository = new FollowAccountRepository(_context);
                 }
@@ -216,7 +219,7 @@ namespace Repository
         {
             get
             {
-                if(_proposalRepository == null)
+                if (_proposalRepository == null)
                 {
                     _proposalRepository = new ProposalRepository(_context);
                 }
@@ -228,7 +231,7 @@ namespace Repository
         {
             get
             {
-                if(_prizeContestRepository == null)
+                if (_prizeContestRepository == null)
                 {
                     _prizeContestRepository = new PrizeContestRepository(_context);
                 }
@@ -240,7 +243,7 @@ namespace Repository
         {
             get
             {
-                if(_prizeRepository == null)
+                if (_prizeRepository == null)
                 {
                     _prizeRepository = new PrizeRepository(_context);
                 }
@@ -262,7 +265,7 @@ namespace Repository
         {
             get
             {
-                if(_errorLogsRepository == null)
+                if (_errorLogsRepository == null)
                 {
                     _errorLogsRepository = new ErrorLogsRepository(_context);
                 }
@@ -274,7 +277,7 @@ namespace Repository
         {
             get
             {
-                if(_joinedContestRepository == null)
+                if (_joinedContestRepository == null)
                 {
                     _joinedContestRepository = new JoinedContestRepository(_context);
                 }
@@ -309,6 +312,36 @@ namespace Repository
                 if (_rateRepository == null)
                     _rateRepository = new RateRepository(_context);
                 return _rateRepository;
+            }
+        }
+
+        public INotificationRepository Notification
+        {
+            get
+            {
+                if (_notificationRepository == null)
+                    _notificationRepository = new NotificationRepository(_context);
+                return _notificationRepository;
+            }
+        }
+
+        public IChatRepository Chat
+        {
+            get
+            {
+                if (_chatRepository == null) 
+                    _chatRepository = new ChatRepository(_context);
+                return _chatRepository;
+            }
+        }
+
+        public IBillRepository Bill
+        {
+            get
+            {
+                if (_billRepository == null)
+                    _billRepository = new BillRepository(_context);
+                return _billRepository; 
             }
         }
 
