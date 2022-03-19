@@ -92,7 +92,8 @@ namespace Repository.Repository
                     ToyName = x.ToyName,
                     Type = x.Type == null ? "Unknow" : x.Type.Name,
                     IsLikedPost = x.ReactTradingPosts.Where(y => y.AccountId == account_id).Count() == 0 ? false : true,
-                    Value = x.Value
+                    Value = x.Value,
+                    Content = x.Content
                 })
             };
 
