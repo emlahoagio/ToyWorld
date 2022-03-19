@@ -22,5 +22,7 @@ namespace Entities.DataTransferObject
         public int NoOfReact { get; set; }
         public int NoOfComment { get; set; }
         public bool IsLikedPost { get; set; }
+        public string Title { get; set; }
+        public string Phone { get; set; }
     }
 }
