@@ -34,6 +34,7 @@ namespace Repository.Repository
                 ToyId = toy_id,
                 BrandId = brand_id,
                 TypeId = type_id,
+                GroupId = group_id,
                 Images = tradingPost.ImagesLink.Select(x => new Image { Url = x }).ToList()
             };
 
@@ -91,6 +92,7 @@ namespace Repository.Repository
                     ToyName = x.ToyName,
                     Type = x.Type == null ? "Unknow" : x.Type.Name,
                     IsLikedPost = x.ReactTradingPosts.Where(y => y.AccountId == account_id).Count() == 0 ? false : true,
+                    Value = x.Value
                 })
             };
 
@@ -134,6 +136,14 @@ namespace Repository.Repository
             tradingPost.Value = update_infor.Value;
             tradingPost.Phone = update_infor.Phone;
             Update(tradingPost);
+        }
+
+        public async Task UpdateTradingStatus(int trading_post_id, bool trackChanges)
+        {
+            var trading_post = await FindByCondition(x => x.Id == trading_post_id, trackChanges).FirstOrDefaultAsync();
+
+            trading_post.Status = 1;
+            Update(trading_post);
         }
     }
 }

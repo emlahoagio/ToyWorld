@@ -1,6 +1,7 @@
 ﻿using Contracts;
 using Entities.DataTransferObject;
 using Entities.ErrorModel;
+using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -108,14 +109,29 @@ namespace ToyWorldSystem.Controller
 
             var toy = await _repositoryManager.Toy.GetToyByName(tradingPost.ToyName, trackChanges: false);
 
-            var brand = await _repositoryManager.Brand.GetBrandByName(tradingPost.BrandName, trackChanges: false);
+            var brand = await _repositoryManager.Brand
+    .GetBrandByName(tradingPost.BrandName == null ? "Unknow Brand" : tradingPost.BrandName, trackChanges: false);
+            if (brand == null)
+            {
+                _repositoryManager.Brand.CreateBrand(new Brand { Name = tradingPost.BrandName });
+                await _repositoryManager.SaveAsync();
+                brand = await _repositoryManager.Brand.GetBrandByName(tradingPost.BrandName, trackChanges: false);
+            }
 
-            var type = await _repositoryManager.Type.GetTypeByName(tradingPost.TypeName, trackChanges: false);
-            
+            var type = await _repositoryManager.Type
+                .GetTypeByName(tradingPost.TypeName == null ? "Unknow Type" : tradingPost.TypeName, trackChanges: false);
+            if (type == null)
+            {
+                _repositoryManager.Type.CreateType(new Entities.Models.Type { Name = tradingPost.TypeName });
+                await _repositoryManager.SaveAsync();
+                type = await _repositoryManager.Type.GetTypeByName(tradingPost.BrandName, trackChanges: false);
+            }
+
             if (toy != null)
             {
                 _repositoryManager.TradingPost.CreateTradingPost(tradingPost, group_id, account_id, toy.Id, brand.Id, type.Id);
-            }else
+            }
+            else
             {
                 _repositoryManager.TradingPost.CreateTradingPost(tradingPost, group_id, account_id, 3, brand.Id, type.Id);
             }
@@ -156,7 +172,7 @@ namespace ToyWorldSystem.Controller
         /// <returns></returns>
         [HttpPut]
         [Route("{tradingpost_id}")]
-        public async Task<IActionResult> UpdateAllInformationTradingPost([FromBody]UpdateTradingPostParameters update_infor, int tradingpost_id)
+        public async Task<IActionResult> UpdateAllInformationTradingPost([FromBody] UpdateTradingPostParameters update_infor, int tradingpost_id)
         {
             var current_login_account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
 
@@ -165,13 +181,14 @@ namespace ToyWorldSystem.Controller
             if (update_tradingpost.AccountId != current_login_account.Id)
                 throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Invalid request");
 
-            if(update_infor.ToyName != update_tradingpost.ToyName)
+            if (update_infor.ToyName != update_tradingpost.ToyName)
             {
                 var newToyOfTrading = await _repositoryManager.Toy.GetToyByName(update_infor.ToyName, trackChanges: false);
-                if(newToyOfTrading == null)
+                if (newToyOfTrading == null)
                 {
                     update_tradingpost.ToyId = 3;
-                }else
+                }
+                else
                 {
                     update_tradingpost.ToyId = newToyOfTrading.Id;
                 }
@@ -183,7 +200,7 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
-    
+
         /// <summary>
         /// Disable trading post
         /// </summary>

@@ -27,6 +27,7 @@ namespace Entities.Models
         public bool IsExchanged { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime PostDate { get; set; }
+        public int Status { get; set; }
         public int GroupId { get; set; }
         public int? AccountId { get; set; }
         public int? ToyId { get; set; }

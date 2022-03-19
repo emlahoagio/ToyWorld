@@ -32,6 +32,7 @@ namespace Contracts
         IRateRepository Rate { get; }
         INotificationRepository Notification { get; } //quandtm add
         IChatRepository Chat { get; } //quandtm add
+        IBillRepository Bill { get; }
         Task SaveAsync();
     }
 }

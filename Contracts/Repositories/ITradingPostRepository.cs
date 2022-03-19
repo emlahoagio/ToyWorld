@@ -14,6 +14,7 @@ namespace Contracts.Repositories
         void ExchangedTradingPost(TradingPost tradingPost);
         void UpdateTradingPost(UpdateTradingPostParameters update_infor, TradingPost tradingPost);
         void Disable(TradingPost tradingPost);
+        Task UpdateTradingStatus(int trading_post_id, bool trackChanges);
         Task<Pagination<TradingPostInList>> GetTradingPostInGroup(int group_id, PagingParameters paging, bool trackChanges, int account_id);
         Task<TradingPost> GetTradingPostById(int tradingpost_id, bool trackChanges);
         Task<UpdateTradingPost> GetUpdateDetail(int tradingpost_id, bool trackChanges);

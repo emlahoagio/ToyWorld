@@ -41,7 +41,7 @@ namespace Repository
         private IPostOfContestRepository _postOfContestRepository;
         private IRewardRepository _rewardRepository;
         private IRateRepository _rateRepository;
-
+        private IBillRepository _billRepository;
         private INotificationRepository _notificationRepository;
         private IChatRepository _chatRepository;
 
@@ -332,6 +332,16 @@ namespace Repository
                 if (_chatRepository == null) 
                     _chatRepository = new ChatRepository(_context);
                 return _chatRepository;
+            }
+        }
+
+        public IBillRepository Bill
+        {
+            get
+            {
+                if (_billRepository == null)
+                    _billRepository = new BillRepository(_context);
+                return _billRepository; 
             }
         }
 
