@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using ToyWorldSystem.Hubs;
+using ToyWorldSystem.Hubs.Clients;
 
-namespace Message.Hubs
+namespace ToyWorldSystem.Hubs
 {
     public class ChatHub : Hub<IChatClient>
     {
