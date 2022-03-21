@@ -43,6 +43,14 @@ namespace ToyWorldSystem.Controller
             };
 
             _repositoryManager.Comment.CreateComment(comment);
+            //var account = _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), false).Result;
+            //var noti = new CreateNotificationModel
+            //{
+            //    PostId = param.PostId,
+            //    Content = account.Name + " has commented on your post",
+            //    AccountId = 0,
+            //};
+            //_repositoryManager.Notification.CreateNotification(noti);
 
             await _repositoryManager.SaveAsync();
 

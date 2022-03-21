@@ -2,7 +2,11 @@
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
+using ToyWorldSystem.Hubs;
+using ToyWorldSystem.Hubs.Clients;
+using ToyWorldSystem.Models;
 
 namespace ToyWorldSystem.Controller
 {
@@ -10,39 +14,19 @@ namespace ToyWorldSystem.Controller
     [ApiController]
     public class ChatController : ControllerBase
     {
-        private readonly IRepositoryManager _repositoryManager;
-        public ChatController(IRepositoryManager repositoryManager)
+        private readonly IHubContext<ChatHub, IChatClient> _chatHub;
+
+        public ChatController(IHubContext<ChatHub, IChatClient> chatHub)
         {
-            _repositoryManager = repositoryManager;
+            _chatHub = chatHub;
         }
 
-        [AllowAnonymous]
-        [Route("create")]
-        [HttpPost]
-        public async Task<IActionResult> Create(CreateChatModel model)
+        [HttpPost("messages")]
+        public async Task Post(ChatModel message)
         {
-            _repositoryManager.Chat.CreateChat(model);
-            await _repositoryManager.SaveAsync();
-            return Ok("Created");
-        }
+            // run some logic...
 
-        [AllowAnonymous]
-        [Route("changestatus")]
-        [HttpPut]
-        public async Task<IActionResult> Update(int id)
-        {
-            await _repositoryManager.Chat.ChangeStatusChat(id);
-            await _repositoryManager.SaveAsync();
-            return Ok("Updated");
-        }
-
-        [AllowAnonymous]
-        [Route("getconversation")]
-        [HttpGet]
-        public async Task<IActionResult> GetConversation(int senderId, int receiverId, [FromQuery] PagingParameters paging)
-        {
-            var result = await _repositoryManager.Chat.GetConversation(senderId, receiverId, paging);
-            return Ok(result);
+            await _chatHub.Clients.All.ReceiveMessage(message);
         }
     }
 }
