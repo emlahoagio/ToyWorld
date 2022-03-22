@@ -565,10 +565,10 @@ namespace Entities.Models
             //quandtm modify
             modelBuilder.Entity<Chat>(entity =>
             {
-                entity.HasOne(d => d.Account)
-                    .WithMany(p => p.Chats)
-                    .HasForeignKey(d => d.AccountId)
-                    .HasConstraintName("FK_Chat_Account_UserId");
+                entity.HasOne(d => d.Sender)
+                    .WithMany(p => p.Senders)
+                    .HasForeignKey(d => d.SenderId)
+                    .HasConstraintName("FK_Chat_Account_SenderId");
             });
 
             modelBuilder.Entity<Bill>(entity =>

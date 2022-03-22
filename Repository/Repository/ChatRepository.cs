@@ -25,10 +25,10 @@ namespace Repository.Repository
         {
             var chat = new Chat
             {
-                AccountId = model.UserId,
+                SenderId = model.UserId,
                 Content = model.Content,
                 RoomName = model.RoomName,
-                When = DateTime.Now,
+                SendDate = DateTime.Now,
                 IsRead = false
             };
             Create(chat);
@@ -42,7 +42,7 @@ namespace Repository.Repository
         public async Task<Pagination<Chat>> GetConversation(string roomName, PagingParameters paging)
         {
             var conversation = await FindByCondition(x => x.RoomName == roomName, false)
-                .OrderByDescending(x => x.When)
+                .OrderByDescending(x => x.SendDate)
                 .ToListAsync();
 
             var subConversation = conversation.Skip((paging.PageNumber - 1) * paging.PageSize)

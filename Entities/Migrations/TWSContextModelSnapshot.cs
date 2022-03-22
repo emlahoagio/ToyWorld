@@ -138,9 +138,6 @@ namespace Entities.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AccountId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
@@ -150,12 +147,15 @@ namespace Entities.Migrations
                     b.Property<string>("RoomName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("When")
+                    b.Property<DateTime>("SendDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("SenderId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountId");
+                    b.HasIndex("SenderId");
 
                     b.ToTable("Chat");
                 });
@@ -960,14 +960,14 @@ namespace Entities.Migrations
 
             modelBuilder.Entity("Entities.Models.Chat", b =>
                 {
-                    b.HasOne("Entities.Models.Account", "Account")
-                        .WithMany("Chats")
-                        .HasForeignKey("AccountId")
-                        .HasConstraintName("FK_Chat_Account_UserId")
+                    b.HasOne("Entities.Models.Account", "Sender")
+                        .WithMany("Senders")
+                        .HasForeignKey("SenderId")
+                        .HasConstraintName("FK_Chat_Account_SenderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Account");
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("Entities.Models.Comment", b =>
@@ -1507,8 +1507,6 @@ namespace Entities.Migrations
 
                     b.Navigation("BillsSeler");
 
-                    b.Navigation("Chats");
-
                     b.Navigation("Comments");
 
                     b.Navigation("ContestJoined");
@@ -1546,6 +1544,8 @@ namespace Entities.Migrations
                     b.Navigation("ReactTradingPosts");
 
                     b.Navigation("Rewards");
+
+                    b.Navigation("Senders");
 
                     b.Navigation("TradingPosts");
                 });

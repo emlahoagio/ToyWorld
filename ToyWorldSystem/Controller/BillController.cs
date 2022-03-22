@@ -106,5 +106,20 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+
+        //[HttpPut]
+        //[Route("{bill_id}/status")]
+        //public async Task<IActionResult> UpdateBillStatus(int bill_id, int update_status)
+        //{
+        //    var bill = _repository.Bill.GetAcceptOrDeny(bill_id);
+        //    switch (update_status)
+        //    {
+        //        case 2:
+        //            {
+        //                await _repository.Bill.ClosedBill();
+        //                break;
+        //            }
+        //    }
+        //}
     }
 }
