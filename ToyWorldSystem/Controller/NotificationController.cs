@@ -19,7 +19,6 @@ namespace ToyWorldSystem.Controller
             _repositoryManager = repositoryManager;
         }
 
-        [AllowAnonymous]
         [Route("create")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateNotificationModel notificationModel)
@@ -29,7 +28,6 @@ namespace ToyWorldSystem.Controller
             return Ok("Success");
         }
 
-        [AllowAnonymous]
         [Route("changestatus")]
         [HttpPut]
         public async Task<IActionResult> Update(int id)
@@ -39,7 +37,6 @@ namespace ToyWorldSystem.Controller
             return Ok("Success");
         }
 
-        [AllowAnonymous]
         [Route("getnotification")]
         [HttpGet]
         public async Task<IActionResult> GetNotificationByOwnerId(int ownerId, [FromQuery] PagingParameters paging)
