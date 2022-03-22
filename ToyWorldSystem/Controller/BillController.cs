@@ -100,26 +100,51 @@ namespace ToyWorldSystem.Controller
             else
             {
                 _repository.Bill.AcceptBill(bill);
-                await _repository.TradingPost.UpdateTradingStatus(bill.TradingPostId, trackChanges: false);
+                await _repository.TradingPost.UpdateTradingStatus(bill.TradingPostId, 1, trackChanges: false);
             }
             await _repository.SaveAsync();
 
             return Ok("Save changes success");
         }
 
-        //[HttpPut]
-        //[Route("{bill_id}/status")]
-        //public async Task<IActionResult> UpdateBillStatus(int bill_id, int update_status)
-        //{
-        //    var bill = _repository.Bill.GetAcceptOrDeny(bill_id);
-        //    switch (update_status)
-        //    {
-        //        case 2:
-        //            {
-        //                await _repository.Bill.ClosedBill();
-        //                break;
-        //            }
-        //    }
-        //}
+        /// <summary>
+        /// Update bill to CANCEL or CLOSED (Role: Manager, member => Only seller can update)
+        /// </summary>
+        /// <param name="bill_id"></param>
+        /// <param name="update_status">2: Close, 3: Cancel (2 and 3 ONLY)</param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("{bill_id}/status")]
+        public async Task<IActionResult> UpdateBillStatus(int bill_id, int update_status)
+        {
+            var bill = await _repository.Bill.GetAcceptOrDeny(bill_id, trackChanges: false);
+
+            if(bill.SellerId != _userAccessor.getAccountId())
+            {
+                throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to change");
+            }
+
+            switch (update_status)
+            {
+                case 2:
+                    {
+                        _repository.Bill.UpdateBillStatus(bill, update_status);
+                        await _repository.TradingPost.UpdateTradingStatus(bill.TradingPostId, 2, trackChanges: false);
+                        break;
+                    };
+                case 3:
+                    {
+                        _repository.Bill.UpdateBillStatus(bill, update_status);
+                        await _repository.TradingPost.UpdateTradingStatus(bill.TradingPostId, 0, trackChanges: false);
+                        break;
+                    }
+                default:
+                    {
+                        throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Invalid update status of bill");
+                    }
+            }
+            await _repository.SaveAsync();
+            return Ok("Save changes success");      
+        }
     }
 }

@@ -64,5 +64,11 @@ namespace Repository.Repository
 
             return result.Id;
         }
+
+        public void UpdateBillStatus(Bill bill, int update_status)
+        {
+            bill.Status = update_status;
+            Update(bill);
+        }
     }
 }

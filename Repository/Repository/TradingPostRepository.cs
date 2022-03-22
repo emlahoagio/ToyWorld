@@ -141,11 +141,11 @@ namespace Repository.Repository
             Update(tradingPost);
         }
 
-        public async Task UpdateTradingStatus(int trading_post_id, bool trackChanges)
+        public async Task UpdateTradingStatus(int trading_post_id, int trading_status, bool trackChanges)
         {
             var trading_post = await FindByCondition(x => x.Id == trading_post_id, trackChanges).FirstOrDefaultAsync();
 
-            trading_post.Status = 1;
+            trading_post.Status = trading_status;
             Update(trading_post);
         }
     }
