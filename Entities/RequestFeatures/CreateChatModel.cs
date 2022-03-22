@@ -6,8 +6,8 @@ namespace Entities.RequestFeatures
 {
     public class CreateChatModel
     {
-        public int SenderId { get; set; }
-        public int ReceiverId { get; set; }
+        public int UserId { get; set; }
+        public string RoomName { get; set; }
         public string Content { get; set; }
     }
 }

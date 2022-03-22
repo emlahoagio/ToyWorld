@@ -10,7 +10,7 @@ namespace Contracts.Repositories
     {
         void CreateChat(CreateChatModel model);
         Task ChangeStatusChat(int id);
-        Task<Pagination<Chat>> GetConversation(int senderId, int receiverId, PagingParameters paging);
+        Task<Pagination<Chat>> GetConversation(string roomName, PagingParameters paging);
         Task<Pagination<Chat>> GetChatByReceiver(int receiverId); //realtime
     }
 }
