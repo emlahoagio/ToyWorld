@@ -40,9 +40,7 @@ namespace ToyWorldSystem.Controller
         public async Task<IActionResult> GetListAccount([FromQuery] PagingParameters paging)
         {
             var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
-            //quandtm modify
-            if (current_account.Role == 2) throw new ErrorDetails(HttpStatusCode.BadRequest, "Not enough role to get");
-
+            
             var result = await _repository.Account.GetListAccount(paging, trackChanges: false);
 
             if (result == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No more records in this page");
