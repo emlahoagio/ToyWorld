@@ -562,17 +562,13 @@ namespace Entities.Models
                     .HasConstraintName("FK_Notification_Contest");
             });
 
+            //quandtm modify
             modelBuilder.Entity<Chat>(entity =>
             {
-                entity.HasOne(d => d.Sender)
-                    .WithMany(p => p.ChatSenders)
-                    .HasForeignKey(d => d.SenderId)
-                    .HasConstraintName("FK_Chat_Account_Sender");
-
-                entity.HasOne(d => d.Receiver)
-                    .WithMany(p => p.ChatReceivers)
-                    .HasForeignKey(d => d.ReceiverId)
-                    .HasConstraintName("FK_Chat_Account_Receiver");
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.Chats)
+                    .HasForeignKey(d => d.AccountId)
+                    .HasConstraintName("FK_Chat_Account_UserId");
             });
 
             modelBuilder.Entity<Bill>(entity =>
