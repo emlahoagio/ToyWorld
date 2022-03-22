@@ -9,10 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Repository;
 using Repository.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ToyWorldSystem.Extensions
 {
@@ -23,8 +19,9 @@ namespace ToyWorldSystem.Extensions
             => services.AddCors(option =>
             {
                 option.AddPolicy("CorsPolicy", builder =>
-                builder.AllowAnyOrigin()
+                builder.WithOrigins("http://localhost:3000")
                 .AllowAnyMethod()
+                .AllowCredentials()
                 .AllowAnyHeader());
             });
 

@@ -19,6 +19,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using ToyWorldSystem.Extensions;
+using ToyWorldSystem.Hubs;
 
 namespace ToyWorldSystem
 {
@@ -58,6 +59,10 @@ namespace ToyWorldSystem
             services.ConfigureHasingServices();
 
             services.ConfigureHangFire(Configuration);
+
+            //quandtm realtime signalr
+            services.AddSignalR();
+            services.AddSingleton<IDictionary<string, UserConnection>>(opts => new Dictionary<string, UserConnection>());
 
             //Add verify jwt services
             var tokenValidationParams = new TokenValidationParameters
@@ -168,6 +173,7 @@ namespace ToyWorldSystem
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<ChatHub>("/chat");
             });
         }
     }
