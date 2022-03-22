@@ -41,7 +41,7 @@ namespace ToyWorldSystem.Controller
         {
             var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
             //quandtm modify
-            if (current_account.Role != 0 || current_account.Role != 2) throw new ErrorDetails(HttpStatusCode.BadRequest, "Not enough role to get");
+            //if (current_account.Role != 0 || current_account.Role != 2) throw new ErrorDetails(HttpStatusCode.BadRequest, "Not enough role to get");
 
             var result = await _repository.Account.GetListAccount(paging, trackChanges: false);
 
