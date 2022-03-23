@@ -142,6 +142,32 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Feedback trading post (Role: Member)
+        /// </summary>
+        /// <param name="trading_post_id">Trading post you want to feedback</param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("{trading_post_id}/feedback")]
+        public async Task<IActionResult> FeedbackPost(int trading_post_id, string content)
+        {
+            var sender_id = _userAccessor.getAccountId();
+
+            var feedback = new Feedback
+            {
+                TradingPostId = trading_post_id,
+                Content = content,
+                SenderId = sender_id,
+                SendDate = DateTime.Now
+            };
+
+            _repositoryManager.Feedback.Create(feedback);
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
         /// Update trading post to is exchanged (Role: Manager, Member)
         /// </summary>
         /// <param name="tradingpost_id">id of post want to update</param>

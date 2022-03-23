@@ -35,6 +35,7 @@ namespace Contracts
         IBillRepository Bill { get; }
         IRateSellerRepository RateSeller { get; }
         IEvaluateContestRepository EvaluateContest { get; }
+        IFeedbackRepository Feedback { get; }
         Task SaveAsync();
     }
 }

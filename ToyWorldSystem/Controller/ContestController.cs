@@ -416,6 +416,32 @@ namespace ToyWorldSystem.Controller
             return Ok("Save changes success");
         }
 
+        /// <summary>
+        /// Feedback post of contest (Role: Member)
+        /// </summary>
+        /// <param name="post_of_contest_id">Post of contest you want to feedback</param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("post_of_contest/{post_of_contest_id}/feedback")]
+        public async Task<IActionResult> FeedbackPost(int post_of_contest_id, string content)
+        {
+            var sender_id = _userAccessor.getAccountId();
+
+            var feedback = new Feedback
+            {
+                PostOfContestId = post_of_contest_id,
+                Content = content,
+                SenderId = sender_id,
+                SendDate = DateTime.Now
+            };
+
+            _repositoryManager.Feedback.Create(feedback);
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Save changes success");
+        }
+
         [HttpPut("startregis")]
         public void StartRegisContest(int contest_id)
         {

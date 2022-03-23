@@ -46,6 +46,7 @@ namespace Repository
         private IChatRepository _chatRepository;
         private IRateSellerRepository _rateSellerRepository;
         private IEvaluateContestRepository _evaluateContestRepository;
+        private IFeedbackRepository _feedbackRepository;
 
         public RepositoryManager(DataContext context)
         {
@@ -364,6 +365,16 @@ namespace Repository
                 if (_evaluateContestRepository == null)
                     _evaluateContestRepository = new EvaluateContestRepository(_context);
                 return _evaluateContestRepository;
+            }
+        }
+
+        public IFeedbackRepository Feedback
+        {
+            get
+            {
+                if (_feedbackRepository == null)
+                    _feedbackRepository = new FeedbackRepository(_context);
+                return _feedbackRepository;
             }
         }
 

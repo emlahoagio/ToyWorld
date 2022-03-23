@@ -180,6 +180,16 @@ namespace Entities.Models
                     .WithMany(p => p.FeedbackSenders)
                     .HasForeignKey(d => d.SenderId)
                     .HasConstraintName("FK_Feedback_Account1");
+                
+                entity.HasOne(d => d.TradingPost)
+                    .WithMany(p => p.Feedbacks)
+                    .HasForeignKey(d => d.TradingPostId)
+                    .HasConstraintName("FK_Feedback_TradingPost");
+
+                entity.HasOne(d => d.PostOfCotest)
+                    .WithMany(p => p.Feedbacks)
+                    .HasForeignKey(d => d.PostOfContestId)
+                    .HasConstraintName("FK_Feedback_PostOfContest");
             });
 
             modelBuilder.Entity<FollowAccount>(entity =>

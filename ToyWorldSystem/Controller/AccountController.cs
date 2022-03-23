@@ -273,6 +273,32 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Feedback Account (Role: Member)
+        /// </summary>
+        /// <param name="account_id">Post id want to feedback</param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("{account_id}/feedback")]
+        public async Task<IActionResult> FeedbackPost(int account_id, string content)
+        {
+            var sender_id = _userAccessor.getAccountId();
+
+            var feedback = new Feedback
+            {
+                AccountId = account_id,
+                Content = content,
+                SenderId = sender_id,
+                SendDate = DateTime.Now
+            };
+
+            _repository.Feedback.Create(feedback);
+            await _repository.SaveAsync();
+
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
         /// Disable or Enable account (Role: Admin)
         /// </summary>
         /// <param name="account_id">Account id</param>
