@@ -32,6 +32,8 @@ namespace Entities.Models
             Senders = new HashSet<Chat>(); //quandtm modify
             BillsBuyer = new HashSet<Bill>();
             BillsSeler = new HashSet<Bill>();
+            RateSellersBuyer = new HashSet<RateSeller>();
+            RateSellersSeller = new HashSet<RateSeller>();
         }
 
         public int Id { get; set; }
@@ -69,5 +71,8 @@ namespace Entities.Models
         public virtual ICollection<Chat> Senders { get; set; } //quandtm modify
         public virtual ICollection<Bill> BillsSeler { get; set; }
         public virtual ICollection<Bill> BillsBuyer { get; set; }
+        public virtual ICollection<RateSeller> RateSellersBuyer { get; set; }
+        public virtual ICollection<RateSeller> RateSellersSeller { get; set; }
+
     }
 }

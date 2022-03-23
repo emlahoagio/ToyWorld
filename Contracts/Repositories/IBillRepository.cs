@@ -12,7 +12,7 @@ namespace Contracts.Repositories
     {
         void Create(Bill bill);
         void UpdateBillStatus(Bill bill, int update_status);
-        Task<Bill> GetAcceptOrDeny(int bill_id, bool trackChanges);
+        Task<Bill> GetBillById(int bill_id, bool trackChanges);
         void AcceptBill(Bill bill);
         void DenyBill(Bill bill);
         Task<int> GetIdOfCreatedBill(DateTime findTime, bool trackChanges);

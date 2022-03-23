@@ -189,5 +189,14 @@ namespace Repository
 
             return contest.Status == 3 ? true : false;
         }
+
+        public async Task<Contest> GetEvaluateContest(int contest_id, bool trackChanges)
+        {
+            var contest = await FindByCondition(x => x.Id == contest_id, trackChanges)
+                .Include(x => x.AccountJoined)
+                .FirstOrDefaultAsync();
+
+            return contest;
+        }
     }
 }

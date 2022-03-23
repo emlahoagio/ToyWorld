@@ -385,6 +385,37 @@ namespace ToyWorldSystem.Controller
             return Ok(new { contestId = createdContest.Id });
         }
 
+        /// <summary>
+        /// Evaluate contest (Role: Member, manager => Only user joined to contest)
+        /// </summary>
+        /// <param name="contest_id"></param>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("{contest_id}/evaluate")]
+        public async Task<IActionResult> EvaluateContest(int contest_id, NewEvaluateContestParameters param)
+        {
+            var contest = await _repositoryManager.Contest.GetEvaluateContest(contest_id, trackChanges: false);
+
+            var current_accountId = _userAccessor.getAccountId();
+
+            var isJoinContest = contest.AccountJoined.Where(x => x.AccountId == current_accountId).ToList().Count() > 0;
+            if (!isJoinContest) 
+                throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Only people joined to contest can evaluate");
+
+            var evaluate = new Evaluate
+            {
+                AccountId = current_accountId,
+                Comment = param.Comment,
+                ContestId = contest_id,
+                NoOfStart = param.NumOfStar
+            };
+            _repositoryManager.EvaluateContest.Create(evaluate);
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Save changes success");
+        }
+
         [HttpPut("startregis")]
         public void StartRegisContest(int contest_id)
         {

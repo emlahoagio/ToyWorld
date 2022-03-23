@@ -82,7 +82,7 @@ namespace ToyWorldSystem.Controller
         {
             var current_user_id = _userAccessor.getAccountId();
 
-            var bill = await _repository.Bill.GetAcceptOrDeny(bill_id, trackChanges: false);
+            var bill = await _repository.Bill.GetBillById(bill_id, trackChanges: false);
 
             if (bill == null)
                 throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Invalid bill");
@@ -117,7 +117,7 @@ namespace ToyWorldSystem.Controller
         [Route("{bill_id}/status")]
         public async Task<IActionResult> UpdateBillStatus(int bill_id, int update_status)
         {
-            var bill = await _repository.Bill.GetAcceptOrDeny(bill_id, trackChanges: false);
+            var bill = await _repository.Bill.GetBillById(bill_id, trackChanges: false);
 
             if(bill.SellerId != _userAccessor.getAccountId())
             {

@@ -41,9 +41,12 @@ namespace Repository.Repository
             Create(newTradingPost);
         }
 
-        public void Disable(TradingPost tradingPost)
+        public void DisableOrEnable(TradingPost tradingPost, int disable_or_enable)
         {
-            tradingPost.IsDeleted = true;
+            if (disable_or_enable == 0)
+                tradingPost.IsDeleted = true;
+            else tradingPost.IsDeleted = false;
+
             Update(tradingPost);
         }
 

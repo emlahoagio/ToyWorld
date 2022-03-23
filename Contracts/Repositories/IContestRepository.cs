@@ -21,5 +21,6 @@ namespace Contracts
         Task EndContest(int contestId, bool trackChanges);
         Task<bool> CanJoin (int contest_id, bool trackChanges);
         Task<bool> IsOpenContest(int contest_id, bool trackChanges);
+        Task<Contest> GetEvaluateContest(int contest_id, bool trackChanges);
     }
 }
