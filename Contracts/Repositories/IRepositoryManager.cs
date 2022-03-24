@@ -33,6 +33,9 @@ namespace Contracts
         INotificationRepository Notification { get; } //quandtm add
         IChatRepository Chat { get; } //quandtm add
         IBillRepository Bill { get; }
+        IRateSellerRepository RateSeller { get; }
+        IEvaluateContestRepository EvaluateContest { get; }
+        IFeedbackRepository Feedback { get; }
         Task SaveAsync();
     }
 }

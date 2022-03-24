@@ -28,7 +28,7 @@ namespace Repository.Repository
             Update(bill);
         }
 
-        public async Task<Bill> GetAcceptOrDeny(int bill_id, bool trackChanges)
+        public async Task<Bill> GetBillById(int bill_id, bool trackChanges)
         {
             var result = await FindByCondition(x => x.Id == bill_id, trackChanges).FirstOrDefaultAsync();
 
@@ -63,6 +63,12 @@ namespace Repository.Repository
             var result = await FindByCondition(x => x.CreateTime == findTime, trackChanges).FirstOrDefaultAsync();
 
             return result.Id;
+        }
+
+        public void UpdateBillStatus(Bill bill, int update_status)
+        {
+            bill.Status = update_status;
+            Update(bill);
         }
     }
 }

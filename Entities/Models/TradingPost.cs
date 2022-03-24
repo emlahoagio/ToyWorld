@@ -14,6 +14,7 @@ namespace Entities.Models
             Comments = new HashSet<Comment>();
             Notifications = new HashSet<Notification>();
             Bills = new HashSet<Bill>();
+            Feedbacks = new HashSet<Feedback>();
         }
 
         public int Id { get; set; }
@@ -44,5 +45,6 @@ namespace Entities.Models
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }
         public virtual ICollection<Bill> Bills { get; set; }
+        public virtual ICollection<Feedback> Feedbacks { get; set; }
     }
 }

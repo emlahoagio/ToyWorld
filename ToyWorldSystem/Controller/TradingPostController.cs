@@ -110,7 +110,7 @@ namespace ToyWorldSystem.Controller
             var toy = await _repositoryManager.Toy.GetToyByName(tradingPost.ToyName, trackChanges: false);
 
             var brand = await _repositoryManager.Brand
-    .GetBrandByName(tradingPost.BrandName == null ? "Unknow Brand" : tradingPost.BrandName, trackChanges: false);
+                .GetBrandByName(tradingPost.BrandName == null ? "Unknow Brand" : tradingPost.BrandName, trackChanges: false);
             if (brand == null)
             {
                 _repositoryManager.Brand.CreateBrand(new Brand { Name = tradingPost.BrandName });
@@ -136,6 +136,32 @@ namespace ToyWorldSystem.Controller
                 _repositoryManager.TradingPost.CreateTradingPost(tradingPost, group_id, account_id, 3, brand.Id, type.Id);
             }
 
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
+        /// Feedback trading post (Role: Member)
+        /// </summary>
+        /// <param name="trading_post_id">Trading post you want to feedback</param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("{trading_post_id}/feedback")]
+        public async Task<IActionResult> FeedbackPost(int trading_post_id, string content)
+        {
+            var sender_id = _userAccessor.getAccountId();
+
+            var feedback = new Feedback
+            {
+                TradingPostId = trading_post_id,
+                Content = content,
+                SenderId = sender_id,
+                SendDate = DateTime.Now
+            };
+
+            _repositoryManager.Feedback.Create(feedback);
             await _repositoryManager.SaveAsync();
 
             return Ok("Save changes success");
@@ -205,19 +231,23 @@ namespace ToyWorldSystem.Controller
         /// Disable trading post
         /// </summary>
         /// <param name="tradingpost_id">id of trading post need to disable</param>
+        /// <param name="disable_or_enable">0: disable, 1: enable</param>
         /// <returns></returns>
-        [HttpDelete]
-        [Route("{tradingpost_id}")]
-        public async Task<IActionResult> DisableTradingPost(int tradingpost_id)
+        [HttpPut]
+        [Route("{tradingpost_id}/{disable_or_enable}")]
+        public async Task<IActionResult> DisableTradingPost(int tradingpost_id, int disable_or_enable)
         {
             var delete_post = await _repositoryManager.TradingPost.GetTradingPostById(tradingpost_id, trackChanges: false);
+
+            if (disable_or_enable != 0 && disable_or_enable != 1)
+                throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Invalid status change");
 
             var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
 
             if (delete_post.AccountId != account.Id && account.Role != 1)
-                throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Unable to delete");
+                throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to update");
 
-            _repositoryManager.TradingPost.Disable(delete_post);
+            _repositoryManager.TradingPost.DisableOrEnable(delete_post, disable_or_enable);
 
             await _repositoryManager.SaveAsync();
 

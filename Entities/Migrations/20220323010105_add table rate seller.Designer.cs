@@ -4,14 +4,16 @@ using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Entities.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class TWSContextModelSnapshot : ModelSnapshot
+    [Migration("20220323010105_add table rate seller")]
+    partial class addtablerateseller
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -326,17 +328,8 @@ namespace Entities.Migrations
                     b.Property<int?>("PostId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PostOfContestId")
-                        .HasColumnType("int");
-
                     b.Property<string>("ReplyContent")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ReplyDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("SendDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int?>("SenderId")
                         .HasColumnType("int");
@@ -352,11 +345,7 @@ namespace Entities.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.HasIndex("PostOfContestId");
-
                     b.HasIndex("SenderId");
-
-                    b.HasIndex("TradingPostId");
 
                     b.ToTable("Feedback");
                 });
@@ -398,12 +387,6 @@ namespace Entities.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDisable")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsUnicode(false)
@@ -1100,20 +1083,10 @@ namespace Entities.Migrations
                         .HasForeignKey("PostId")
                         .HasConstraintName("FK_Feedback_Post");
 
-                    b.HasOne("Entities.Models.PostOfContest", "PostOfCotest")
-                        .WithMany("Feedbacks")
-                        .HasForeignKey("PostOfContestId")
-                        .HasConstraintName("FK_Feedback_PostOfContest");
-
                     b.HasOne("Entities.Models.Account", "Sender")
                         .WithMany("FeedbackSenders")
                         .HasForeignKey("SenderId")
                         .HasConstraintName("FK_Feedback_Account1");
-
-                    b.HasOne("Entities.Models.TradingPost", "TradingPost")
-                        .WithMany("Feedbacks")
-                        .HasForeignKey("TradingPostId")
-                        .HasConstraintName("FK_Feedback_TradingPost");
 
                     b.Navigation("Account");
 
@@ -1121,11 +1094,7 @@ namespace Entities.Migrations
 
                     b.Navigation("Post");
 
-                    b.Navigation("PostOfCotest");
-
                     b.Navigation("Sender");
-
-                    b.Navigation("TradingPost");
                 });
 
             modelBuilder.Entity("Entities.Models.FollowAccount", b =>
@@ -1693,8 +1662,6 @@ namespace Entities.Migrations
 
             modelBuilder.Entity("Entities.Models.PostOfContest", b =>
                 {
-                    b.Navigation("Feedbacks");
-
                     b.Navigation("Images");
 
                     b.Navigation("Notifications");
@@ -1736,8 +1703,6 @@ namespace Entities.Migrations
                     b.Navigation("Bills");
 
                     b.Navigation("Comments");
-
-                    b.Navigation("Feedbacks");
 
                     b.Navigation("Images");
 

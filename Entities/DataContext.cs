@@ -46,6 +46,7 @@ namespace Entities.Models
         public virtual DbSet<Notification> Notification { get; set; }
         public virtual DbSet<Chat> Chat { get; set; }
         public virtual DbSet<Bill> Bill { get; set; }
+        public virtual DbSet<RateSeller> RateSeller { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -179,6 +180,16 @@ namespace Entities.Models
                     .WithMany(p => p.FeedbackSenders)
                     .HasForeignKey(d => d.SenderId)
                     .HasConstraintName("FK_Feedback_Account1");
+                
+                entity.HasOne(d => d.TradingPost)
+                    .WithMany(p => p.Feedbacks)
+                    .HasForeignKey(d => d.TradingPostId)
+                    .HasConstraintName("FK_Feedback_TradingPost");
+
+                entity.HasOne(d => d.PostOfCotest)
+                    .WithMany(p => p.Feedbacks)
+                    .HasForeignKey(d => d.PostOfContestId)
+                    .HasConstraintName("FK_Feedback_PostOfContest");
             });
 
             modelBuilder.Entity<FollowAccount>(entity =>
@@ -565,10 +576,10 @@ namespace Entities.Models
             //quandtm modify
             modelBuilder.Entity<Chat>(entity =>
             {
-                entity.HasOne(d => d.Account)
-                    .WithMany(p => p.Chats)
-                    .HasForeignKey(d => d.AccountId)
-                    .HasConstraintName("FK_Chat_Account_UserId");
+                entity.HasOne(d => d.Sender)
+                    .WithMany(p => p.Senders)
+                    .HasForeignKey(d => d.SenderId)
+                    .HasConstraintName("FK_Chat_Account_SenderId");
             });
 
             modelBuilder.Entity<Bill>(entity =>
@@ -587,6 +598,19 @@ namespace Entities.Models
                     .WithMany(p => p.Bills)
                     .HasForeignKey(d => d.TradingPostId)
                     .HasConstraintName("FK_Bill_TradingPost");
+            });
+            
+            modelBuilder.Entity<RateSeller>(entity =>
+            {
+                entity.HasOne(d => d.Seller)
+                    .WithMany(p => p.RateSellersSeller)
+                    .HasForeignKey(d => d.SellerId)
+                    .HasConstraintName("FK_RateSeller_Account_Seller");
+
+                entity.HasOne(d => d.Buyer)
+                    .WithMany(p => p.RateSellersBuyer)
+                    .HasForeignKey(d => d.BuyerId)
+                    .HasConstraintName("FK_RateSeller_Account_Buyer");
             });
 
             OnModelCreatingPartial(modelBuilder);

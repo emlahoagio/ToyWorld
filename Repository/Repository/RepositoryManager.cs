@@ -44,6 +44,9 @@ namespace Repository
         private IBillRepository _billRepository;
         private INotificationRepository _notificationRepository;
         private IChatRepository _chatRepository;
+        private IRateSellerRepository _rateSellerRepository;
+        private IEvaluateContestRepository _evaluateContestRepository;
+        private IFeedbackRepository _feedbackRepository;
 
         public RepositoryManager(DataContext context)
         {
@@ -342,6 +345,36 @@ namespace Repository
                 if (_billRepository == null)
                     _billRepository = new BillRepository(_context);
                 return _billRepository; 
+            }
+        }
+
+        public IRateSellerRepository RateSeller
+        {
+            get
+            {
+                if (_rateSellerRepository == null)
+                    _rateSellerRepository = new RateSellerRepository(_context);
+                return _rateSellerRepository;
+            }
+        }
+
+        public IEvaluateContestRepository EvaluateContest
+        {
+            get
+            {
+                if (_evaluateContestRepository == null)
+                    _evaluateContestRepository = new EvaluateContestRepository(_context);
+                return _evaluateContestRepository;
+            }
+        }
+
+        public IFeedbackRepository Feedback
+        {
+            get
+            {
+                if (_feedbackRepository == null)
+                    _feedbackRepository = new FeedbackRepository(_context);
+                return _feedbackRepository;
             }
         }
 

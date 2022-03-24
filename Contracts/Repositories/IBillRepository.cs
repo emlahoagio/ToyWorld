@@ -11,7 +11,8 @@ namespace Contracts.Repositories
     public interface IBillRepository
     {
         void Create(Bill bill);
-        Task<Bill> GetAcceptOrDeny(int bill_id, bool trackChanges);
+        void UpdateBillStatus(Bill bill, int update_status);
+        Task<Bill> GetBillById(int bill_id, bool trackChanges);
         void AcceptBill(Bill bill);
         void DenyBill(Bill bill);
         Task<int> GetIdOfCreatedBill(DateTime findTime, bool trackChanges);

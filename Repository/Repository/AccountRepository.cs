@@ -191,5 +191,18 @@ namespace Repository
             account.Password = hasing_pw;
             Update(account);
         }
+
+        public async Task<CreatedAccount> GetCreatedAccount(NewAccountParameters param, bool trackChanges)
+        {
+            var created_account = await FindByCondition(x => x.Name == param.Name && x.Email == param.Email, trackChanges)
+                .FirstOrDefaultAsync();
+
+            return new CreatedAccount
+            {
+                Avatar = created_account.Avatar,
+                Id = created_account.Id,
+                Name = created_account.Name
+            };
+        }
     }
 }

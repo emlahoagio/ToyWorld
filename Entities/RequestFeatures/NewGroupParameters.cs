@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Entities.DataTransferObject
+namespace Entities.RequestFeatures
 {
-    public class GroupReturn
+    public class NewGroupParameters
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
     }
