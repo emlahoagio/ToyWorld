@@ -242,13 +242,41 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Create account system (Role: Unauthorize user)
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("AccountSystem")]
+        public async Task<IActionResult> CreateNewAccountSystem(NewAccountParameters param)
+        {
+            var isExistEmail = await _repository.Account.getAccountByEmail(param.Email, trackChanges: false) != null;
+
+            if (isExistEmail) throw new ErrorDetails(HttpStatusCode.BadRequest, "Email existed in the system");
+
+            var account = new Account
+            {
+                Name = param.Name,
+                Email = param.Email,
+                Password = _hasingServices.encriptSHA256(param.Password)
+            };
+
+            _repository.Account.Create(account);
+            await _repository.SaveAsync();
+
+            var created_account = await _repository.Account.GetCreatedAccount(param, trackChanges: false);
+
+            return Ok(created_account);
+        }
+
+        /// <summary>
         /// Rate the seller (Role: ALL => buyer in the bill send this request)
         /// </summary>
         /// <param name="bill_id">bill id attach in the chat</param>
         /// <param name="param"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("rate/{bill_id}")]
+        [Route("rate/bill/{bill_id}")]
         public async Task<IActionResult> RateSeller(int bill_id, NewRateSellerParameters param)
         {
             var buyer_id = _userAccessor.getAccountId();

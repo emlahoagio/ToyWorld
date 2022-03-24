@@ -60,5 +60,29 @@ namespace ToyWorldSystem.Controller
 
             return Ok(feedbacks);
         }
+
+        /// <summary>
+        /// Reply feedback, Update reply of feedback (Role: Manager)
+        /// </summary>
+        /// <param name="feedback_id"></param>
+        /// <param name="replyContent"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("{feedback_id}/reply")]
+        public async Task<IActionResult> ReplyFeedback(int feedback_id, string replyContent)
+        {
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            if (current_account.Role != 1)
+                throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to reply");
+
+            await _repository.Feedback.ReplyFeedback(feedback_id, current_account.Id, replyContent, trackChanges: false);
+
+            //Push notification (To sender of feedback)
+
+            await _repository.SaveAsync();
+
+            return Ok("Save changes success");
+        }
     }
 }

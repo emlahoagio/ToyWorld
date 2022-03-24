@@ -16,6 +16,7 @@ namespace Contracts
         Task<Account> GetAccountById(int account_id, bool trackChanges);
         Task<AccountDetail> GetAccountDetail(int account_id, int current_acc_id, bool trackChanges);
         Task<Profile> GetProfile(int account_id, bool trackChanges);
+        Task<CreatedAccount> GetCreatedAccount(NewAccountParameters param, bool trackChanges);
         void DisableAccount(Account account);
         void EnableAccount(Account account);
         void UpdateAccountToManager(Account account);

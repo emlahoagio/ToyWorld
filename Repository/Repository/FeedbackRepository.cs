@@ -95,5 +95,16 @@ namespace Repository.Repository
             };
             return result;
         }
+
+        public async Task ReplyFeedback(int feedback_id, int replier_id, string reply_content, bool trackChanges)
+        {
+            var feedback = await FindByCondition(x => x.Id == feedback_id, trackChanges).FirstOrDefaultAsync();
+
+            feedback.ReplyContent = reply_content;
+            feedback.ReplyDate = DateTime.UtcNow;
+            feedback.AccountReplyId = replier_id;
+
+            Update(feedback);
+        }
     }
 }

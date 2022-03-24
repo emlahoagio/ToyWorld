@@ -1,4 +1,6 @@
 ﻿using Contracts;
+using Entities.ErrorModel;
+using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +16,12 @@ namespace ToyWorldSystem.Controller
     public class GroupController : ControllerBase
     {
         private readonly IRepositoryManager _repository;
+        private readonly IUserAccessor _userAccessor;
 
-        public GroupController(IRepositoryManager repository)
+        public GroupController(IRepositoryManager repository, IUserAccessor userAccessor)
         {
             _repository = repository;
+            _userAccessor = userAccessor;
         }
 
         /// <summary>
@@ -32,6 +36,74 @@ namespace ToyWorldSystem.Controller
             if (result == null) return NotFound();
 
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Create new group (Role: Admin)
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> CreateGroup(NewGroupParameters param)
+        {
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            if (current_account.Role != 0) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "don't have permission to update");
+
+            var group = new Entities.Models.Group
+            {
+                Description = param.Description,
+                Name = param.Name,
+                IsDisable = false
+            };
+            _repository.Group.Create(group);
+            await _repository.SaveAsync();
+
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
+        /// Update information of group (Role: Admin)
+        /// </summary>
+        /// <param name="group_id"></param>
+        /// <param name="name"></param>
+        /// <param name="description"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("{group_id}")]
+        public async Task<IActionResult> UpdateGroup(int group_id, string name, string description)
+        {
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            if (current_account.Role != 0) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "don't have permission to update");
+
+            await _repository.Group.Update(group_id, name, description, trackChanges: false);
+            await _repository.SaveAsync();
+
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
+        /// Disable or enable group (Role: Admin)
+        /// </summary>
+        /// <param name="group_id"></param>
+        /// <param name="disable_or_enable">0: disable, 1: enable</param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("{group_id}/disable_or_enable/{disable_or_enable}")]
+        public async Task<IActionResult> DisableOrEnableGroup(int group_id, int disable_or_enable)
+        {
+            if (disable_or_enable != 1 && disable_or_enable != 0)
+                throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Invalid update status");
+
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            if (current_account.Role != 0) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "don't have permission to update");
+
+            await _repository.Group.DisableOrEnableGroup(group_id, disable_or_enable, trackChanges: false);
+            await _repository.SaveAsync();
+
+            return Ok("Save changes success");
         }
     }
 }
