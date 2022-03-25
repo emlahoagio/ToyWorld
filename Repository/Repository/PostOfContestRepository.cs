@@ -17,6 +17,14 @@ namespace Repository.Repository
         {
         }
 
+        public async Task<int> GetOwnerByPostOfContestId(int id)
+        {
+            int result = 0;
+            var postOfContest = await FindByCondition(x => x.Id == id, false).FirstOrDefaultAsync();
+            result = postOfContest.AccountId;
+            return result;
+        }
+
         public async Task<Pagination<PostOfContestInList>> GetPostOfContest(int contest_id, PagingParameters paging, int current_account_id, bool trackChanges)
         {
             var posts = await FindByCondition(x => x.ContestId == contest_id, trackChanges)

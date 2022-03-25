@@ -191,5 +191,11 @@ namespace Repository
             account.Password = hasing_pw;
             Update(account);
         }
+
+        public async Task<IEnumerable<Account>> getListManager()
+        {
+            var listManager = await FindByCondition(x => x.Role == 1, false).ToListAsync();
+            return listManager;
+        }
     }
 }

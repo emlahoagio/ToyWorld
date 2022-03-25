@@ -4,6 +4,7 @@ using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -25,18 +26,13 @@ namespace Repository.Repository
         {
             var chat = new Chat
             {
-                SenderId = model.UserId,
+                AccountId = model.UserId,
                 Content = model.Content,
                 RoomName = model.RoomName,
                 SendDate = DateTime.Now,
                 IsRead = false
             };
             Create(chat);
-        }
-
-        public Task<Pagination<Chat>> GetChatByReceiver(int receiverId)
-        {
-            throw new NotImplementedException();
         }
 
         public async Task<Pagination<Chat>> GetConversation(string roomName, PagingParameters paging)
@@ -54,6 +50,21 @@ namespace Repository.Repository
                 PageNumber = paging.PageNumber,
                 PageSize = paging.PageSize
             };
+        }
+
+        public async Task<IEnumerable<string>> GetListRoomByUserId(int userId)
+        {
+            var listChat = await FindAll(false).ToListAsync();
+            var listRoom = new List<string>() ; 
+            foreach (var chat in listChat)
+            {
+                string []userid = chat.RoomName.Split("-");
+                if (userid[0] == userId.ToString() || userid[1] == userId.ToString())
+                {
+                    listRoom.Add(chat.RoomName);
+                }
+            }
+            return listRoom;
         }
     }
 }

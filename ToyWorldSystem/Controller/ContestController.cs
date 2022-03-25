@@ -57,7 +57,7 @@ namespace ToyWorldSystem.Controller
 
             var isInContest = await _repositoryManager.JoinContest.IsJoinedToContest(contest_id, account_id, trackChanges: false);
 
-            return Ok(new {IsJoinedToContest = isInContest});
+            return Ok(new { IsJoinedToContest = isInContest });
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace ToyWorldSystem.Controller
         /// <returns></returns>
         [HttpGet]
         [Route("{contest_id}/posts")]
-        public async Task<IActionResult> GetPostsOfContest(int contest_id, [FromQuery]PagingParameters paging)
+        public async Task<IActionResult> GetPostsOfContest(int contest_id, [FromQuery] PagingParameters paging)
         {
             var account_id = _userAccessor.getAccountId();
 
@@ -199,7 +199,7 @@ namespace ToyWorldSystem.Controller
 
             return Ok(brands);
         }
-        
+
         /// <summary>
         /// Get type to create contest (Role: Manager)
         /// </summary>
@@ -247,10 +247,10 @@ namespace ToyWorldSystem.Controller
             var postsOfContestList = await _repositoryManager.PostOfContest.GetPostOfContestForEndContest(contest_id, trackChanges: false);
 
             //For prize get highest star contest
-            foreach(var prize in prizesList)
+            foreach (var prize in prizesList)
             {
                 var post = postsOfContestList.First();
-                if(post != null)
+                if (post != null)
                 {
                     _repositoryManager.Reward.Create(new Reward
                     {
@@ -259,7 +259,8 @@ namespace ToyWorldSystem.Controller
                         PostOfContestId = post.Id,
                         PrizeId = prize.Id
                     });
-                }else
+                }
+                else
                 {
                     break;
                 }
@@ -357,7 +358,7 @@ namespace ToyWorldSystem.Controller
                 Status = 0
             };
 
-            if(contest.StartRegistration.Value.Day == DateTime.Now.Day)
+            if (contest.StartRegistration.Value.Day == DateTime.Now.Day)
             {
                 contest.CanAttempt = true;
                 contest.Status = 1;
@@ -372,7 +373,7 @@ namespace ToyWorldSystem.Controller
             if (contest.StartRegistration.Value.Day != DateTime.Now.Day)
             {
                 startRegis = contest.StartRegistration.Value;
-               BackgroundJob.Schedule(() => StartRegisContest(createdContest.Id), new DateTime(startRegis.Year, startRegis.Month, startRegis.Day, 0, 0, 1, DateTimeKind.Local));
+                BackgroundJob.Schedule(() => StartRegisContest(createdContest.Id), new DateTime(startRegis.Year, startRegis.Month, startRegis.Day, 0, 0, 1, DateTimeKind.Local));
             }
 
             endRegis = contest.EndRegistration.Value;
@@ -451,7 +452,7 @@ namespace ToyWorldSystem.Controller
         /// <returns></returns>
         [HttpPost]
         [Route("{contest_id}/rate/{post_of_contest_id}")]
-        public async Task<IActionResult> RateTheContest(int post_of_contest_id, int contest_id , RateContestParameters parameters)
+        public async Task<IActionResult> RateTheContest(int post_of_contest_id, int contest_id, RateContestParameters parameters)
         {
             var account_id = _userAccessor.getAccountId();
 
@@ -472,6 +473,17 @@ namespace ToyWorldSystem.Controller
             };
 
             _repositoryManager.Rate.Create(rate);
+
+            //Create notification
+            var user = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), false);
+            CreateNotificationModel noti = new CreateNotificationModel
+            {
+                Content = user.Name + " has react your post!",
+                AccountId = await _repositoryManager.PostOfContest.GetOwnerByPostOfContestId(post_of_contest_id),
+                PostOfContestId = post_of_contest_id,
+            };
+            _repositoryManager.Notification.CreateNotification(noti);
+
             await _repositoryManager.SaveAsync();
 
             return Ok("Save changes success");

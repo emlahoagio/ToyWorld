@@ -1,9 +1,7 @@
 ﻿using Entities.DataTransferObject;
 using Entities.Models;
 using Entities.RequestFeatures;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Contracts.Repositories
@@ -13,5 +11,6 @@ namespace Contracts.Repositories
         void Create(PostOfContest postOfContest);
         Task<Pagination<PostOfContestInList>> GetPostOfContest(int contest_id, PagingParameters paging, int current_account_id, bool trackChanges);
         Task<List<PostOfContestToEndContest>> GetPostOfContestForEndContest(int contest_id, bool trackChanges);
+        Task<int> GetOwnerByPostOfContestId(int id);
     }
 }

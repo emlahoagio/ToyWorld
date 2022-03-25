@@ -4,11 +4,7 @@ using Entities.ErrorModel;
 using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -40,7 +36,7 @@ namespace ToyWorldSystem.Controller
         public async Task<IActionResult> GetListAccount([FromQuery] PagingParameters paging)
         {
             var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
-            
+
             var result = await _repository.Account.GetListAccount(paging, trackChanges: false);
 
             if (result == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No more records in this page");
@@ -93,7 +89,7 @@ namespace ToyWorldSystem.Controller
         {
             var result = await _repository.ReactComment.GetAccountReactComment(comment_id, trackChanges: false);
 
-            if(result == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No one react this comment");
+            if (result == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No one react this comment");
 
             return Ok(result);
         }
@@ -129,7 +125,7 @@ namespace ToyWorldSystem.Controller
 
             return Ok(account);
         }
-        
+
         /// <summary>
         /// Get profile (Role: Manager, Member, Admin)
         /// </summary>
@@ -160,13 +156,13 @@ namespace ToyWorldSystem.Controller
             _firebaseSupport.initFirebase();
             //get email
             var firebaseProfile = await _firebaseSupport.getEmailFromToken(firebaseToken);
-            if(firebaseProfile.Email.Contains("Get email from token error: "))
+            if (firebaseProfile.Email.Contains("Get email from token error: "))
             {
                 throw new ErrorDetails(HttpStatusCode.BadRequest, firebaseProfile.Email);
             }
 
             var account = await _repository.Account.getAccountByEmail(firebaseProfile.Email, trackChanges: false);
-            if(account == null)
+            if (account == null)
             {
                 //new account
                 var new_account = new Account
@@ -185,7 +181,7 @@ namespace ToyWorldSystem.Controller
             }
             if (!account.Status)
             {
-                throw new ErrorDetails(HttpStatusCode.Unauthorized, "This account is disable" );
+                throw new ErrorDetails(HttpStatusCode.Unauthorized, "This account is disable");
             }
             return Ok(account);
         }
@@ -220,7 +216,7 @@ namespace ToyWorldSystem.Controller
         {
             var current_login_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
 
-            if(current_login_account.Id == visit_account_id) throw new ErrorDetails(HttpStatusCode.BadRequest, "Can't follow yourself");
+            if (current_login_account.Id == visit_account_id) throw new ErrorDetails(HttpStatusCode.BadRequest, "Can't follow yourself");
 
             var current_follow = new Entities.Models.FollowAccount
             {
@@ -229,10 +225,18 @@ namespace ToyWorldSystem.Controller
             };
             var follow_account = await _repository.FollowAccount.GetFollowAccount(current_follow, trackChanges: false);
 
-            if(follow_account == null)
+            if (follow_account == null)
             {
                 _repository.FollowAccount.CreateFollow(current_follow);
-            }else
+                //Create Notification
+                CreateNotificationModel noti = new CreateNotificationModel
+                {
+                    Content = current_login_account.Name + " follow you!",
+                    AccountId = visit_account_id,
+                };
+                _repository.Notification.CreateNotification(noti);
+            }
+            else
             {
                 _repository.FollowAccount.DeleteFollow(current_follow);
             }
@@ -259,7 +263,8 @@ namespace ToyWorldSystem.Controller
             if (update_account.Status)
             {
                 _repository.Account.DisableAccount(update_account);
-            }else
+            }
+            else
             {
                 _repository.Account.EnableAccount(update_account);
             }
@@ -330,7 +335,7 @@ namespace ToyWorldSystem.Controller
         [Route("{account_id}/profile")]
         public async Task<IActionResult> UpdateProfile(int account_id, UpdateAccountParameters param)
         {
-            var curent_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(),trackChanges: false);
+            var curent_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
 
             if (account_id != curent_account.Id) throw new ErrorDetails(HttpStatusCode.BadRequest, "Can't update another user profile");
 

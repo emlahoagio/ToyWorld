@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Contracts;
+using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +9,15 @@ namespace ToyWorldSystem.Hubs
 {
     public class ChatHub : Hub
     {
+        private readonly IRepositoryManager _repositoryManager;
         private readonly string _botUser;
         private readonly IDictionary<string, UserConnection> _connections;
 
-        public ChatHub(IDictionary<string, UserConnection> connections)
+        public ChatHub(IDictionary<string, UserConnection> connections, IRepositoryManager repositoryManager)
         {
             _botUser = "MyChat Bot";
             _connections = connections;
+            _repositoryManager = repositoryManager;
         }
 
         public override Task OnDisconnectedAsync(Exception exception)

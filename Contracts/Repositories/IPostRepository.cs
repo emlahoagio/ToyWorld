@@ -24,5 +24,7 @@ namespace Contracts.Repositories
         void ApprovePost(Post post);
         void DenyPost(Post post);
         void Delete(Post post);
+
+        Task<int> GetOwnerByPostId(int postId);
     }
 }

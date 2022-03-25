@@ -148,5 +148,11 @@ namespace Repository.Repository
             trading_post.Status = trading_status;
             Update(trading_post);
         }
+
+        public async Task<int> GetOwnerById(int tradingPostId)
+        {
+            var tradingPost = await FindByCondition(x => x.Id == tradingPostId, false).FirstOrDefaultAsync();
+            return (int)tradingPost.AccountId;
+        }
     }
 }
