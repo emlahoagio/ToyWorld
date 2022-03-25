@@ -192,10 +192,17 @@ namespace Repository
             Update(account);
         }
 
-        public async Task<IEnumerable<Account>> getListManager()
+        public async Task<CreatedAccount> GetCreatedAccount(NewAccountParameters param, bool trackChanges)
         {
-            var listManager = await FindByCondition(x => x.Role == 1, false).ToListAsync();
-            return listManager;
+            var created_account = await FindByCondition(x => x.Name == param.Name && x.Email == param.Email, trackChanges)
+                .FirstOrDefaultAsync();
+
+            return new CreatedAccount
+            {
+                Avatar = created_account.Avatar,
+                Id = created_account.Id,
+                Name = created_account.Name
+            };
         }
     }
 }

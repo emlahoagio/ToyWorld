@@ -125,6 +125,32 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Feedback Post (Role: Member)
+        /// </summary>
+        /// <param name="post_id">Post id want to feedback</param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("{post_id}/feedback")]
+        public async Task<IActionResult> FeedbackPost(int post_id, string content)
+        {
+            var sender_id = _userAccessor.getAccountId();
+
+            var feedback = new Feedback
+            {
+                PostId = post_id,
+                Content = content,
+                SenderId = sender_id,
+                SendDate = DateTime.Now
+            };
+
+            _repositoryManager.Feedback.Create(feedback);
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
         /// React Post
         /// </summary>
         /// <param name="post_id">Id of post return in detail, or get list</param>

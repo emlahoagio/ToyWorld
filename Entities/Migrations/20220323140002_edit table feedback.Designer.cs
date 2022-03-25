@@ -4,14 +4,16 @@ using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Entities.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class TWSContextModelSnapshot : ModelSnapshot
+    [Migration("20220323140002_edit table feedback")]
+    partial class edittablefeedback
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -138,9 +140,6 @@ namespace Entities.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AccountId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
@@ -153,9 +152,12 @@ namespace Entities.Migrations
                     b.Property<DateTime>("SendDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("SenderId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountId");
+                    b.HasIndex("SenderId");
 
                     b.ToTable("Chat");
                 });
@@ -332,12 +334,6 @@ namespace Entities.Migrations
                     b.Property<string>("ReplyContent")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("ReplyDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("SendDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int?>("SenderId")
                         .HasColumnType("int");
 
@@ -398,12 +394,6 @@ namespace Entities.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDisable")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsUnicode(false)
@@ -1007,14 +997,14 @@ namespace Entities.Migrations
 
             modelBuilder.Entity("Entities.Models.Chat", b =>
                 {
-                    b.HasOne("Entities.Models.Account", "Account")
-                        .WithMany("Chats")
-                        .HasForeignKey("AccountId")
-                        .HasConstraintName("FK_Chat_Account_AccountId")
+                    b.HasOne("Entities.Models.Account", "Sender")
+                        .WithMany("Senders")
+                        .HasForeignKey("SenderId")
+                        .HasConstraintName("FK_Chat_Account_SenderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Account");
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("Entities.Models.Comment", b =>
@@ -1589,8 +1579,6 @@ namespace Entities.Migrations
 
                     b.Navigation("BillsSeler");
 
-                    b.Navigation("Chats");
-
                     b.Navigation("Comments");
 
                     b.Navigation("ContestJoined");
@@ -1632,6 +1620,8 @@ namespace Entities.Migrations
                     b.Navigation("ReactTradingPosts");
 
                     b.Navigation("Rewards");
+
+                    b.Navigation("Senders");
 
                     b.Navigation("TradingPosts");
                 });

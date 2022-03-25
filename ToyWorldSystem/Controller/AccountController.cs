@@ -246,6 +246,91 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Create account system (Role: Unauthorize user)
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("AccountSystem")]
+        public async Task<IActionResult> CreateNewAccountSystem(NewAccountParameters param)
+        {
+            var isExistEmail = await _repository.Account.getAccountByEmail(param.Email, trackChanges: false) != null;
+
+            if (isExistEmail) throw new ErrorDetails(HttpStatusCode.BadRequest, "Email existed in the system");
+
+            var account = new Account
+            {
+                Name = param.Name,
+                Email = param.Email,
+                Password = _hasingServices.encriptSHA256(param.Password)
+            };
+
+            _repository.Account.Create(account);
+            await _repository.SaveAsync();
+
+            var created_account = await _repository.Account.GetCreatedAccount(param, trackChanges: false);
+
+            return Ok(created_account);
+        }
+
+        /// <summary>
+        /// Rate the seller (Role: ALL => buyer in the bill send this request)
+        /// </summary>
+        /// <param name="bill_id">bill id attach in the chat</param>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("rate/bill/{bill_id}")]
+        public async Task<IActionResult> RateSeller(int bill_id, NewRateSellerParameters param)
+        {
+            var buyer_id = _userAccessor.getAccountId();
+
+            var bill = await _repository.Bill.GetBillById(bill_id, trackChanges: false);
+
+            if (bill == null) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid bill");
+            if (buyer_id != bill.BuyerId) throw new ErrorDetails(HttpStatusCode.BadRequest, "Not buyer to rate");
+            if (bill.Status == 0) throw new ErrorDetails(HttpStatusCode.BadRequest, "Buyer need to confirm bill to rate seller");
+
+            var rateSeller = new RateSeller
+            {
+                BuyerId = buyer_id,
+                Content = param.Content,
+                NumOfStar = param.NumOfStar,
+                SellerId = bill.SellerId
+            };
+            _repository.RateSeller.NewRateSeller(rateSeller);
+            await _repository.SaveAsync();
+
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
+        /// Feedback Account (Role: Member)
+        /// </summary>
+        /// <param name="account_id">Post id want to feedback</param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("{account_id}/feedback")]
+        public async Task<IActionResult> FeedbackPost(int account_id, string content)
+        {
+            var sender_id = _userAccessor.getAccountId();
+
+            var feedback = new Feedback
+            {
+                AccountId = account_id,
+                Content = content,
+                SenderId = sender_id,
+                SendDate = DateTime.Now
+            };
+
+            _repository.Feedback.Create(feedback);
+            await _repository.SaveAsync();
+
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
         /// Disable or Enable account (Role: Admin)
         /// </summary>
         /// <param name="account_id">Account id</param>
