@@ -1,8 +1,10 @@
 ﻿using Contracts;
 using Entities.DataTransferObject;
 using Entities.ErrorModel;
+using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 
