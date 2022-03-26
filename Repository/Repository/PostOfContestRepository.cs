@@ -17,6 +17,14 @@ namespace Repository.Repository
         {
         }
 
+        public async Task<int> GetOwnerByPostOfContestId(int id)
+        {
+            int result = 0;
+            var postOfContest = await FindByCondition(x => x.Id == id, false).FirstOrDefaultAsync();
+            result = postOfContest.AccountId;
+            return result;
+        }
+
         public async Task<Pagination<PostOfContestInList>> GetPostOfContest(int contest_id, PagingParameters paging, int current_account_id, bool trackChanges)
         {
             var posts = await FindByCondition(x => x.ContestId == contest_id, trackChanges)
@@ -41,13 +49,13 @@ namespace Repository.Repository
                 }).ToList(),
                 OwnerAvatar = x.Account.Avatar,
                 OwnerName = x.Account.Name,
-                AverageStar = x.Rates.Select(x => x.NumOfStart).ToList().Average(),
+                AverageStar = x.Rates.Select(x => x.NumOfStar).ToList().Average(),
                 IsRated = x.Rates.Where(x => x.AccountId.Value == current_account_id).Count() != 0 ? true : false,
                 Rates = x.Rates.Select(y => new RateReturn
                 {
                     Id = y.Id,
                     Note = y.Note,
-                    NumOfStar = y.NumOfStart,
+                    NumOfStar = y.NumOfStar,
                     OwnerAvatar = y.Account.Avatar,
                     OwnerName = y.Account.Name,
                     OwnerId = y.AccountId.Value
@@ -74,7 +82,7 @@ namespace Repository.Repository
             {
                 AccountId = x.AccountId,
                 Id = x.Id,
-                SumOfStart = x.Rates.Select(x => x.NumOfStart).Sum()
+                SumOfStart = x.Rates.Select(x => x.NumOfStar).Sum()
             }).OrderByDescending(y => y.SumOfStart).ToList();
 
             return result;

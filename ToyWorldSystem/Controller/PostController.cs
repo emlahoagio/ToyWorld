@@ -3,12 +3,8 @@ using Entities.DataTransferObject;
 using Entities.ErrorModel;
 using Entities.Models;
 using Entities.RequestFeatures;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Repository;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -194,6 +190,16 @@ namespace ToyWorldSystem.Controller
                 //react
                 _repositoryManager.ReactPost.CreateReact(
                     new Entities.Models.ReactPost { AccountId = accountId, PostId = post_id });
+                //Create Notification
+                var user = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), false);
+                var owner = await _repositoryManager.Post.GetOwnerByPostId(post_id);
+                CreateNotificationModel noti = new CreateNotificationModel
+                {
+                    Content = user.Name + " has react your Post!",
+                    AccountId = owner,
+                    PostId = post_id,
+                };
+                _repositoryManager.Notification.CreateNotification(noti);
             }
 
             await _repositoryManager.SaveAsync();
@@ -226,6 +232,25 @@ namespace ToyWorldSystem.Controller
             if (post == null) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid post id");
 
             _repositoryManager.Post.ApprovePost(post);
+            //CREATE COMMENT
+            CreateNotificationModel noti = new CreateNotificationModel
+            {
+                Content = "Your post is approved",
+                AccountId = post.AccountId,
+                PostId = post.Id,
+            };
+            //push notification to list follower
+            var listFollower = await _repositoryManager.FollowAccount.GetAccountFollower((int)post.AccountId, false);
+            foreach (var item in listFollower)
+            {
+                CreateNotificationModel notiToFollower = new CreateNotificationModel
+                {
+                    Content = await _repositoryManager.Account.GetAccountById((int)post.AccountId, false) + " have a new post!",
+                    AccountId = item.Id,
+                    PostId = post.Id,
+                };
+            }
+            //END
             await _repositoryManager.SaveAsync();
 
             //Send notification
@@ -276,7 +301,7 @@ namespace ToyWorldSystem.Controller
                 throw new ErrorDetails(HttpStatusCode.BadRequest, "You don't have permission to delete");
 
             //Delete Image
-            if (post.Images != null|| post.Images.Count > 0)
+            if (post.Images != null || post.Images.Count > 0)
             {
                 foreach (var image in post.Images)
                 {
@@ -304,9 +329,9 @@ namespace ToyWorldSystem.Controller
             }
 
             //Delete react post
-            if(post.ReactPosts != null || post.ReactPosts.Count > 0)
+            if (post.ReactPosts != null || post.ReactPosts.Count > 0)
             {
-                foreach(var reactPost in post.ReactPosts)
+                foreach (var reactPost in post.ReactPosts)
                 {
                     _repositoryManager.ReactPost.DeleteReact(reactPost);
                 }

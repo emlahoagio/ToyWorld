@@ -95,6 +95,19 @@ namespace ToyWorldSystem.Controller
             return Ok(result);
         }
 
+        [HttpGet]
+        [Route("{trading_post_id}/detail")]
+        public async Task<IActionResult> GetTradingPostDetail(int trading_post_id)
+        {
+            var current_account_id = _userAccessor.getAccountId();
+
+            var trading_post_detail = await _repositoryManager.TradingPost.GetDetail(trading_post_id, current_account_id, trackChanges: false);
+
+            if (trading_post_detail == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "Invalid trading post Id");
+
+            return Ok(trading_post_detail);
+        }
+
         /// <summary>
         /// Create new trading post (Role: Manager, Member)
         /// </summary>
@@ -135,7 +148,13 @@ namespace ToyWorldSystem.Controller
             {
                 _repositoryManager.TradingPost.CreateTradingPost(tradingPost, group_id, account_id, 3, brand.Id, type.Id);
             }
-
+            //Create Notifications
+            //CreateNotificationModel noti = new CreateNotificationModel
+            //{
+            //    Content = "",
+            //    AccountId = 1,
+            //    TradingPostId = 1,
+            //};
             await _repositoryManager.SaveAsync();
 
             return Ok("Save changes success");

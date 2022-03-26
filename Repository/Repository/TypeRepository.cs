@@ -1,5 +1,7 @@
 ﻿using Contracts;
+using Entities.DataTransferObject;
 using Entities.Models;
+using Entities.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -41,6 +43,31 @@ namespace Repository
             var types = await FindAll(trackChanges).OrderBy(x => x.Name).Select(x => x.Name).ToListAsync();
 
             return types;
+        }
+
+        public async Task<Pagination<TypeInList>> GetTypeToAddFavorite(PagingParameters paging, bool trackChanges)
+        {
+            var result = await FindAll(trackChanges).OrderBy(x => x.Name).ToListAsync();
+
+            var count = result.Count;
+
+            var paging_result = result.Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize);
+
+            var result_list = paging_result.Select(x => new TypeInList
+            {
+                Name = x.Name,
+                Id = x.Id
+            });
+
+            var final_result = new Pagination<TypeInList>
+            {
+                Count = count,
+                Data = result_list,
+                PageNumber = paging.PageNumber,
+                PageSize = paging.PageSize
+            };
+            return final_result;
         }
     }
 }

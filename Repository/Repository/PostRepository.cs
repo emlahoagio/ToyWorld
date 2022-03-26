@@ -63,12 +63,12 @@ namespace Repository
             var pagingList = listPost.Skip((paging.PageNumber - 1) * paging.PageSize)
                 .Take(paging.PageSize);
 
-            if(count == 0 || listPost == null)
+            if (count == 0 || listPost == null)
             {
                 return null;
             }
 
-            var result = listPost.Select(x => new PostInList
+            var result = pagingList.Select(x => new PostInList
             {
                 Id = x.Id,
                 Images = x.Images.Select(x => new ImageReturn
@@ -131,7 +131,8 @@ namespace Repository
                     NumOfReact = x.ReactComments.Count,
                     OwnerId = x.Account.Id,
                     OwnerAvatar = x.Account.Avatar,
-                    OwnerName = x.Account.Name
+                    OwnerName = x.Account.Name,
+                    CommentDate = x.CommentDate
                 }).ToList(),
                 Images = post.Images.Select(x => new ImageReturn
                 {
@@ -292,7 +293,7 @@ namespace Repository
                 return null;
             }
 
-            var result = listPost.Select(x => new PostInList
+            var result = pagingList.Select(x => new PostInList
             {
                 Id = x.Id,
                 Images = x.Images.Select(x => new ImageReturn
@@ -331,6 +332,12 @@ namespace Repository
                 return 0;
 
             return post.ReactPosts.Count;
+        }
+
+        public async Task<int> GetOwnerByPostId(int postId)
+        {
+            var post = await FindByCondition(x => x.Id == postId, false).FirstOrDefaultAsync();
+            return (int)post.AccountId;
         }
     }
 }

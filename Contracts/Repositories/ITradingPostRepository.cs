@@ -1,9 +1,6 @@
 ﻿using Entities.DataTransferObject;
 using Entities.Models;
 using Entities.RequestFeatures;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Contracts.Repositories
@@ -18,5 +15,7 @@ namespace Contracts.Repositories
         Task<Pagination<TradingPostInList>> GetTradingPostInGroup(int group_id, PagingParameters paging, bool trackChanges, int account_id);
         Task<TradingPost> GetTradingPostById(int tradingpost_id, bool trackChanges);
         Task<UpdateTradingPost> GetUpdateDetail(int tradingpost_id, bool trackChanges);
+        Task<TradingPostDetail> GetDetail(int trading_post_id, int current_account_id, bool trackChanges);
+        Task<int> GetOwnerById(int trading_post_id);
     }
 }

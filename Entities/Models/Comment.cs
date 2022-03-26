@@ -17,6 +17,7 @@ namespace Entities.Models
         public int? AccountId { get; set; }
         public int? PostId { get; set; }
         public int? TradingPostId { get; set; }
+        public DateTime CommentDate { get; set; }
 
         public virtual TradingPost TradingPost { get; set; }
         public virtual Account Account { get; set; }

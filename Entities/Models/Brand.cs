@@ -13,6 +13,7 @@ namespace Entities.Models
             Proposals = new HashSet<Proposal>();
             Toys = new HashSet<Toy>();
             TradingPosts = new HashSet<TradingPost>();
+            FavoriteBrands = new HashSet<FavoriteBrand>();
         }
 
         public int Id { get; set; }
@@ -22,5 +23,6 @@ namespace Entities.Models
         public virtual ICollection<Contest> Contests { get; set; }
         public virtual ICollection<Proposal> Proposals { get; set; }
         public virtual ICollection<Toy> Toys { get; set; }
+        public virtual ICollection<FavoriteBrand> FavoriteBrands { get; set; }
     }
 }

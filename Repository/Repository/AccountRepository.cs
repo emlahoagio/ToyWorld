@@ -204,5 +204,11 @@ namespace Repository
                 Name = created_account.Name
             };
         }
+
+        public async Task<IEnumerable<Account>> getListManager()
+        {
+            var managers = await FindByCondition(x => x.Role == 1, false).ToListAsync();
+            return managers;
+        }
     }
 }

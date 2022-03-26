@@ -29,11 +29,13 @@ namespace Entities.Models
             Rewards = new HashSet<Reward>();
             Rates = new HashSet<Rate>();
             Notifications = new HashSet<Notification>();
-            Senders = new HashSet<Chat>(); //quandtm modify
+            Chats = new HashSet<Chat>(); //quandtm modify
             BillsBuyer = new HashSet<Bill>();
             BillsSeler = new HashSet<Bill>();
             RateSellersBuyer = new HashSet<RateSeller>();
             RateSellersSeller = new HashSet<RateSeller>();
+            FavoriteTypes = new HashSet<FavoriteType>();
+            FavoriteBrands = new HashSet<FavoriteBrand>();
         }
 
         public int Id { get; set; }
@@ -68,11 +70,12 @@ namespace Entities.Models
         public virtual ICollection<Reward> Rewards { get; set; }
         public virtual ICollection<Rate> Rates { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }
-        public virtual ICollection<Chat> Senders { get; set; } //quandtm modify
+        public virtual ICollection<Chat> Chats { get; set; } //quandtm modify
         public virtual ICollection<Bill> BillsSeler { get; set; }
         public virtual ICollection<Bill> BillsBuyer { get; set; }
         public virtual ICollection<RateSeller> RateSellersBuyer { get; set; }
         public virtual ICollection<RateSeller> RateSellersSeller { get; set; }
-
+        public virtual ICollection<FavoriteType> FavoriteTypes { get; set; }
+        public virtual ICollection<FavoriteBrand> FavoriteBrands { get; set; }
     }
 }

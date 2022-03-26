@@ -130,7 +130,7 @@ namespace Repository.Repository
 
             var pagingList = proposals.Skip((paging.PageNumber - 1) * paging.PageSize).Take(paging.PageSize);
 
-            var data = proposals.Select(x => new ProposalInList
+            var data = pagingList.Select(x => new ProposalInList
             {
                 Id = x.Id,
                 BrandName = x.Brand == null ? null : x.Brand.Name,

@@ -4,11 +4,8 @@ using Entities.ErrorModel;
 using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -232,7 +229,15 @@ namespace ToyWorldSystem.Controller
             if (follow_account == null)
             {
                 _repository.FollowAccount.CreateFollow(current_follow);
-            } else
+                //Create Notification
+                CreateNotificationModel noti = new CreateNotificationModel
+                {
+                    Content = current_login_account.Name + " follow you!",
+                    AccountId = visit_account_id,
+                };
+                _repository.Notification.CreateNotification(noti);
+            }
+            else
             {
                 _repository.FollowAccount.DeleteFollow(current_follow);
             }
@@ -344,7 +349,8 @@ namespace ToyWorldSystem.Controller
             if (update_account.Status)
             {
                 _repository.Account.DisableAccount(update_account);
-            }else
+            }
+            else
             {
                 _repository.Account.EnableAccount(update_account);
             }
@@ -415,7 +421,7 @@ namespace ToyWorldSystem.Controller
         [Route("{account_id}/profile")]
         public async Task<IActionResult> UpdateProfile(int account_id, UpdateAccountParameters param)
         {
-            var curent_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(),trackChanges: false);
+            var curent_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
 
             if (account_id != curent_account.Id) throw new ErrorDetails(HttpStatusCode.BadRequest, "Can't update another user profile");
 

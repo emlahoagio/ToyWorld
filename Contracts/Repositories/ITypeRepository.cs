@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Entities.DataTransferObject;
+using Entities.RequestFeatures;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,5 +13,6 @@ namespace Contracts
         void CreateType(Entities.Models.Type type);
         Task<IEnumerable<string>> GetListName(bool trackChanges);
         Task<List<string>> GetTypeCreateContest(bool trackChanges);
+        Task<Pagination<TypeInList>> GetTypeToAddFavorite(PagingParameters paging, bool trackChanges);
     }
 }

@@ -79,7 +79,7 @@ namespace Repository.Repository
                 PageSize = paging.PageSize,
                 PageNumber = paging.PageNumber,
                 Count = count,
-                Data = tradingPosts.Select(x => new TradingPostInList
+                Data = pagingList.Select(x => new TradingPostInList
                 {
                     Address = x.Address,
                     Brand = x.Brand == null ? "Unknow" : x.Brand.Name,
@@ -150,6 +150,65 @@ namespace Repository.Repository
 
             trading_post.Status = trading_status;
             Update(trading_post);
+        }
+
+        public async Task<TradingPostDetail> GetDetail(int trading_post_id, int current_account_id, bool trackChanges)
+        {
+            var trading_post = await FindByCondition(x => x.Id == trading_post_id && x.IsDeleted == false, trackChanges)
+                .Include(x => x.Brand)
+                .Include(x => x.Comments).ThenInclude(x => x.ReactComments)
+                .Include(x => x.Comments).ThenInclude(x => x.Account)
+                .Include(x => x.Account)
+                .Include(x => x.Images)
+                .Include(x => x.ReactTradingPosts)
+                .Include(x => x.Type)
+                .FirstOrDefaultAsync();
+
+            var result = new TradingPostDetail
+            {
+                Id = trading_post.Id,
+                Address = trading_post.Address,
+                BrandName = trading_post.Brand == null ? "Unkow brand" : trading_post.Brand.Name,
+                Comment = trading_post.Comments.Select(y => new CommentReturn
+                {
+                    CommentDate = y.CommentDate,
+                    Content = y.Content,
+                    Id = y.Id,
+                    NumOfReact = y.ReactComments.Count,
+                    OwnerAvatar = y.Account.Avatar,
+                    OwnerId = y.AccountId.Value,
+                    OwnerName = y.Account.Name
+                }).ToList(),
+                Value = trading_post.Value,
+                OwnerName = trading_post.Account.Name,
+                OwnerId = trading_post.AccountId,
+                Content = trading_post.Content,
+                GroupId = trading_post.GroupId,
+                Images = trading_post.Images.Select(y => new ImageReturn
+                {
+                    Id = y.Id,
+                    Url = y.Url
+                }).ToList(),
+                IsReact = trading_post.ReactTradingPosts.Where(y => y.AccountId == current_account_id).Count() == 0 ? false : true,
+                OwnerAvatar = trading_post.Account.Avatar,
+                Phone = trading_post.Phone,
+                PostDate = trading_post.PostDate,
+                Status = trading_post.Status,
+                Title = trading_post.Title,
+                ToyId = trading_post.ToyId,
+                ToyName = trading_post.ToyName,
+                Trading = trading_post.Trading,
+                TypeName = trading_post.Type == null ? "Unkow type" : trading_post.Type.Name
+            };
+
+            return result;
+        }
+
+        public async Task<int> GetOwnerById(int trading_post_id)
+        {
+            var result = await FindByCondition(x => x.Id == trading_post_id, false).FirstOrDefaultAsync();
+
+            return result.AccountId.Value;
         }
     }
 }

@@ -117,6 +117,19 @@ namespace ToyWorldSystem.Controller
             };
 
             _repository.Proposal.CreateProposal(proposal);
+
+            //Create notification
+            var listManager = await _repository.Account.getListManager();
+            foreach (var manager in listManager)
+            {
+                CreateNotificationModel noti = new CreateNotificationModel
+                {
+                    Content = "You receive a proposal!",
+                    AccountId = manager.Id,
+                };
+                _repository.Notification.CreateNotification(noti);
+            };
+            //end.
             await _repository.SaveAsync();
 
             return Ok("Save changes success");
@@ -130,16 +143,16 @@ namespace ToyWorldSystem.Controller
         /// <returns></returns>
         [HttpPut]
         [Route("{proposal_id}/prizes")]
-        public async Task<IActionResult> AddProposalPrize(int proposal_id, [FromBody]List<int> prizes_id)
+        public async Task<IActionResult> AddProposalPrize(int proposal_id, [FromBody] List<int> prizes_id)
         {
             var proposal = await _repository.Proposal.GetProposalToAddPrize(proposal_id, trachChanges: false);
 
             var account_id = _userAccessor.getAccountId();
 
-            if (proposal.AccountId != account_id) 
+            if (proposal.AccountId != account_id)
                 throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "This proposal isn't belong to you");
 
-            foreach(var prize_id in prizes_id)
+            foreach (var prize_id in prizes_id)
             {
                 _repository.ProposalPrize.Create(new ProposalPrize
                 {
@@ -171,6 +184,14 @@ namespace ToyWorldSystem.Controller
             if (proposal == null) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Invalid Proposal");
 
             _repository.Proposal.DenyProposal(proposal);
+            //CREATE NOTIFICATION
+            CreateNotificationModel noti = new CreateNotificationModel
+            {
+                Content = "Your proposal is denied!",
+                AccountId = proposal.AccountId,
+            };
+            _repository.Notification.CreateNotification(noti);
+            //END
             await _repository.SaveAsync();
 
             return Ok("Save changes success");
@@ -195,10 +216,17 @@ namespace ToyWorldSystem.Controller
             if (proposal == null) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Invalid Proposal");
 
             _repository.Proposal.ApproveProposal(proposal);
+            //CREATE NOTIFICATION
+            CreateNotificationModel noti = new CreateNotificationModel
+            {
+                Content = "Your proposal is approved!",
+                AccountId = proposal.AccountId,
+            };
+            _repository.Notification.CreateNotification(noti);
+            //END
             await _repository.SaveAsync();
 
             return Ok("Save changes success");
         }
     }
 }
- 

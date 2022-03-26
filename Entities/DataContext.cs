@@ -47,6 +47,7 @@ namespace Entities.Models
         public virtual DbSet<Chat> Chat { get; set; }
         public virtual DbSet<Bill> Bill { get; set; }
         public virtual DbSet<RateSeller> RateSeller { get; set; }
+        public virtual DbSet<FavoriteType> FavoriteType { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -209,6 +210,44 @@ namespace Entities.Models
                     .HasForeignKey(d => d.AccountId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_FollowAccount_Account");
+            });
+            
+            modelBuilder.Entity<FavoriteType>(entity =>
+            {
+                entity.HasKey(e => new { e.AccountId, e.TypeId });
+
+                entity.ToTable("FavoriteType");
+
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.FavoriteTypes)
+                    .HasForeignKey(d => d.AccountId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Type_Account_FavoriteTypeAccount");
+
+                entity.HasOne(d => d.Type)
+                    .WithMany(p => p.FavoriteTypes)
+                    .HasForeignKey(d => d.TypeId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Type_Account_FavoriteTypeType");
+            }); 
+            
+            modelBuilder.Entity<FavoriteBrand>(entity =>
+            {
+                entity.HasKey(e => new { e.AccountId, e.BrandId });
+
+                entity.ToTable("FavoriteBrand");
+
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.FavoriteBrands)
+                    .HasForeignKey(d => d.AccountId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Brand_Account_FavoriteBrandAccount");
+
+                entity.HasOne(d => d.Brand)
+                    .WithMany(p => p.FavoriteBrands)
+                    .HasForeignKey(d => d.BrandId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Type_Account_FavoriteBrandBrand");
             });
 
             modelBuilder.Entity<FollowGroup>(entity =>
@@ -576,10 +615,10 @@ namespace Entities.Models
             //quandtm modify
             modelBuilder.Entity<Chat>(entity =>
             {
-                entity.HasOne(d => d.Sender)
-                    .WithMany(p => p.Senders)
-                    .HasForeignKey(d => d.SenderId)
-                    .HasConstraintName("FK_Chat_Account_SenderId");
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.Chats)
+                    .HasForeignKey(d => d.AccountId)
+                    .HasConstraintName("FK_Chat_Account_AccountId");
             });
 
             modelBuilder.Entity<Bill>(entity =>
