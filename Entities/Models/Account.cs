@@ -34,6 +34,8 @@ namespace Entities.Models
             BillsSeler = new HashSet<Bill>();
             RateSellersBuyer = new HashSet<RateSeller>();
             RateSellersSeller = new HashSet<RateSeller>();
+            FavoriteTypes = new HashSet<FavoriteType>();
+            FavoriteBrands = new HashSet<FavoriteBrand>();
         }
 
         public int Id { get; set; }
@@ -73,6 +75,7 @@ namespace Entities.Models
         public virtual ICollection<Bill> BillsBuyer { get; set; }
         public virtual ICollection<RateSeller> RateSellersBuyer { get; set; }
         public virtual ICollection<RateSeller> RateSellersSeller { get; set; }
-
+        public virtual ICollection<FavoriteType> FavoriteTypes { get; set; }
+        public virtual ICollection<FavoriteBrand> FavoriteBrands { get; set; }
     }
 }

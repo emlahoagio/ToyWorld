@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,11 +13,11 @@ namespace ToyWorldSystem.Controller
     [ApiController]
     public class TypeController : ControllerBase
     {
-        private readonly IRepositoryManager _repositoryManager;
+        private readonly IRepositoryManager _repository;
 
         public TypeController(IRepositoryManager repositoryManager)
         {
-            _repositoryManager = repositoryManager;
+            _repository = repositoryManager;
         }
 
         /// <summary>
@@ -27,9 +28,18 @@ namespace ToyWorldSystem.Controller
         [Route("type_to_conbobox")]
         public async Task<IActionResult> getTypeToCombobox()
         {
-            var result = await _repositoryManager.Type.GetListName(trackChanges: false);
+            var result = await _repository.Type.GetListName(trackChanges: false);
 
             return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("to_add_favorite")]
+        public async Task<IActionResult> GetBrands(PagingParameters paging)
+        {
+            var brands = await _repository.Type.GetTypeToAddFavorite(paging, trackChanges: false);
+
+            return Ok(brands);
         }
     }
 }

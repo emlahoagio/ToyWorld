@@ -39,7 +39,8 @@ namespace ToyWorldSystem.Controller
                 AccountId = accountId,
                 Content = param.Content,
                 PostId = param.PostId,
-                TradingPostId = null
+                TradingPostId = null,
+                CommentDate = DateTime.UtcNow
             };
 
             _repositoryManager.Comment.CreateComment(comment);
@@ -73,7 +74,8 @@ namespace ToyWorldSystem.Controller
                 AccountId = accountId,
                 Content = param.Content,
                 PostId = null,
-                TradingPostId = param.PostId
+                TradingPostId = param.PostId,
+                CommentDate = DateTime.UtcNow
             };
 
             _repositoryManager.Comment.CreateComment(comment);

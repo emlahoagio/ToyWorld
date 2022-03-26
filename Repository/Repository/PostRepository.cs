@@ -68,7 +68,7 @@ namespace Repository
                 return null;
             }
 
-            var result = listPost.Select(x => new PostInList
+            var result = pagingList.Select(x => new PostInList
             {
                 Id = x.Id,
                 Images = x.Images.Select(x => new ImageReturn
@@ -131,7 +131,8 @@ namespace Repository
                     NumOfReact = x.ReactComments.Count,
                     OwnerId = x.Account.Id,
                     OwnerAvatar = x.Account.Avatar,
-                    OwnerName = x.Account.Name
+                    OwnerName = x.Account.Name,
+                    CommentDate = x.CommentDate
                 }).ToList(),
                 Images = post.Images.Select(x => new ImageReturn
                 {
@@ -292,7 +293,7 @@ namespace Repository
                 return null;
             }
 
-            var result = listPost.Select(x => new PostInList
+            var result = pagingList.Select(x => new PostInList
             {
                 Id = x.Id,
                 Images = x.Images.Select(x => new ImageReturn

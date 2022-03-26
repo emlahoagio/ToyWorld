@@ -524,7 +524,7 @@ namespace ToyWorldSystem.Controller
             {
                 AccountId = account_id,
                 Note = parameters.Note,
-                NumOfStart = parameters.NumOfStart,
+                NumOfStar = parameters.NumOfStar,
                 PostOfContestId = post_of_contest_id
             };
 

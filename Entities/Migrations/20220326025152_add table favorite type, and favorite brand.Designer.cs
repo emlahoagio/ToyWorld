@@ -4,14 +4,16 @@ using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Entities.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class TWSContextModelSnapshot : ModelSnapshot
+    [Migration("20220326025152_add table favorite type, and favorite brand")]
+    partial class addtablefavoritetypeandfavoritebrand
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -170,9 +172,6 @@ namespace Entities.Migrations
 
                     b.Property<int?>("AccountId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("CommentDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
@@ -764,7 +763,7 @@ namespace Entities.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("NumOfStar")
+                    b.Property<int>("NumOfStart")
                         .HasColumnType("int");
 
                     b.Property<int>("PostOfContestId")

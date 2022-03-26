@@ -34,7 +34,7 @@ namespace Repository.Repository
                     Id = x.PostOfContest.Id,
                     OwnerAvatar = x.Account.Avatar,
                     OwnerName = x.Account.Name,
-                    SumOfStart = x.PostOfContest.Rates.Select(y => y.NumOfStart).ToList().Sum()
+                    SumOfStart = x.PostOfContest.Rates.Select(y => y.NumOfStar).ToList().Sum()
                 }
             }).ToList();
 
