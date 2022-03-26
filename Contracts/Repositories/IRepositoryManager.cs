@@ -36,6 +36,7 @@ namespace Contracts
         IRateSellerRepository RateSeller { get; }
         IEvaluateContestRepository EvaluateContest { get; }
         IFeedbackRepository Feedback { get; }
+        IReactTradingPostRepository ReactTradingPost { get; }
         Task SaveAsync();
     }
 }

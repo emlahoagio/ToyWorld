@@ -95,6 +95,11 @@ namespace ToyWorldSystem.Controller
             return Ok(result);
         }
 
+        /// <summary>
+        /// Get trading post detail (Role: Manager, Member)
+        /// </summary>
+        /// <param name="trading_post_id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("{trading_post_id}/detail")]
         public async Task<IActionResult> GetTradingPostDetail(int trading_post_id)
@@ -183,6 +188,33 @@ namespace ToyWorldSystem.Controller
             _repositoryManager.Feedback.Create(feedback);
             await _repositoryManager.SaveAsync();
 
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
+        /// React trading post (Role: Manager, Member)
+        /// </summary>
+        /// <param name="trading_post_id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("{trading_post_id}/react")]
+        public async Task<IActionResult> ReactTradingPost(int trading_post_id)
+        {
+            var account_id = _userAccessor.getAccountId();
+
+            var reactTrading = await _repositoryManager.ReactTradingPost.FindReact(trading_post_id, account_id, trackChanges: false);
+
+            if (reactTrading == null)
+                _repositoryManager.ReactTradingPost.Create(new ReactTradingPost
+                {
+                    AccountId = account_id,
+                    TradingPostId = trading_post_id
+                    //Push notification to trading post owner
+                });
+            else
+                _repositoryManager.ReactTradingPost.Delete(reactTrading);
+
+            await _repositoryManager.SaveAsync();
             return Ok("Save changes success");
         }
 

@@ -47,6 +47,7 @@ namespace Repository
         private IRateSellerRepository _rateSellerRepository;
         private IEvaluateContestRepository _evaluateContestRepository;
         private IFeedbackRepository _feedbackRepository;
+        private IReactTradingPostRepository _reactTradingRepository;
 
         public RepositoryManager(DataContext context)
         {
@@ -375,6 +376,16 @@ namespace Repository
                 if (_feedbackRepository == null)
                     _feedbackRepository = new FeedbackRepository(_context);
                 return _feedbackRepository;
+            }
+        }
+
+        public IReactTradingPostRepository ReactTradingPost
+        {
+            get
+            {
+                if (_reactTradingRepository == null)
+                    _reactTradingRepository = new ReactTradingPostRepository(_context);
+                return _reactTradingRepository;
             }
         }
 
