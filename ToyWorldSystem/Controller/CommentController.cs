@@ -1,11 +1,7 @@
 ﻿using Contracts;
 using Entities.ErrorModel;
 using Entities.RequestFeatures;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ToyWorldSystem.Controller
@@ -44,15 +40,16 @@ namespace ToyWorldSystem.Controller
             };
 
             _repositoryManager.Comment.CreateComment(comment);
-            //var account = _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), false).Result;
-            //var noti = new CreateNotificationModel
-            //{
-            //    PostId = param.PostId,
-            //    Content = account.Name + " has commented on your post",
-            //    AccountId = 0,
-            //};
-            //_repositoryManager.Notification.CreateNotification(noti);
-
+            //CREATE COMMENT
+            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), false);
+            var noti = new CreateNotificationModel
+            {
+                PostId = param.PostId,
+                Content = account.Name + " has commented on your post",
+                AccountId = await _repositoryManager.Post.GetOwnerByPostId(param.PostId),
+            };
+            _repositoryManager.Notification.CreateNotification(noti);
+            //END
             await _repositoryManager.SaveAsync();
 
             return Ok("Save changes success");
@@ -79,7 +76,16 @@ namespace ToyWorldSystem.Controller
             };
 
             _repositoryManager.Comment.CreateComment(comment);
-
+            //CREATE COMMENT
+            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), false);
+            var noti = new CreateNotificationModel
+            {
+                PostId = param.PostId,
+                Content = account.Name + " has commented on your post",
+                AccountId = await _repositoryManager.TradingPost.GetOwnerById(param.PostId),
+            };
+            _repositoryManager.Notification.CreateNotification(noti);
+            //END
             await _repositoryManager.SaveAsync();
 
             return Ok("Save changes success");
@@ -120,6 +126,14 @@ namespace ToyWorldSystem.Controller
                 //react
                 _repositoryManager.ReactComment.CreateReact(
                     new Entities.Models.ReactComment { AccountId = accountId, CommentId = comment_id });
+                //CREATE COMMENT
+                var noti = new CreateNotificationModel
+                {
+                    Content = account.Name + " has commented on your post",
+                    AccountId = comment.AccountId,
+                };
+                _repositoryManager.Notification.CreateNotification(noti);
+                //END
             }
 
             await _repositoryManager.SaveAsync();
@@ -161,7 +175,7 @@ namespace ToyWorldSystem.Controller
 
             var comment = await _repositoryManager.Comment.GetUpdateCommentById(comment_id, trackChanges: false);
 
-            if(comment == null) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Invalid comment");
+            if (comment == null) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Invalid comment");
 
             if (comment.AccountId != account_id && comment.Post.AccountId != account_id)
                 throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "You're not owner to remove");

@@ -148,7 +148,13 @@ namespace ToyWorldSystem.Controller
             {
                 _repositoryManager.TradingPost.CreateTradingPost(tradingPost, group_id, account_id, 3, brand.Id, type.Id);
             }
-
+            //Create Notifications
+            //CreateNotificationModel noti = new CreateNotificationModel
+            //{
+            //    Content = "",
+            //    AccountId = 1,
+            //    TradingPostId = 1,
+            //};
             await _repositoryManager.SaveAsync();
 
             return Ok("Save changes success");

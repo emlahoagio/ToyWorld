@@ -1,9 +1,7 @@
 ﻿using Entities.DataTransferObject;
 using Entities.Models;
 using Entities.RequestFeatures;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Contracts
@@ -24,5 +22,7 @@ namespace Contracts
         void Update(Account account);
         void Create(Account account);
         void UpdateNewPassword(Account account, string new_password);
+
+        Task<IEnumerable<Account>> getListManager();
     }
 }

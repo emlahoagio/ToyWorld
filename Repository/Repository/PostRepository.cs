@@ -63,7 +63,7 @@ namespace Repository
             var pagingList = listPost.Skip((paging.PageNumber - 1) * paging.PageSize)
                 .Take(paging.PageSize);
 
-            if(count == 0 || listPost == null)
+            if (count == 0 || listPost == null)
             {
                 return null;
             }
@@ -332,6 +332,12 @@ namespace Repository
                 return 0;
 
             return post.ReactPosts.Count;
+        }
+
+        public async Task<int> GetOwnerByPostId(int postId)
+        {
+            var post = await FindByCondition(x => x.Id == postId, false).FirstOrDefaultAsync();
+            return (int)post.AccountId;
         }
     }
 }
