@@ -203,5 +203,12 @@ namespace Repository.Repository
 
             return result;
         }
+
+        public async Task<int> GetOwnerById(int trading_post_id)
+        {
+            var result = await FindByCondition(x => x.Id == trading_post_id, false).FirstOrDefaultAsync();
+
+            return result.AccountId.Value;
+        }
     }
 }
