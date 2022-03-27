@@ -159,7 +159,7 @@ namespace Repository.Repository
                 .Include(x => x.Comments).ThenInclude(x => x.ReactComments)
                 .Include(x => x.Comments).ThenInclude(x => x.Account)
                 .Include(x => x.Account)
-                .Include(x => x.Images)
+                //.Include(x => x.Images)
                 .Include(x => x.ReactTradingPosts)
                 .Include(x => x.Type)
                 .FirstOrDefaultAsync();
@@ -184,11 +184,11 @@ namespace Repository.Repository
                 OwnerId = trading_post.AccountId,
                 Content = trading_post.Content,
                 GroupId = trading_post.GroupId,
-                Images = trading_post.Images.Select(y => new ImageReturn
-                {
-                    Id = y.Id,
-                    Url = y.Url
-                }).ToList(),
+                //Images = trading_post.Images.Select(y => new ImageReturn
+                //{
+                //    Id = y.Id,
+                //    Url = y.Url
+                //}).ToList(),
                 IsReact = trading_post.ReactTradingPosts.Where(y => y.AccountId == current_account_id).Count() == 0 ? false : true,
                 OwnerAvatar = trading_post.Account.Avatar,
                 Phone = trading_post.Phone,
