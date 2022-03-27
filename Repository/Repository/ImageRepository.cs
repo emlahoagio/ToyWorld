@@ -48,5 +48,13 @@ namespace Repository
 
             Delete(image);
         }
+
+        public async Task<TradingPostDetail> GetImageForTradingDetail(TradingPostDetail trading_post_detail_no_image, bool trackChanges)
+        {
+            trading_post_detail_no_image.Images = await FindByCondition(x => x.TradingPostId == trading_post_detail_no_image.Id, trackChanges)
+                .Select(x => new ImageReturn { Id = x.Id, Url = x.Url }).ToListAsync();
+
+            return trading_post_detail_no_image;
+        }
     }
 }

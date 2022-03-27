@@ -104,7 +104,9 @@ namespace ToyWorldSystem.Controller
         {
             var current_account_id = _userAccessor.getAccountId();
 
-            var trading_post_detail = await _repositoryManager.TradingPost.GetDetail(trading_post_id, current_account_id, trackChanges: false);
+            var trading_post_detail_no_image = await _repositoryManager.TradingPost.GetDetail(trading_post_id, current_account_id, trackChanges: false);
+
+            var trading_post_detail = await _repositoryManager.Image.GetImageForTradingDetail(trading_post_detail_no_image, trackChanges: true);
 
             if (trading_post_detail == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "Invalid trading post Id");
 
