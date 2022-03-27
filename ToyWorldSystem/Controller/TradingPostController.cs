@@ -3,11 +3,9 @@ using Entities.DataTransferObject;
 using Entities.ErrorModel;
 using Entities.Models;
 using Entities.RequestFeatures;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ToyWorldSystem.Controller
@@ -305,6 +303,14 @@ namespace ToyWorldSystem.Controller
             await _repositoryManager.SaveAsync();
 
             return Ok("Save changes success");
+        }
+
+        [HttpGet]
+        [Route("getdatafortradingmessage")]
+        public async Task<IActionResult> GetDataForTradingMessage(int tradingPostId)
+        {
+            var result = await _repositoryManager.TradingPost.GetDataForTradingMess(tradingPostId);
+            return Ok(result);
         }
     }
 }

@@ -3,10 +3,7 @@ using Entities.DataTransferObject;
 using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Repository.Repository
@@ -209,6 +206,23 @@ namespace Repository.Repository
             var result = await FindByCondition(x => x.Id == trading_post_id, false).FirstOrDefaultAsync();
 
             return result.AccountId.Value;
+        }
+
+        public async Task<DataForMess> GetDataForTradingMess(int tradingpostId)
+        {
+            var tradingPost = await FindByCondition(x => x.Id == tradingpostId, false)
+                .FirstOrDefaultAsync();
+            if (tradingPost == null)
+            {
+                return null;
+            }
+            DataForMess result = new DataForMess
+            {
+                Title = tradingPost.Title,
+                ToyName = tradingPost.ToyName
+            };
+
+            return result;
         }
     }
 }
