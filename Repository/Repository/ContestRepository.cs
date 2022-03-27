@@ -71,7 +71,7 @@ namespace Repository
 
         public async Task<Pagination<ContestInGroup>> GetContestInGroup(int group_id, int account_id, bool trackChanges, PagingParameters paging)
         {
-            var contest_in_group = await FindByCondition(x => x.GroupId == group_id && x.StartRegistration >= DateTime.Now.AddDays(-5), trackChanges)
+            var contest_in_group = await FindByCondition(x => x.GroupId == group_id, trackChanges)
                 .ToListAsync();
 
             if (contest_in_group == null) return null;
@@ -127,12 +127,12 @@ namespace Repository
                 .Take(4)
                 .ToListAsync();
 
-            if(listContest == null)
+            if (listContest == null)
                 return null;
 
             var result = new List<HighlightContest>();
 
-            foreach(Contest contest in listContest)
+            foreach (Contest contest in listContest)
             {
                 result.Add(new HighlightContest
                 {
@@ -155,8 +155,8 @@ namespace Repository
             contest.Status = 1;
 
             Update(contest);
-        } 
-        
+        }
+
         public async Task EndRegistration(int contest_id, bool trackChanges)
         {
             var contest = await FindByCondition(x => x.Id == contest_id, trackChanges).FirstOrDefaultAsync();
@@ -166,7 +166,7 @@ namespace Repository
 
             Update(contest);
         }
-        
+
         public async Task StartContest(int contest_id, bool trackChanges)
         {
             var contest = await FindByCondition(x => x.Id == contest_id, trackChanges).FirstOrDefaultAsync();
@@ -197,6 +197,98 @@ namespace Repository
                 .FirstOrDefaultAsync();
 
             return contest;
+        }
+
+        public async Task<Pagination<ContestInGroup>> GetContestByBrandAndType(int account_id, List<Entities.Models.Type> types, List<Brand> brands, PagingParameters paging, bool trackChanges)
+        {
+            var contests = await FindByCondition(x => x.StartRegistration >= DateTime.UtcNow.AddMonths(-6), trackChanges).ToListAsync();
+
+            //Account have no favorite
+            if (types == null && brands == null)
+            {
+                return new Pagination<ContestInGroup>
+                {
+                    Count = contests.Count,
+                    Data = contests.Skip((paging.PageNumber - 1) * paging.PageSize).Take(paging.PageSize).Select(x => new ContestInGroup
+                    {
+                        CoverImage = x.CoverImage,
+                        Description = x.Description,
+                        EndDate = x.EndDate,
+                        EndRegistration = x.EndRegistration,
+                        Id = x.Id,
+                        Slogan = x.Slogan,
+                        MaxRegistration = x.MaxRegistration,
+                        MinRegistration = x.MinRegistration,
+                        ProposalId = x.ProposalId,
+                        StartDate = x.StartDate,
+                        StartRegistration = x.StartRegistration,
+                        Title = x.Title,
+                        Venue = x.Venue,
+                        IsJoined = x.AccountJoined.Where(x => x.AccountId == account_id).Count() == 0 ? false : true
+                    }).ToList(),
+                    PageSize = paging.PageSize,
+                    PageNumber = paging.PageNumber
+                };
+            }
+
+            var result = new List<Contest>();
+            //select by brand
+            if (brands != null)
+            {
+                foreach (var brand in brands)
+                {
+                    foreach (var contest in contests)
+                    {
+                        if (contest.BrandId == brand.Id)
+                        {
+                            result.Add(contest);
+                            contests.Remove(contest);
+                        }
+                    }
+                }
+            }
+            //select by type
+            if (types != null)
+            {
+                foreach (var type in types)
+                {
+                    foreach (var contest in contests)
+                    {
+                        if (contest.TypeId == type.Id)
+                        {
+                            result.Add(contest);
+                            contests.Remove(contest);
+                        }
+                    }
+                }
+            }
+            var count = result.Count;
+            //paging result
+            var paging_result = result.Skip((paging.PageNumber - 1) * paging.PageSize).Take(paging.PageSize)
+                .Select(x => new ContestInGroup
+                {
+                    CoverImage = x.CoverImage,
+                    Description = x.Description,
+                    EndDate = x.EndDate,
+                    EndRegistration = x.EndRegistration,
+                    Id = x.Id,
+                    Slogan = x.Slogan,
+                    MaxRegistration = x.MaxRegistration,
+                    MinRegistration = x.MinRegistration,
+                    ProposalId = x.ProposalId,
+                    StartDate = x.StartDate,
+                    StartRegistration = x.StartRegistration,
+                    Title = x.Title,
+                    Venue = x.Venue,
+                    IsJoined = x.AccountJoined.Where(x => x.AccountId == account_id).Count() == 0 ? false : true
+                }).ToList();
+            return new Pagination<ContestInGroup>
+            {
+                Count = count,
+                Data = paging_result,
+                PageNumber = paging.PageNumber,
+                PageSize = paging.PageSize
+            };
         }
     }
 }

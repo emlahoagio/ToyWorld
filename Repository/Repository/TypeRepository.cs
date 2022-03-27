@@ -45,29 +45,16 @@ namespace Repository
             return types;
         }
 
-        public async Task<Pagination<TypeInList>> GetTypeToAddFavorite(PagingParameters paging, bool trackChanges)
+        public async Task<List<TypeInList>> GetTypeToAddFavorite(int account_id, bool trackChanges)
         {
-            var result = await FindAll(trackChanges).OrderBy(x => x.Name).ToListAsync();
+            var result = await FindAll(trackChanges).Include(x => x.FavoriteTypes).OrderBy(x => x.Name).ToListAsync();
 
-            var count = result.Count;
-
-            var paging_result = result.Skip((paging.PageNumber - 1) * paging.PageSize)
-                .Take(paging.PageSize);
-
-            var result_list = paging_result.Select(x => new TypeInList
+            return result.Select(x => new TypeInList
             {
+                Id = x.Id,
                 Name = x.Name,
-                Id = x.Id
-            });
-
-            var final_result = new Pagination<TypeInList>
-            {
-                Count = count,
-                Data = result_list,
-                PageNumber = paging.PageNumber,
-                PageSize = paging.PageSize
-            };
-            return final_result;
+                IsFavorite = x.FavoriteTypes.Where(y => y.AccountId == account_id).Count() > 0
+            }).ToList();
         }
     }
 }

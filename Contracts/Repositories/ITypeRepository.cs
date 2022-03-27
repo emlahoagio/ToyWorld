@@ -13,6 +13,6 @@ namespace Contracts
         void CreateType(Entities.Models.Type type);
         Task<IEnumerable<string>> GetListName(bool trackChanges);
         Task<List<string>> GetTypeCreateContest(bool trackChanges);
-        Task<Pagination<TypeInList>> GetTypeToAddFavorite(PagingParameters paging, bool trackChanges);
+        Task<List<TypeInList>> GetTypeToAddFavorite(int accout_id, bool trackChanges);
     }
 }

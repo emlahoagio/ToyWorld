@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +15,12 @@ namespace ToyWorldSystem.Controller
     public class TypeController : ControllerBase
     {
         private readonly IRepositoryManager _repository;
+        private readonly IUserAccessor _userAccessor;
 
-        public TypeController(IRepositoryManager repositoryManager)
+        public TypeController(IRepositoryManager repositoryManager, IUserAccessor userAccessor)
         {
             _repository = repositoryManager;
+            _userAccessor = userAccessor;
         }
 
         /// <summary>
@@ -33,13 +36,46 @@ namespace ToyWorldSystem.Controller
             return Ok(result);
         }
 
+        /// <summary>
+        /// Get type for add favorite
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("to_add_favorite")]
-        public async Task<IActionResult> GetBrands(PagingParameters paging)
+        public async Task<IActionResult> GetTypeForFavorite()
         {
-            var brands = await _repository.Type.GetTypeToAddFavorite(paging, trackChanges: false);
+            var account_id = _userAccessor.getAccountId();
+
+            var brands = await _repository.Type.GetTypeToAddFavorite(account_id, trackChanges: false);
 
             return Ok(brands);
+        }
+
+        /// <summary>
+        /// Add/remove favorite type (All role)
+        /// </summary>
+        /// <param name="types_id">If not in favorite -> add, Has in favorite -> remove</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("favorite/unfavorite")]
+        public async Task<IActionResult> AddFavoriteType(List<int> types_id)
+        {
+            var account_id = _userAccessor.getAccountId();
+
+            var favorite_type = await _repository.FavoriteType.GetFavoriteType(account_id, trackChanges: false);
+            foreach(var type_id in types_id)
+            {
+                if(!_repository.FavoriteType.IsFavoriteType(favorite_type, type_id))
+                {
+                    _repository.FavoriteType.Create(new FavoriteType { AccountId = account_id, TypeId = type_id });
+                }else
+                {
+                    _repository.FavoriteType.Delete(new FavoriteType { AccountId = account_id, TypeId = type_id });
+                }
+            }
+
+            await _repository.SaveAsync();
+            return Ok("Save changes success");
         }
     }
 }

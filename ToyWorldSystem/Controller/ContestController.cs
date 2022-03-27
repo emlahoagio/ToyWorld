@@ -45,6 +45,28 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Get favorite contest
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("favorite")]
+        public async Task<IActionResult> GetFavoriteContest(PagingParameters paging)
+        {
+            var account_id = _userAccessor.getAccountId();
+
+            //Get favorite type
+            var types = await _repositoryManager.FavoriteType.GetFavoriteType(account_id, trackChanges: false);
+            //Get favorite brand
+            var brands = await _repositoryManager.FavoriteBrand.GetFavoriteBrand(account_id, trackChanges: false);
+            //Get contest by type and brand
+            var contest_no_prize = await _repositoryManager.Contest.GetContestByBrandAndType(account_id, types, brands, paging, trackChanges: false);
+            var favorite_contests = await _repositoryManager.PrizeContest.GetPrizeForContest(contest_no_prize);
+
+            return Ok(favorite_contests);
+        }
+
+        /// <summary>
         /// Check is user attended to the contest (Role: Manager, Member)
         /// </summary>
         /// <param name="contest_id"></param>

@@ -36,29 +36,16 @@ namespace Repository
 
         public void CreateBrand(Brand brand) => Create(brand);
 
-        public async Task<Pagination<BrandInList>> GetBrandToAddFavorite(PagingParameters paging, bool trackChanges)
+        public async Task<List<BrandInList>> GetBrandToAddFavorite(int account_id, bool trackChanges)
         {
-            var result = await FindAll(trackChanges).OrderBy(x => x.Name).ToListAsync();
+            var result = await FindAll(trackChanges).Include(x => x.FavoriteBrands).OrderBy(x => x.Name).ToListAsync();
 
-            var count = result.Count;
-
-            var paging_result = result.Skip((paging.PageNumber - 1) * paging.PageSize)
-                .Take(paging.PageSize);
-
-            var result_list = paging_result.Select(x => new BrandInList
+            return result.Select(x => new BrandInList
             {
+                Id = x.Id,
                 Name = x.Name,
-                Id = x.Id
-            });
-
-            var final_result = new Pagination<BrandInList>
-            {
-                Count = count,
-                Data = result_list,
-                PageNumber = paging.PageNumber,
-                PageSize = paging.PageSize
-            };
-            return final_result;
+                IsFavorite = x.FavoriteBrands.Where(y => y.AccountId == account_id).Count() != 0
+            }).ToList();
         }
     }
 }

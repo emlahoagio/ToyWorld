@@ -37,6 +37,8 @@ namespace Contracts
         IEvaluateContestRepository EvaluateContest { get; }
         IFeedbackRepository Feedback { get; }
         IReactTradingPostRepository ReactTradingPost { get; }
+        IFavoriteTypeRepository FavoriteType { get; }
+        IFavoriteBrandRepository FavoriteBrand { get; }
         Task SaveAsync();
     }
 }

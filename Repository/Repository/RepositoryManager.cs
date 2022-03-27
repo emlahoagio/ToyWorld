@@ -48,6 +48,8 @@ namespace Repository
         private IEvaluateContestRepository _evaluateContestRepository;
         private IFeedbackRepository _feedbackRepository;
         private IReactTradingPostRepository _reactTradingRepository;
+        private IFavoriteTypeRepository _favoriteTypeRepository;
+        private IFavoriteBrandRepository _favoriteBrandRepository;
 
         public RepositoryManager(DataContext context)
         {
@@ -386,6 +388,26 @@ namespace Repository
                 if (_reactTradingRepository == null)
                     _reactTradingRepository = new ReactTradingPostRepository(_context);
                 return _reactTradingRepository;
+            }
+        }
+
+        public IFavoriteTypeRepository FavoriteType
+        {
+            get
+            {
+                if (_favoriteTypeRepository == null)
+                    _favoriteTypeRepository = new FavoriteTypeRepository(_context);
+                return _favoriteTypeRepository;
+            }
+        }
+
+        public IFavoriteBrandRepository FavoriteBrand
+        {
+            get
+            {
+                if (_favoriteBrandRepository == null)
+                    _favoriteBrandRepository = new FavoriteBrandRepository(_context);
+                return _favoriteBrandRepository;
             }
         }
 
