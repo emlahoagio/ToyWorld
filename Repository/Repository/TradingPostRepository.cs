@@ -211,7 +211,7 @@ namespace Repository.Repository
         public async Task<DataForMess> GetDataForTradingMess(int tradingpostId)
         {
             var tradingPost = await FindByCondition(x => x.Id == tradingpostId, false)
-                .Include(x => x.ToyName)
+                .Include(x => x.Toy).ThenInclude(x => x.Name)
                 .FirstOrDefaultAsync();
 
             DataForMess result = new DataForMess
