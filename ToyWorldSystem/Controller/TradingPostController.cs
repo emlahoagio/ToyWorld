@@ -3,6 +3,7 @@ using Entities.DataTransferObject;
 using Entities.ErrorModel;
 using Entities.Models;
 using Entities.RequestFeatures;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;

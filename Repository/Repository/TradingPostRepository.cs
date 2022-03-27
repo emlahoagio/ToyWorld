@@ -211,14 +211,17 @@ namespace Repository.Repository
         public async Task<DataForMess> GetDataForTradingMess(int tradingpostId)
         {
             var tradingPost = await FindByCondition(x => x.Id == tradingpostId, false)
-                .Include(x => x.Toy).ThenInclude(x => x.Name)
                 .FirstOrDefaultAsync();
-
+            if (tradingPost == null)
+            {
+                return null;
+            }
             DataForMess result = new DataForMess
             {
                 Title = tradingPost.Title,
                 ToyName = tradingPost.ToyName
             };
+
             return result;
         }
     }
