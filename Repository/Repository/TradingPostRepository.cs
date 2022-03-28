@@ -95,7 +95,8 @@ namespace Repository.Repository
                     Value = x.Value,
                     Content = x.Content,
                     Title = x.Title,
-                    Phone = x.Phone
+                    Phone = x.Phone,
+                    Status = x.Status,
                 })
             };
 
