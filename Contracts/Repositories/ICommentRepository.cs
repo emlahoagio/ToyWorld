@@ -18,5 +18,6 @@ namespace Contracts.Repositories
         void DeleteComment(Comment comment);
         Task<PostDetail> GetPostComment(PostDetail result_no_comment, bool trackChanges, int account_id);
         Task<Pagination<PostInList>> GetNumOfCommentForPostList(Pagination<PostInList> result_no_comment, bool trackChanges);
+        Task<Pagination<TradingPostInList>> GetNumOfCommentForTradingPostList(Pagination<TradingPostInList> result_no_comment, bool trackChanges);
     }
 }
