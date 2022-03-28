@@ -35,7 +35,16 @@ namespace ToyWorldSystem.Controller
         {
             var account_id = _userAccessor.getAccountId();
 
-            var result = await _repositoryManager.TradingPost.GetTradingPostInGroup(group_id, paging, trackChanges: false, account_id);
+            var result_no_image_no_comment = await _repositoryManager.TradingPost.GetTradingPostInGroup(group_id, paging, trackChanges: false, account_id);
+
+            if (result_no_image_no_comment == null)
+            {
+                throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
+            }
+
+            var result_no_comment = await _repositoryManager.Image.GetImageForListTradingPost(result_no_image_no_comment, trackChanges: false);
+
+            var result = await _repositoryManager.Comment.GetNumOfCommentForTradingPostList(result_no_comment, trackChanges: false);
 
             return Ok(result);
         }

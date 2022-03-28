@@ -17,5 +17,6 @@ namespace Contracts
         void Delete(Image image);
         Task<PostDetail> GetImageForPostDetail(PostDetail result_no_image, bool trackChanges);
         Task<Pagination<PostInList>> GetImageForListPost(Pagination<PostInList> result_no_image, bool trackChanges);
+        Task<Pagination<TradingPostInList>> GetImageForListTradingPost(Pagination<TradingPostInList> result_no_image, bool trackChanges);
     }
 }

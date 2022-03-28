@@ -60,9 +60,9 @@ namespace Repository.Repository
                 .Include(x => x.Brand)
                 .Include(x => x.Type)
                 .Include(x => x.ReactTradingPosts)
-                .Include(x => x.Images)
+                //.Include(x => x.Images)
                 .Include(x => x.Account)
-                .Include(x => x.Comments)
+                //.Include(x => x.Comments)
                 .OrderByDescending(x => x.PostDate)
                 .ToListAsync();
 
@@ -82,8 +82,8 @@ namespace Repository.Repository
                     Brand = x.Brand == null ? "Unknow" : x.Brand.Name,
                     Exchange = x.Trading,
                     Id = x.Id,
-                    Images = x.Images.Select(x => new ImageReturn { Id = x.Id, Url = x.Url }).ToList(),
-                    NoOfComment = x.Comments.Count,
+                    //Images = x.Images.Select(x => new ImageReturn { Id = x.Id, Url = x.Url }).ToList(),
+                    //NoOfComment = x.Comments.Count,
                     NoOfReact = x.ReactTradingPosts.Count,
                     OwnerId = x.AccountId,
                     OwnerAvatar = x.Account.Avatar,
