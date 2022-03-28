@@ -151,7 +151,13 @@ namespace ToyWorldSystem.Controller
         {
             var account_id = _userAccessor.getAccountId();
 
-            var posts = await _repositoryManager.PostOfContest.GetPostOfContest(contest_id, paging, account_id, trackChanges: false);
+            var posts_no_rate_no_image = await _repositoryManager.PostOfContest.GetPostOfContest(contest_id, paging, account_id, trackChanges: false);
+
+            if (posts_no_rate_no_image == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No post in this contest");
+
+            var post_no_rate = await _repositoryManager.Image.GetImageForPostOfContest(posts_no_rate_no_image, trackChanges: false);
+
+            var posts = await _repositoryManager.Rate.GetRateForPostOfContest(post_no_rate, account_id,trackChanges: false);
 
             if (posts == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "This contest has no post");
 

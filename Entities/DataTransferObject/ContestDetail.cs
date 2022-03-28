@@ -24,6 +24,5 @@ namespace Entities.DataTransferObject
         public string BrandName { get; set; }
         public string TypeName { get; set; }
         public List<EvaluateInContestDetail> Evaluates { get; set; }
-        public List<ImageReturn> Images { get; set; }
     }
 }

@@ -326,6 +326,15 @@ namespace ToyWorldSystem.Controller
             };
 
             _repository.Feedback.Create(feedback);
+            //CREATE NOTIFICATION
+            var sender = await _repository.Account.GetAccountById(sender_id, false);
+            CreateNotificationModel noti = new CreateNotificationModel
+            {
+                Content = sender.Name + " replied your feedback!",
+                AccountId = account_id,
+            };
+            _repository.Notification.CreateNotification(noti);
+            //END
             await _repository.SaveAsync();
 
             return Ok("Save changes success");

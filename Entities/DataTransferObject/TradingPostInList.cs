@@ -24,5 +24,7 @@ namespace Entities.DataTransferObject
         public bool IsLikedPost { get; set; }
         public string Title { get; set; }
         public string Phone { get; set; }
+
+        public int Status { get; set; }
     }
 }

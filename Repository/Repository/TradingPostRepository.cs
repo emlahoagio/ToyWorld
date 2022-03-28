@@ -60,9 +60,7 @@ namespace Repository.Repository
                 .Include(x => x.Brand)
                 .Include(x => x.Type)
                 .Include(x => x.ReactTradingPosts)
-                //.Include(x => x.Images)
                 .Include(x => x.Account)
-                //.Include(x => x.Comments)
                 .OrderByDescending(x => x.PostDate)
                 .ToListAsync();
 
@@ -82,8 +80,6 @@ namespace Repository.Repository
                     Brand = x.Brand == null ? "Unknow" : x.Brand.Name,
                     Exchange = x.Trading,
                     Id = x.Id,
-                    //Images = x.Images.Select(x => new ImageReturn { Id = x.Id, Url = x.Url }).ToList(),
-                    //NoOfComment = x.Comments.Count,
                     NoOfReact = x.ReactTradingPosts.Count,
                     OwnerId = x.AccountId,
                     OwnerAvatar = x.Account.Avatar,
@@ -95,7 +91,8 @@ namespace Repository.Repository
                     Value = x.Value,
                     Content = x.Content,
                     Title = x.Title,
-                    Phone = x.Phone
+                    Phone = x.Phone,
+                    Status = x.Status,
                 })
             };
 
@@ -153,8 +150,6 @@ namespace Repository.Repository
         {
             var trading_post = await FindByCondition(x => x.Id == trading_post_id && x.IsDeleted == false, trackChanges)
                 .Include(x => x.Brand)
-                //.Include(x => x.Comments).ThenInclude(x => x.ReactComments)
-                //.Include(x => x.Comments).ThenInclude(x => x.Account)
                 .Include(x => x.Account)
                 .Include(x => x.ReactTradingPosts)
                 .Include(x => x.Type)
@@ -165,16 +160,6 @@ namespace Repository.Repository
                 Id = trading_post.Id,
                 Address = trading_post.Address,
                 BrandName = trading_post.Brand == null ? "Unkow brand" : trading_post.Brand.Name,
-                //Comment = trading_post.Comments.Select(y => new CommentReturn
-                //{
-                //    CommentDate = y.CommentDate,
-                //    Content = y.Content,
-                //    Id = y.Id,
-                //    NumOfReact = y.ReactComments.Count,
-                //    OwnerAvatar = y.Account.Avatar,
-                //    OwnerId = y.AccountId.Value,
-                //    OwnerName = y.Account.Name
-                //}).ToList(),
                 Value = trading_post.Value,
                 OwnerName = trading_post.Account.Name,
                 OwnerId = trading_post.AccountId,

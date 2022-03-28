@@ -35,11 +35,6 @@ namespace Repository.Repository
                 {
                     Description = x.Description,
                     Id = x.Id,
-                    Images = x.Images.Select(y => new ImageReturn
-                    {
-                        Id = y.Id,
-                        Url = y.Url
-                    }).ToList(),
                     Name = x.Name,
                     Value = x.Value
                 }).ToList(),
@@ -66,7 +61,6 @@ namespace Repository.Repository
         public async Task<PrizeReturn> GetUpdatePrize(int prize_id, bool trackChanges)
         {
             var prize = await FindByCondition(x => x.Id == prize_id, trackChanges)
-                .Include(x => x.Images)
                 .FirstOrDefaultAsync();
 
             if (prize == null) return null;
@@ -75,11 +69,6 @@ namespace Repository.Repository
             {
                 Description = prize.Description,
                 Id = prize.Id,
-                Images = prize.Images.Select(y => new ImageReturn
-                {
-                    Id = y.Id,
-                    Url = y.Url
-                }).ToList(),
                 Name = prize.Name,
                 Value = prize.Value
             };

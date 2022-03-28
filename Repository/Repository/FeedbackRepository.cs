@@ -56,7 +56,7 @@ namespace Repository.Repository
 
         public async Task<Pagination<RepliedFeedback>> GetRepliedFeedback(PagingParameters paging, bool trackChanges)
         {
-            var feedback = await FindByCondition(x => x.ReplyDate == null, trackChanges)
+            var feedback = await FindByCondition(x => x.ReplyDate != null, trackChanges)
                 .Include(x => x.PostOfCotest)
                 .Include(x => x.Sender)
                 .Include(x => x.TradingPost)

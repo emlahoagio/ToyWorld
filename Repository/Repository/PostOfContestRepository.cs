@@ -28,9 +28,7 @@ namespace Repository.Repository
         public async Task<Pagination<PostOfContestInList>> GetPostOfContest(int contest_id, PagingParameters paging, int current_account_id, bool trackChanges)
         {
             var posts = await FindByCondition(x => x.ContestId == contest_id, trackChanges)
-                .Include(x => x.Images)
                 .Include(x => x.Account)
-                .Include(x => x.Rates).ThenInclude(y => y.Account)
                 .OrderByDescending(x => x.DateCreate)
                 .ToListAsync();
 
@@ -42,24 +40,8 @@ namespace Repository.Repository
             {
                 Content = x.Content,
                 Id = x.Id,
-                Images = x.Images.Select(y => new ImageReturn
-                {
-                    Id = y.Id,
-                    Url = y.Url
-                }).ToList(),
                 OwnerAvatar = x.Account.Avatar,
-                OwnerName = x.Account.Name,
-                AverageStar = x.Rates.Select(x => x.NumOfStar).ToList().Average(),
-                IsRated = x.Rates.Where(x => x.AccountId.Value == current_account_id).Count() != 0 ? true : false,
-                Rates = x.Rates.Select(y => new RateReturn
-                {
-                    Id = y.Id,
-                    Note = y.Note,
-                    NumOfStar = y.NumOfStar,
-                    OwnerAvatar = y.Account.Avatar,
-                    OwnerName = y.Account.Name,
-                    OwnerId = y.AccountId.Value
-                }).ToList()
+                OwnerName = x.Account.Name
             }).ToList();
 
             var result = new Pagination<PostOfContestInList>
