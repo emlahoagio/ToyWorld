@@ -153,10 +153,9 @@ namespace Repository.Repository
         {
             var trading_post = await FindByCondition(x => x.Id == trading_post_id && x.IsDeleted == false, trackChanges)
                 .Include(x => x.Brand)
-                .Include(x => x.Comments).ThenInclude(x => x.ReactComments)
-                .Include(x => x.Comments).ThenInclude(x => x.Account)
+                //.Include(x => x.Comments).ThenInclude(x => x.ReactComments)
+                //.Include(x => x.Comments).ThenInclude(x => x.Account)
                 .Include(x => x.Account)
-                //.Include(x => x.Images)
                 .Include(x => x.ReactTradingPosts)
                 .Include(x => x.Type)
                 .FirstOrDefaultAsync();
@@ -166,26 +165,21 @@ namespace Repository.Repository
                 Id = trading_post.Id,
                 Address = trading_post.Address,
                 BrandName = trading_post.Brand == null ? "Unkow brand" : trading_post.Brand.Name,
-                Comment = trading_post.Comments.Select(y => new CommentReturn
-                {
-                    CommentDate = y.CommentDate,
-                    Content = y.Content,
-                    Id = y.Id,
-                    NumOfReact = y.ReactComments.Count,
-                    OwnerAvatar = y.Account.Avatar,
-                    OwnerId = y.AccountId.Value,
-                    OwnerName = y.Account.Name
-                }).ToList(),
+                //Comment = trading_post.Comments.Select(y => new CommentReturn
+                //{
+                //    CommentDate = y.CommentDate,
+                //    Content = y.Content,
+                //    Id = y.Id,
+                //    NumOfReact = y.ReactComments.Count,
+                //    OwnerAvatar = y.Account.Avatar,
+                //    OwnerId = y.AccountId.Value,
+                //    OwnerName = y.Account.Name
+                //}).ToList(),
                 Value = trading_post.Value,
                 OwnerName = trading_post.Account.Name,
                 OwnerId = trading_post.AccountId,
                 Content = trading_post.Content,
                 GroupId = trading_post.GroupId,
-                //Images = trading_post.Images.Select(y => new ImageReturn
-                //{
-                //    Id = y.Id,
-                //    Url = y.Url
-                //}).ToList(),
                 IsReact = trading_post.ReactTradingPosts.Where(y => y.AccountId == current_account_id).Count() == 0 ? false : true,
                 OwnerAvatar = trading_post.Account.Avatar,
                 Phone = trading_post.Phone,

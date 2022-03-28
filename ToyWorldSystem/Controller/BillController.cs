@@ -49,7 +49,7 @@ namespace ToyWorldSystem.Controller
         {
             var current_userId = _userAccessor.getAccountId();
 
-            var findTime = DateTime.Now;
+            var findTime = DateTime.UtcNow;
 
             _repository.Bill.Create(new Entities.Models.Bill
             {

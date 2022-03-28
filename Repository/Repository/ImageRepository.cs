@@ -56,5 +56,31 @@ namespace Repository
 
             return trading_post_detail_no_image;
         }
+
+        public async Task<PostDetail> GetImageForPostDetail(PostDetail result_no_image, bool trackChanges)
+        {
+            var images = await FindByCondition(x => x.PostId == result_no_image.Id, trackChanges).ToListAsync();
+
+            result_no_image.Images = images.Select(x => new ImageReturn { Id = x.Id, Url = x.Url }).ToList();
+
+            return result_no_image;
+        }
+
+        public async Task<Pagination<PostInList>> GetImageForListPost(Pagination<PostInList> result_no_image, bool trackChanges)
+        {
+            var data = new List<PostInList>();
+
+            foreach(var post in result_no_image.Data)
+            {
+                var images = await FindByCondition(x => x.PostId == post.Id, trackChanges).ToListAsync();
+
+                if (images != null) post.Images = images.Select(x => new ImageReturn { Id = x.Id, Url = x.Url }).ToList();
+
+                data.Add(post);
+            }
+
+            result_no_image.Data = data;
+            return result_no_image;
+        }
     }
 }

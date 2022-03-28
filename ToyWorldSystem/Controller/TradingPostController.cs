@@ -104,9 +104,13 @@ namespace ToyWorldSystem.Controller
         {
             var current_account_id = _userAccessor.getAccountId();
 
-            var trading_post_detail_no_image = await _repositoryManager.TradingPost.GetDetail(trading_post_id, current_account_id, trackChanges: false);
+            var trading_post_detail_no_image_no_comment = 
+                await _repositoryManager.TradingPost.GetDetail(trading_post_id, current_account_id, trackChanges: false);
 
-            var trading_post_detail = await _repositoryManager.Image.GetImageForTradingDetail(trading_post_detail_no_image, trackChanges: true);
+            var trading_post_detail_no_comment = 
+                await _repositoryManager.Image.GetImageForTradingDetail(trading_post_detail_no_image_no_comment, trackChanges: false);
+
+            var trading_post_detail = await _repositoryManager.Comment.GetTradingComment(trading_post_detail_no_comment, current_account_id, trackChanges: false);
 
             if (trading_post_detail == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "Invalid trading post Id");
 
@@ -182,7 +186,7 @@ namespace ToyWorldSystem.Controller
                 TradingPostId = trading_post_id,
                 Content = content,
                 SenderId = sender_id,
-                SendDate = DateTime.Now
+                SendDate = DateTime.UtcNow
             };
 
             _repositoryManager.Feedback.Create(feedback);

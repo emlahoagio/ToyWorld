@@ -13,5 +13,6 @@ namespace Entities.DataTransferObject
         public string OwnerAvatar { get; set; }
         public int NumOfReact { get; set; }
         public DateTime CommentDate { get; set; }
+        public bool IsReacted { get; set; }
     }
 }
