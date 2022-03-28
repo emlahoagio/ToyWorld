@@ -62,7 +62,8 @@ namespace Repository.Repository
                 Description = x.Prize.Description,
                 Name = x.Prize.Name,
                 Id = x.Prize.Id,
-                Value = x.Prize.Value
+                Value = x.Prize.Value,
+                Images = x.Prize.Images.Select(y => new ImageReturn { Id = y.Id, Url = y.Url}).ToList()
             }).ToList();
 
             return result;

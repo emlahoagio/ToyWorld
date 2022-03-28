@@ -16,10 +16,10 @@ namespace ToyWorldSystem.Controller
     [ApiController]
     public class PrizeController : ControllerBase
     {
-        private readonly RepositoryManager _repository;
+        private readonly IRepositoryManager _repository;
         private readonly IUserAccessor _userAccessor;
 
-        public PrizeController(RepositoryManager repository, IUserAccessor userAccessor)
+        public PrizeController(IRepositoryManager repository, IUserAccessor userAccessor)
         {
             _repository = repository;
             _userAccessor = userAccessor;
@@ -33,7 +33,9 @@ namespace ToyWorldSystem.Controller
         [HttpGet]
         public async Task<IActionResult> getPrizeList([FromQuery] PagingParameters paging)
         {
-            var pagignationPrize = await _repository.Prize.GetPrize(paging, trackChanges: false);
+            var pagignationPrize_no_image = await _repository.Prize.GetPrize(paging, trackChanges: false);
+
+            var pagignationPrize = await _repository.Image.GetImageForPrizeList(pagignationPrize_no_image, trackChanges: false);
 
             return Ok(pagignationPrize);
         }
@@ -47,9 +49,11 @@ namespace ToyWorldSystem.Controller
         [Route("{prize_id}/update")]
         public async Task<IActionResult> GetPrizeForUpdate(int prize_id)
         {
-            var prize = await _repository.Prize.GetUpdatePrize(prize_id, trackChanges: false);
+            var prize_no_image = await _repository.Prize.GetUpdatePrize(prize_id, trackChanges: false);
 
-            if (prize == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "Invalid Prize Id");
+            if (prize_no_image == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "Invalid Prize Id");
+
+            var prize = await _repository.Image.GetImageForPrize(prize_no_image, trackChanges: false);
 
             return Ok(prize);
         }

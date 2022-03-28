@@ -104,7 +104,6 @@ namespace Repository
         {
             var post = await FindByCondition(x => x.Id == post_id && x.IsPublic == true && x.IsDeleted == false, trackChanges)
                 .Include(x => x.Account)
-                .Include(x => x.Images)
                 .Include(x => x.ReactPosts)
                 .FirstOrDefaultAsync();
 
@@ -113,12 +112,6 @@ namespace Repository
             var result = new PostDetail
             {
                 Id = post.Id,
-                NumOfComment = post.Comments.Count,
-                Images = post.Images.Select(x => new ImageReturn
-                {
-                    Id = x.Id,
-                    Url = x.Url
-                }).ToList(),
                 NumOfReact = post.ReactPosts.Count,
                 OwnerId = post.Account.Id,
                 OwnerAvatar = post.Account.Avatar,
@@ -135,9 +128,7 @@ namespace Repository
         {
             var posts = await FindByCondition(x => x.IsWaiting == true, trackChanges)
                 .Include(x => x.Account)
-                .Include(x => x.Images)
                 .Include(x => x.ReactPosts)
-                .Include(x => x.Comments)
                 .OrderByDescending(x => x.PostDate)
                 .ToListAsync();
 
@@ -152,11 +143,6 @@ namespace Repository
             {
                 Content = x.Content,
                 Id = x.Id,
-                Images = x.Images.Select(x => new ImageReturn
-                {
-                    Id = x.Id,
-                    Url = x.Url
-                }).ToList(),
                 OwnerId = x.AccountId,
                 OwnerAvatar = x.Account.Avatar,
                 OwnerName = x.Account.Name,
@@ -178,9 +164,7 @@ namespace Repository
         {
             var posts = await FindByCondition(x => x.IsWaiting == true && x.AccountId == accountId, trackChanges)
                 .Include(x => x.Account)
-                .Include(x => x.Images)
                 .Include(x => x.ReactPosts)
-                .Include(x => x.Comments)
                 .OrderByDescending(x => x.PostDate)
                 .ToListAsync();
 
@@ -195,11 +179,6 @@ namespace Repository
             {
                 Content = x.Content,
                 Id = x.Id,
-                Images = x.Images.Select(x => new ImageReturn
-                {
-                    Id = x.Id,
-                    Url = x.Url
-                }).ToList(),
                 OwnerId = x.AccountId,
                 OwnerAvatar = x.Account.Avatar,
                 OwnerName = x.Account.Name,
@@ -257,9 +236,7 @@ namespace Repository
         {
             var listPost = await FindByCondition(post => post.AccountId == accountId && post.IsPublic == true && post.IsDeleted == false, trackChanges)
                 .Include(x => x.Account)
-                .Include(x => x.Images)
                 .Include(x => x.ReactPosts)
-                .Include(x => x.Comments)
                 .OrderByDescending(x => x.PostDate)
                 .ToListAsync();
 
@@ -276,12 +253,6 @@ namespace Repository
             var result = pagingList.Select(x => new PostInList
             {
                 Id = x.Id,
-                Images = x.Images.Select(x => new ImageReturn
-                {
-                    Id = x.Id,
-                    Url = x.Url
-                }).ToList(),
-                NumOfComment = x.Comments.Count,
                 NumOfReact = x.ReactPosts.Count,
                 Content = x.Content,
                 OwnerId = x.AccountId,

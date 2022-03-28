@@ -59,9 +59,17 @@ namespace ToyWorldSystem.Controller
         [Route("account/{account_id}")]
         public async Task<IActionResult> GetListPostByAccount(int account_id, [FromQuery] PagingParameters paging)
         {
-            var result = await _repositoryManager.Post.GetPostByAccountId(account_id, trackChanges: false, paging);
+            var result_no_image_no_comment = await _repositoryManager.Post.GetPostByAccountId(account_id, trackChanges: false, paging);
 
-            if (result == null) throw new ErrorDetails(HttpStatusCode.NotFound, "This account has no post yet");
+            if (result_no_image_no_comment == null)
+            {
+                throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "This account has no post yet");
+            }
+
+            var result_no_comment = await _repositoryManager.Image.GetImageForListPost(result_no_image_no_comment, trackChanges: false);
+
+            var result = await _repositoryManager.Comment.GetNumOfCommentForPostList(result_no_comment, trackChanges: false);
+
 
             return Ok(result);
         }
@@ -77,18 +85,18 @@ namespace ToyWorldSystem.Controller
         {
             var accountId = _userAccessor.getAccountId();
             var account = await _repositoryManager.Account.GetAccountById(accountId, trackChanges: false);
-
-            Pagination<WaitingPost> result;
+            Pagination<WaitingPost> result_no_image;
             if (account.Role == 1)
             {
-                result = await _repositoryManager.Post.GetWaitingPost(trackChanges: false, paging);
+                result_no_image = await _repositoryManager.Post.GetWaitingPost(trackChanges: false, paging);
             }
             else
             {
-                result = await _repositoryManager.Post.GetWaitingPost(trackChanges: false, paging, accountId);
+                result_no_image = await _repositoryManager.Post.GetWaitingPost(trackChanges: false, paging, accountId);
             }
+            if (result_no_image == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No waiting post was found");
 
-            if (result == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No waiting post");
+            var result = await _repositoryManager.Image.GetImageForWaitingPostDetail(result_no_image, trackChanges: false);
 
             return Ok(result);
         }
