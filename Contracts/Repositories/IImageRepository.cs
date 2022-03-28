@@ -18,5 +18,6 @@ namespace Contracts
         Task<PostDetail> GetImageForPostDetail(PostDetail result_no_image, bool trackChanges);
         Task<Pagination<PostInList>> GetImageForListPost(Pagination<PostInList> result_no_image, bool trackChanges);
         Task<Pagination<TradingPostInList>> GetImageForListTradingPost(Pagination<TradingPostInList> result_no_image, bool trackChanges);
+        Task<Pagination<PostOfContestInList>> GetImageForPostOfContest(Pagination<PostOfContestInList> posts_no_rate_no_image, bool trackChanges);
     }
 }
