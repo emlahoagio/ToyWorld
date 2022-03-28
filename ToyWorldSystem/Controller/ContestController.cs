@@ -318,7 +318,7 @@ namespace ToyWorldSystem.Controller
                 Content = param.Content,
                 ContestId = contest_id,
                 Images = param.ImagesUrl.Select(x => new Image { Url = x }).ToList(),
-                DateCreate = DateTime.Now
+                DateCreate = DateTime.UtcNow
             };
 
             _repositoryManager.PostOfContest.Create(postOfContest);
@@ -380,7 +380,7 @@ namespace ToyWorldSystem.Controller
                 Status = 0
             };
 
-            if (contest.StartRegistration.Value.Day == DateTime.Now.Day)
+            if (contest.StartRegistration.Value.Day == DateTime.UtcNow.Day)
             {
                 contest.CanAttempt = true;
                 contest.Status = 1;
@@ -392,7 +392,7 @@ namespace ToyWorldSystem.Controller
             var createdContest = await _repositoryManager.Contest.GetCreatedContest(group_id, param.Title, param.StartRegistration, trackChanges: false);
 
             //schedule for contest
-            if (contest.StartRegistration.Value.Day != DateTime.Now.Day)
+            if (contest.StartRegistration.Value.Day != DateTime.UtcNow.Day)
             {
                 startRegis = contest.StartRegistration.Value;
                 BackgroundJob.Schedule(() => StartRegisContest(createdContest.Id), new DateTime(startRegis.Year, startRegis.Month, startRegis.Day, 0, 0, 1, DateTimeKind.Local));
@@ -456,7 +456,7 @@ namespace ToyWorldSystem.Controller
                 PostOfContestId = post_of_contest_id,
                 Content = content,
                 SenderId = sender_id,
-                SendDate = DateTime.Now
+                SendDate = DateTime.UtcNow
             };
 
             _repositoryManager.Feedback.Create(feedback);

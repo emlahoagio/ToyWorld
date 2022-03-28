@@ -322,7 +322,7 @@ namespace ToyWorldSystem.Controller
                 AccountId = account_id,
                 Content = content,
                 SenderId = sender_id,
-                SendDate = DateTime.Now
+                SendDate = DateTime.UtcNow
             };
 
             _repository.Feedback.Create(feedback);
