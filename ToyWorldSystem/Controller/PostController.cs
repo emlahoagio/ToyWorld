@@ -35,12 +35,16 @@ namespace ToyWorldSystem.Controller
         {
             var account_id = _userAccessor.getAccountId();
 
-            var result = await _repositoryManager.Post.GetPostByGroupId(group_id, trackChanges: false, paging, account_id);
-
-            if (result == null)
+            var result_no_image_no_comment = await _repositoryManager.Post.GetPostByGroupId(group_id, trackChanges: false, paging, account_id);
+            
+            if (result_no_image_no_comment == null)
             {
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
             }
+
+            var result_no_comment = await _repositoryManager.Image.GetImageForListPost(result_no_image_no_comment, trackChanges: false);
+
+            var result = await _repositoryManager.Comment.GetNumOfCommentForPostList(result_no_comment, trackChanges: false);
 
             return Ok(result);
         }
@@ -100,10 +104,14 @@ namespace ToyWorldSystem.Controller
         {
             var account_id = _userAccessor.getAccountId();
 
-            var result = await _repositoryManager.Post.GetPostDetail(post_id, trackChanges: false, account_id);
+            var result_no_comment_no_image = await _repositoryManager.Post.GetPostDetail(post_id, trackChanges: false, account_id);
 
-            if (result == null)
+            if (result_no_comment_no_image == null)
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No post matches with the id: " + post_id);
+
+            var result_no_image = await _repositoryManager.Comment.GetPostComment(result_no_comment_no_image, trackChanges: false, account_id);
+
+            var result = await _repositoryManager.Image.GetImageForPostDetail(result_no_image, trackChanges: false);
 
             return Ok(result);
         }
@@ -143,7 +151,7 @@ namespace ToyWorldSystem.Controller
                 PostId = post_id,
                 Content = content,
                 SenderId = sender_id,
-                SendDate = DateTime.Now
+                SendDate = DateTime.UtcNow
             };
 
             _repositoryManager.Feedback.Create(feedback);

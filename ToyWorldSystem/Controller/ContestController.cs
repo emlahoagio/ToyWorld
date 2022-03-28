@@ -151,7 +151,13 @@ namespace ToyWorldSystem.Controller
         {
             var account_id = _userAccessor.getAccountId();
 
-            var posts = await _repositoryManager.PostOfContest.GetPostOfContest(contest_id, paging, account_id, trackChanges: false);
+            var posts_no_rate_no_image = await _repositoryManager.PostOfContest.GetPostOfContest(contest_id, paging, account_id, trackChanges: false);
+
+            if (posts_no_rate_no_image == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No post in this contest");
+
+            var post_no_rate = await _repositoryManager.Image.GetImageForPostOfContest(posts_no_rate_no_image, trackChanges: false);
+
+            var posts = await _repositoryManager.Rate.GetRateForPostOfContest(post_no_rate, account_id,trackChanges: false);
 
             if (posts == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "This contest has no post");
 
@@ -318,7 +324,7 @@ namespace ToyWorldSystem.Controller
                 Content = param.Content,
                 ContestId = contest_id,
                 Images = param.ImagesUrl.Select(x => new Image { Url = x }).ToList(),
-                DateCreate = DateTime.Now
+                DateCreate = DateTime.UtcNow
             };
 
             _repositoryManager.PostOfContest.Create(postOfContest);
@@ -380,7 +386,7 @@ namespace ToyWorldSystem.Controller
                 Status = 0
             };
 
-            if (contest.StartRegistration.Value.Day == DateTime.Now.Day)
+            if (contest.StartRegistration.Value.Day == DateTime.UtcNow.Day)
             {
                 contest.CanAttempt = true;
                 contest.Status = 1;
@@ -392,7 +398,7 @@ namespace ToyWorldSystem.Controller
             var createdContest = await _repositoryManager.Contest.GetCreatedContest(group_id, param.Title, param.StartRegistration, trackChanges: false);
 
             //schedule for contest
-            if (contest.StartRegistration.Value.Day != DateTime.Now.Day)
+            if (contest.StartRegistration.Value.Day != DateTime.UtcNow.Day)
             {
                 startRegis = contest.StartRegistration.Value;
                 BackgroundJob.Schedule(() => StartRegisContest(createdContest.Id), new DateTime(startRegis.Year, startRegis.Month, startRegis.Day, 0, 0, 1, DateTimeKind.Local));
@@ -456,7 +462,7 @@ namespace ToyWorldSystem.Controller
                 PostOfContestId = post_of_contest_id,
                 Content = content,
                 SenderId = sender_id,
-                SendDate = DateTime.Now
+                SendDate = DateTime.UtcNow
             };
 
             _repositoryManager.Feedback.Create(feedback);

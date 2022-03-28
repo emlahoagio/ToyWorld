@@ -52,9 +52,7 @@ namespace Repository
         {
             var listPost = await FindByCondition(post => post.GroupId == groupId && post.IsPublic == true && post.IsDeleted == false, trackChanges)
                 .Include(x => x.Account)
-                .Include(x => x.Images)
                 .Include(x => x.ReactPosts)
-                .Include(x => x.Comments)
                 .OrderByDescending(x => x.PostDate)
                 .ToListAsync();
 
@@ -71,12 +69,6 @@ namespace Repository
             var result = pagingList.Select(x => new PostInList
             {
                 Id = x.Id,
-                Images = x.Images.Select(x => new ImageReturn
-                {
-                    Id = x.Id,
-                    Url = x.Url
-                }).ToList(),
-                NumOfComment = x.Comments.Count,
                 NumOfReact = x.ReactPosts.Count,
                 Content = x.Content,
                 OwnerId = x.AccountId,
@@ -113,8 +105,6 @@ namespace Repository
             var post = await FindByCondition(x => x.Id == post_id && x.IsPublic == true && x.IsDeleted == false, trackChanges)
                 .Include(x => x.Account)
                 .Include(x => x.Images)
-                .Include(x => x.Comments).ThenInclude(x => x.ReactComments)
-                .Include(x => x.Comments).ThenInclude(x => x.Account)
                 .Include(x => x.ReactPosts)
                 .FirstOrDefaultAsync();
 
@@ -124,16 +114,6 @@ namespace Repository
             {
                 Id = post.Id,
                 NumOfComment = post.Comments.Count,
-                Comments = post.Comments.Select(x => new CommentReturn
-                {
-                    Id = x.Id,
-                    Content = x.Content,
-                    NumOfReact = x.ReactComments.Count,
-                    OwnerId = x.Account.Id,
-                    OwnerAvatar = x.Account.Avatar,
-                    OwnerName = x.Account.Name,
-                    CommentDate = x.CommentDate
-                }).ToList(),
                 Images = post.Images.Select(x => new ImageReturn
                 {
                     Id = x.Id,
