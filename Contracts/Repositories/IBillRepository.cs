@@ -17,5 +17,6 @@ namespace Contracts.Repositories
         void DenyBill(Bill bill);
         Task<int> GetIdOfCreatedBill(DateTime findTime, bool trackChanges);
         Task<BillDetail> GetBillDetail(int bill_id, bool trackChanges);
+        Task<List<BillInList>> GetBillByTradingPost(int trading_id, bool trackChanges);
     }
 }
