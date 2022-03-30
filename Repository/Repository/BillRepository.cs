@@ -5,6 +5,7 @@ using Entities.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,6 +32,32 @@ namespace Repository.Repository
         public async Task<Bill> GetBillById(int bill_id, bool trackChanges)
         {
             var result = await FindByCondition(x => x.Id == bill_id, trackChanges).FirstOrDefaultAsync();
+
+            return result;
+        }
+
+        public async Task<List<BillInList>> GetBillByTradingPost(int trading_id, bool trackChanges)
+        {
+            var bills = await FindByCondition(x => x.TradingPostId == trading_id, trackChanges)
+                .Include(x => x.Seller)
+                .Include(x => x.Buyer)
+                .ToListAsync();
+
+            var result = bills.Select(x => new BillInList
+            {
+                BuyerId = x.BuyerId,
+                BuyerName = x.Buyer.Name,
+                CreateTime = x.CreateTime,
+                ExchangeValue = x.ExchangeValue,
+                Id = x.Id,
+                IsExchangeByMoney = x.IsExchangeByMoney,
+                SellerId = x.SellerId,
+                SellerName = x.Seller.Name,
+                Status = x.Status,
+                ToyOfBuyerName = x.ToyOfBuyerName,
+                ToyOfSellerName = x.ToyOfSellerName,
+                TradingPostId = x.TradingPostId
+            }).ToList();
 
             return result;
         }

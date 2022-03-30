@@ -40,6 +40,26 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Get bill by trading post id (Role: Manager)
+        /// </summary>
+        /// <param name="trading_id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("trading/{trading_id}")]
+        public async Task<IActionResult> GetBillByTradingPost(int trading_id)
+        {
+            var account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            if (account.Role != 1) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to get");
+
+            var bills = await _repository.Bill.GetBillByTradingPost(trading_id, trackChanges: false);
+
+            if (bills == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No bill for this trading");
+
+            return Ok(bills);
+        }
+
+        /// <summary>
         /// Create bill (Role: Manager, Member (Seller))
         /// </summary>
         /// <param name="newBill"></param>
@@ -65,7 +85,7 @@ namespace ToyWorldSystem.Controller
             });
 
             await _repository.SaveAsync();
-            var bill_id = _repository.Bill.GetIdOfCreatedBill(findTime, trackChanges: false);
+            var bill_id = await _repository.Bill.GetIdOfCreatedBill(findTime, trackChanges: false);
 
             return Ok(new {BillId = bill_id});
         }
