@@ -388,6 +388,14 @@ namespace ToyWorldSystem.Controller
             if (update_account.Role == 1) return Ok("Already manager");
 
             _repository.Account.UpdateAccountToManager(update_account);
+            //CREATE NOTIFICATIONS
+            CreateNotificationModel noti = new CreateNotificationModel
+            {
+                Content = "Now you are manager!",
+                AccountId = account_id,
+            };
+            _repository.Notification.CreateNotification(noti);
+            //end
 
             await _repository.SaveAsync();
 
@@ -414,6 +422,14 @@ namespace ToyWorldSystem.Controller
             if (update_account.Role == 2) return Ok("Already member");
 
             _repository.Account.UpdateAccountToMember(update_account);
+            //CREATE NOTIFICATIONS
+            CreateNotificationModel noti = new CreateNotificationModel
+            {
+                Content = "Now you are member!",
+                AccountId = account_id,
+            };
+            _repository.Notification.CreateNotification(noti);
+            //end
 
             await _repository.SaveAsync();
 
