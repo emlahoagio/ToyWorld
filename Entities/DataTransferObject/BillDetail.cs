@@ -11,9 +11,12 @@ namespace Entities.DataTransferObject
         public string ToyOfBuyerName { get; set; }
         public bool IsExchangeByMoney { get; set; }
         public double? ExchangeValue { get; set; }
+        public int SellerId { get; set; }
         public string SellerName { get; set; }
+        public int BuyerId { get; set; }
         public string BuyerName { get; set; }
         public int Status { get; set; }
         public DateTime CreateTime { get; set; }
+        public bool IsRated { get; set; }
     }
 }

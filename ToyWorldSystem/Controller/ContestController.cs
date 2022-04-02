@@ -3,8 +3,6 @@ using Entities.ErrorModel;
 using Entities.Models;
 using Entities.RequestFeatures;
 using Hangfire;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -157,7 +155,7 @@ namespace ToyWorldSystem.Controller
 
             var post_no_rate = await _repositoryManager.Image.GetImageForPostOfContest(posts_no_rate_no_image, trackChanges: false);
 
-            var posts = await _repositoryManager.Rate.GetRateForPostOfContest(post_no_rate, account_id,trackChanges: false);
+            var posts = await _repositoryManager.Rate.GetRateForPostOfContest(post_no_rate, account_id, trackChanges: false);
 
             if (posts == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "This contest has no post");
 
@@ -391,9 +389,8 @@ namespace ToyWorldSystem.Controller
                 contest.CanAttempt = true;
                 contest.Status = 1;
             }
-
-            _repositoryManager.Contest.Create(contest);
-            await _repositoryManager.SaveAsync();
+            _repositoryManager.Contest.Create(contest); //created contest
+            await _repositoryManager.SaveAsync(); //inserted to DB
 
             var createdContest = await _repositoryManager.Contest.GetCreatedContest(group_id, param.Title, param.StartRegistration, trackChanges: false);
 
@@ -403,7 +400,6 @@ namespace ToyWorldSystem.Controller
                 startRegis = contest.StartRegistration.Value;
                 BackgroundJob.Schedule(() => StartRegisContest(createdContest.Id), new DateTime(startRegis.Year, startRegis.Month, startRegis.Day, 0, 0, 1, DateTimeKind.Local));
             }
-
             endRegis = contest.EndRegistration.Value;
             BackgroundJob.Schedule(() => ClosedRegisContest(createdContest.Id), new DateTime(endRegis.Year, endRegis.Month, endRegis.Day, 23, 59, 59, DateTimeKind.Local));
             startDate = contest.StartDate.Value;
@@ -411,6 +407,20 @@ namespace ToyWorldSystem.Controller
             endDate = contest.EndDate.Value;
             BackgroundJob.Schedule(() => ClosedContest(createdContest.Id), new DateTime(endDate.Year, endDate.Month, endDate.Day, 23, 59, 59, DateTimeKind.Local));
 
+            //CREATE NOTIFICATION
+            var users = await _repositoryManager.FollowGroup.GetUserFollowGroup(group_id);
+            foreach (var user in users)
+            {
+                CreateNotificationModel noti = new CreateNotificationModel
+                {
+                    Content = "Contest " + param.Title + " is Created!",
+                    AccountId = user.AccountId,
+                    ContestId = createdContest.Id,
+                };
+                _repositoryManager.Notification.CreateNotification(noti);
+            }
+            //END
+            await _repositoryManager.SaveAsync();
             return Ok(new { contestId = createdContest.Id });
         }
 
@@ -429,7 +439,7 @@ namespace ToyWorldSystem.Controller
             var current_accountId = _userAccessor.getAccountId();
 
             var isJoinContest = contest.AccountJoined.Where(x => x.AccountId == current_accountId).ToList().Count() > 0;
-            if (!isJoinContest) 
+            if (!isJoinContest)
                 throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Only people joined to contest can evaluate");
 
             var evaluate = new Evaluate
