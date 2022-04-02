@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Entities.RequestFeatures
+﻿namespace Entities.RequestFeatures
 {
     public class UpdateTradingPostParameters
     {
@@ -11,7 +7,7 @@ namespace Entities.RequestFeatures
         public string Content { get; set; }
         public string Address { get; set; }
         public string Exchange { get; set; }
-        public decimal? Value { get; set; }
+        public decimal Value { get; set; }
         public string Phone { get; set; }
     }
 }
