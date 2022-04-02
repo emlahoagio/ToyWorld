@@ -19,5 +19,6 @@ namespace Contracts.Repositories
         Task<TradingPostDetail> GetDetail(int trading_post_id, int current_account_id, bool trackChanges);
         Task<int> GetOwnerById(int trading_post_id);
         Task<DataForMess> GetDataForTradingMess(int tradingpostId);
+        Task<int> GetNumOfReact(int trading_post_id, bool trackChanges);
     }
 }

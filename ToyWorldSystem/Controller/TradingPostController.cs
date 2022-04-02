@@ -224,7 +224,7 @@ namespace ToyWorldSystem.Controller
         /// </summary>
         /// <param name="trading_post_id"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPut]
         [Route("{trading_post_id}/react")]
         public async Task<IActionResult> ReactTradingPost(int trading_post_id)
         {
@@ -232,18 +232,30 @@ namespace ToyWorldSystem.Controller
 
             var reactTrading = await _repositoryManager.ReactTradingPost.FindReact(trading_post_id, account_id, trackChanges: false);
 
+            var isLiked = false;
+
             if (reactTrading == null)
+            {
                 _repositoryManager.ReactTradingPost.Create(new ReactTradingPost
                 {
                     AccountId = account_id,
                     TradingPostId = trading_post_id
-                    //Push notification to trading post owner
                 });
+                //Push notification to trading post owner
+                isLiked = true;
+            }
             else
                 _repositoryManager.ReactTradingPost.Delete(reactTrading);
 
+            var numOfReact = await _repositoryManager.TradingPost.GetNumOfReact(trading_post_id, trackChanges: false);
+
             await _repositoryManager.SaveAsync();
-            return Ok("Save changes success");
+            return Ok(new
+            {
+                Message = "Save changes success",
+                NumOfReact = numOfReact,
+                IsLiked = isLiked
+            });
         }
 
         /// <summary>

@@ -249,5 +249,14 @@ namespace Repository.Repository
 
             return result;
         }
+
+        public async Task<int> GetNumOfReact(int trading_post_id, bool trackChanges)
+        {
+            var trading = await FindByCondition(x => x.Id == trading_post_id, trackChanges)
+                .Include(x => x.ReactTradingPosts)
+                .FirstOrDefaultAsync();
+
+            return trading.ReactTradingPosts.Count();
+        }
     }
 }
