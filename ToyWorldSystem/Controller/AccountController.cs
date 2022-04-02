@@ -144,6 +144,23 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Get rate of account (Role: All role)
+        /// </summary>
+        /// <param name="account_id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{account_id}/rate")]
+        public async Task<IActionResult> GetRateOfAccount(int account_id)
+        {
+            var rateOfAccount = await _repository.RateSeller.GetRateOfAccount(account_id, trackChanges: false);
+            if (rateOfAccount == null) throw new ErrorDetails(HttpStatusCode.NotFound, "Account has no rate");
+
+            rateOfAccount = await _repository.Bill.GetDataForRate(account_id, rateOfAccount, trackChanges: false);
+
+            return Ok(rateOfAccount);
+        }
+
+        /// <summary>
         /// Login by google mail (Role: ALL)
         /// </summary>
         /// <param name="firebaseToken">Token get from firebase</param>

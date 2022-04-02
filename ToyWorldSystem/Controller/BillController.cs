@@ -35,6 +35,8 @@ namespace ToyWorldSystem.Controller
             var detail = await _repository.Bill.GetBillDetail(bill_id, trackChanges: false);
 
             if (detail == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No bill matches with id send");
+            
+            detail.IsRated = await _repository.RateSeller.IsRated(detail.SellerId, detail.BuyerId, trackChanges: false);
 
             return Ok(detail);
         }

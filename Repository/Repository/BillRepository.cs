@@ -79,10 +79,31 @@ namespace Repository.Repository
                 SellerName = bill.Seller.Name,
                 Status = bill.Status,
                 ToyOfBuyerName = bill.ToyOfBuyerName,
-                ToyOfSellerName = bill.ToyOfSellerName
+                ToyOfSellerName = bill.ToyOfSellerName,
+                BuyerId = bill.BuyerId,
+                SellerId = bill.SellerId
             };
 
             return result;
+        }
+
+        public async Task<RateAccount> GetDataForRate(int account_id, RateAccount rateOfAccount, bool trackChanges)
+        {
+            var listRate = new List<RateSellerReturn>();
+
+            foreach(var rate in rateOfAccount.Rates)
+            {
+                var bill = await FindByCondition(x => x.SellerId == account_id && x.BuyerId == rate.RateOwnerId && x.Status == 2, trackChanges)
+                    .Include(x => x.TradingPost)
+                    .FirstOrDefaultAsync();
+
+                rate.TradingPostId = bill.TradingPostId;
+                rate.TradingPostTitle = bill.TradingPost.Title;
+
+                listRate.Add(rate);
+            }
+            rateOfAccount.Rates = listRate;
+            return rateOfAccount;
         }
 
         public async Task<int> GetIdOfCreatedBill(DateTime findTime, bool trackChanges)
