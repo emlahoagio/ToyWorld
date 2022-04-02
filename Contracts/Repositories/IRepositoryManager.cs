@@ -1,7 +1,4 @@
 ﻿using Contracts.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Contracts
@@ -39,6 +36,7 @@ namespace Contracts
         IReactTradingPostRepository ReactTradingPost { get; }
         IFavoriteTypeRepository FavoriteType { get; }
         IFavoriteBrandRepository FavoriteBrand { get; }
+        IFollowGroupRepository FollowGroup { get; }
         Task SaveAsync();
     }
 }

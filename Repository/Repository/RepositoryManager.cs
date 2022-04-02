@@ -2,13 +2,9 @@
 using Contracts.Repositories;
 using Contracts.Services;
 using Entities.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Repository.Repository;
 using Repository.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Repository
@@ -51,6 +47,8 @@ namespace Repository
         private IFavoriteTypeRepository _favoriteTypeRepository;
         private IFavoriteBrandRepository _favoriteBrandRepository;
 
+        private IFollowGroupRepository _followGroupRepository;
+
         public RepositoryManager(DataContext context)
         {
             _context = context;
@@ -61,6 +59,18 @@ namespace Repository
             _context = context;
             _configuration = configuration;
             _hasing = hasing;
+        }
+
+        public IFollowGroupRepository FollowGroup
+        {
+            get
+            {
+                if (_followGroupRepository == null)
+                {
+                    _followGroupRepository = new FollowGroupRepository(_context);
+                }
+                return _followGroupRepository;
+            }
         }
 
         public IAccountRepository Account
@@ -335,7 +345,7 @@ namespace Repository
         {
             get
             {
-                if (_chatRepository == null) 
+                if (_chatRepository == null)
                     _chatRepository = new ChatRepository(_context);
                 return _chatRepository;
             }
@@ -347,7 +357,7 @@ namespace Repository
             {
                 if (_billRepository == null)
                     _billRepository = new BillRepository(_context);
-                return _billRepository; 
+                return _billRepository;
             }
         }
 

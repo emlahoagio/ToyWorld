@@ -3,7 +3,6 @@ using Entities.DataTransferObject;
 using Entities.ErrorModel;
 using Entities.Models;
 using Entities.RequestFeatures;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -113,10 +112,10 @@ namespace ToyWorldSystem.Controller
         {
             var current_account_id = _userAccessor.getAccountId();
 
-            var trading_post_detail_no_image_no_comment = 
+            var trading_post_detail_no_image_no_comment =
                 await _repositoryManager.TradingPost.GetDetail(trading_post_id, current_account_id, trackChanges: false);
 
-            var trading_post_detail_no_comment = 
+            var trading_post_detail_no_comment =
                 await _repositoryManager.Image.GetImageForTradingDetail(trading_post_detail_no_image_no_comment, trackChanges: false);
 
             var trading_post_detail = await _repositoryManager.Comment.GetTradingComment(trading_post_detail_no_comment, current_account_id, trackChanges: false);
@@ -166,14 +165,22 @@ namespace ToyWorldSystem.Controller
             {
                 _repositoryManager.TradingPost.CreateTradingPost(tradingPost, group_id, account_id, 3, brand.Id, type.Id);
             }
-            //Create Notifications
-            //CreateNotificationModel noti = new CreateNotificationModel
-            //{
-            //    Content = "",
-            //    AccountId = 1,
-            //    TradingPostId = 1,
-            //};
             await _repositoryManager.SaveAsync();
+
+            //Create Notifications
+            var users = await _repositoryManager.FollowGroup.GetUserFollowGroup(group_id);
+            var account = await _repositoryManager.Account.GetAccountById(account_id, false);
+           // var createdTradingPost = _repositoryManager.TradingPost
+            foreach (var user in users)
+            {
+                CreateNotificationModel noti = new CreateNotificationModel
+                {
+                    Content = account.Name + " post a trading post in group",
+                    AccountId = user.AccountId,
+                    //TradingPostId = ,
+                };
+                _repositoryManager.Notification.CreateNotification(noti);
+            }
 
             return Ok("Save changes success");
         }
