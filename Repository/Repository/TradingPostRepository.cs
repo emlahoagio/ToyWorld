@@ -53,9 +53,9 @@ namespace Repository.Repository
             Update(tradingPost);
         }
 
-        public async Task<Pagination<TradingPostInList>> GetTradingPostInGroup(int group_id, PagingParameters paging, bool trackChanges, int account_id)
+        public async Task<Pagination<TradingPostInList>> GetTradingPostInGroupMember(int group_id, PagingParameters paging, bool trackChanges, int account_id)
         {
-            var tradingPosts = await FindByCondition(x => x.IsExchanged == false && x.IsDeleted == false && x.GroupId == group_id, trackChanges)
+            var tradingPosts = await FindByCondition(x => x.IsDeleted == false && x.GroupId == group_id, trackChanges)
                 .Include(x => x.Toy)
                 .Include(x => x.Brand)
                 .Include(x => x.Type)
@@ -199,6 +199,52 @@ namespace Repository.Repository
             {
                 Title = tradingPost.Title,
                 ToyName = tradingPost.ToyName
+            };
+
+            return result;
+        }
+
+        public async Task<Pagination<TradingPostInList>> GetTradingPostInGroupManager(int group_id, PagingParameters paging, bool trackChanges, int account_id)
+        {
+            var tradingPosts = await FindByCondition(x => x.GroupId == group_id, trackChanges)
+                .Include(x => x.Toy)
+                .Include(x => x.Brand)
+                .Include(x => x.Type)
+                .Include(x => x.ReactTradingPosts)
+                .Include(x => x.Account)
+                .OrderByDescending(x => x.PostDate)
+                .ToListAsync();
+
+            var count = tradingPosts.Count;
+
+            var pagingList = tradingPosts.Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize);
+
+            var result = new Pagination<TradingPostInList>
+            {
+                PageSize = paging.PageSize,
+                PageNumber = paging.PageNumber,
+                Count = count,
+                Data = pagingList.Select(x => new TradingPostInList
+                {
+                    Address = x.Address,
+                    Brand = x.Brand == null ? "Unknow" : x.Brand.Name,
+                    Exchange = x.Trading,
+                    Id = x.Id,
+                    NoOfReact = x.ReactTradingPosts.Count,
+                    OwnerId = x.AccountId,
+                    OwnerAvatar = x.Account.Avatar,
+                    OwnerName = x.Account.Name,
+                    PostDate = x.PostDate,
+                    ToyName = x.ToyName,
+                    Type = x.Type == null ? "Unknow" : x.Type.Name,
+                    IsLikedPost = x.ReactTradingPosts.Where(y => y.AccountId == account_id).Count() == 0 ? false : true,
+                    Value = x.Value,
+                    Content = x.Content,
+                    Title = x.Title,
+                    Phone = x.Phone,
+                    Status = x.Status,
+                })
             };
 
             return result;

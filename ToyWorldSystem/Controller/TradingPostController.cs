@@ -33,8 +33,16 @@ namespace ToyWorldSystem.Controller
         public async Task<IActionResult> GetListTradingPost([FromQuery] PagingParameters paging, int group_id)
         {
             var account_id = _userAccessor.getAccountId();
+            var current_login_account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
 
-            var result_no_image_no_comment = await _repositoryManager.TradingPost.GetTradingPostInGroup(group_id, paging, trackChanges: false, account_id);
+            var result_no_image_no_comment = new Pagination<TradingPostInList>();
+
+            if (current_login_account.Role == 1)
+                result_no_image_no_comment = await _repositoryManager.TradingPost
+                    .GetTradingPostInGroupMember(group_id, paging, trackChanges: false, account_id);
+            else
+                result_no_image_no_comment = await _repositoryManager.TradingPost
+                    .GetTradingPostInGroupManager(group_id, paging, trackChanges: false, account_id);
 
             if (result_no_image_no_comment == null)
             {
@@ -170,7 +178,7 @@ namespace ToyWorldSystem.Controller
             //Create Notifications
             var users = await _repositoryManager.FollowGroup.GetUserFollowGroup(group_id);
             var account = await _repositoryManager.Account.GetAccountById(account_id, false);
-           // var createdTradingPost = _repositoryManager.TradingPost
+            // var createdTradingPost = _repositoryManager.TradingPost
             foreach (var user in users)
             {
                 CreateNotificationModel noti = new CreateNotificationModel
