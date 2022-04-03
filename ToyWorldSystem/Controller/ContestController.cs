@@ -105,23 +105,6 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
-        /// Get information of proposal to create contest (Role: Manager)
-        /// </summary>
-        /// <param name="proposal_id"></param>
-        /// <returns></returns>
-        /// <exception cref="ErrorDetails"></exception>
-        [HttpGet]
-        [Route("create/proposal/{proposal_id}")]
-        public async Task<IActionResult> GetProposalToCreateContest(int proposal_id)
-        {
-            var proposal_information = await _repositoryManager.Proposal.GetInformationToCreateContest(proposal_id, trackChanges: false);
-
-            if (proposal_information == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No proposal matches with id: " + proposal_id);
-
-            return Ok(proposal_information);
-        }
-
-        /// <summary>
         /// Get detail information of contest (Role: Manager, Member)
         /// </summary>
         /// <param name="contest_id"></param>
@@ -377,7 +360,6 @@ namespace ToyWorldSystem.Controller
                 StartDate = param.StartDate,
                 EndDate = param.EndDate,
                 GroupId = group_id,
-                ProposalId = param.ProposalId,
                 BrandId = brand.Id,
                 TypeId = type.Id,
                 CanAttempt = false,
