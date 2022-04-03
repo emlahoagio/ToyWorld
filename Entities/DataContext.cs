@@ -31,8 +31,6 @@ namespace Entities.Models
         public virtual DbSet<Post> Posts { get; set; }
         public virtual DbSet<Prize> Prizes { get; set; }
         public virtual DbSet<PrizeContest> PrizeContests { get; set; }
-        public virtual DbSet<Proposal> Proposals { get; set; }
-        public virtual DbSet<ProposalPrize> ProposalPrizes { get; set; }
         public virtual DbSet<ReactComment> ReactComments { get; set; }
         public virtual DbSet<ReactPost> ReactPosts { get; set; }
         public virtual DbSet<ReactTradingPost> ReactTradingPosts { get; set; }
@@ -125,11 +123,6 @@ namespace Entities.Models
                     .WithMany(p => p.Contests)
                     .HasForeignKey(d => d.BrandId)
                     .HasConstraintName("FK_Contest_Brand");
-
-                entity.HasOne(d => d.Proposal)
-                    .WithMany(p => p.Contests)
-                    .HasForeignKey(d => d.ProposalId)
-                    .HasConstraintName("FK_Contest_Proposal");
 
                 entity.HasOne(d => d.Type)
                     .WithMany(p => p.Contests)
@@ -296,11 +289,6 @@ namespace Entities.Models
                     .HasForeignKey(d => d.PrizeId)
                     .HasConstraintName("FK_Image_Prize");
 
-                entity.HasOne(d => d.Proposal)
-                    .WithMany(p => p.Images)
-                    .HasForeignKey(d => d.ProposalId)
-                    .HasConstraintName("FK_Image_Proposal");
-
                 entity.HasOne(d => d.Toy)
                     .WithMany(p => p.Images)
                     .HasForeignKey(d => d.ToyId)
@@ -377,47 +365,6 @@ namespace Entities.Models
                     .HasForeignKey(d => d.PrizeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Prize_Contest_Prize");
-            });
-
-            modelBuilder.Entity<Proposal>(entity =>
-            {
-                entity.ToTable("Proposal");
-
-                entity.Property(e => e.Id).HasColumnName("id");
-
-                entity.HasOne(d => d.Account)
-                    .WithMany(p => p.Proposals)
-                    .HasForeignKey(d => d.AccountId)
-                    .HasConstraintName("FK_Proposal_Account");
-
-                entity.HasOne(d => d.Brand)
-                    .WithMany(p => p.Proposals)
-                    .HasForeignKey(d => d.BrandId)
-                    .HasConstraintName("FK_Proposal_Brand");
-
-                entity.HasOne(d => d.Type)
-                    .WithMany(p => p.Proposals)
-                    .HasForeignKey(d => d.TypeId)
-                    .HasConstraintName("FK_Proposal_Type");
-            });
-
-            modelBuilder.Entity<ProposalPrize>(entity =>
-            {
-                entity.HasKey(e => new { e.ProposalId, e.PrizeId });
-
-                entity.ToTable("Proposal_Prize");
-
-                entity.HasOne(d => d.Prize)
-                    .WithMany(p => p.ProposalPrizes)
-                    .HasForeignKey(d => d.PrizeId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Proposal_Prize_Prize");
-
-                entity.HasOne(d => d.Proposal)
-                    .WithMany(p => p.ProposalPrizes)
-                    .HasForeignKey(d => d.ProposalId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Proposal_Prize_Proposal");
             });
 
             modelBuilder.Entity<ReactComment>(entity =>

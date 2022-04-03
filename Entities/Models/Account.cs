@@ -19,7 +19,6 @@ namespace Entities.Models
             FollowGroups = new HashSet<FollowGroup>();
             ManageGroups = new HashSet<ManageGroup>();
             Posts = new HashSet<Post>();
-            Proposals = new HashSet<Proposal>();
             ReactComments = new HashSet<ReactComment>();
             ReactPosts = new HashSet<ReactPost>();
             ReactTradingPosts = new HashSet<ReactTradingPost>();
@@ -60,7 +59,6 @@ namespace Entities.Models
         public virtual ICollection<FollowGroup> FollowGroups { get; set; }
         public virtual ICollection<ManageGroup> ManageGroups { get; set; }
         public virtual ICollection<Post> Posts { get; set; }
-        public virtual ICollection<Proposal> Proposals { get; set; }
         public virtual ICollection<ReactComment> ReactComments { get; set; }
         public virtual ICollection<ReactPost> ReactPosts { get; set; }
         public virtual ICollection<ReactTradingPost> ReactTradingPosts { get; set; }

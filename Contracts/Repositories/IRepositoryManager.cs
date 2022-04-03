@@ -18,10 +18,8 @@ namespace Contracts
         IReactPostRepository ReactPost { get; }
         IReactCommentRepository ReactComment { get; }
         IFollowAccountRepository FollowAccount { get; }
-        IProposalRepository Proposal { get; }
         IPrizeContestRepository PrizeContest { get; }
         IPrizeRepository Prize { get; }
-        IProposalPrizeRepository ProposalPrize { get; }
         IErrorLogsRepository ErrorLog { get; }
         IJoinedContestRepository JoinContest { get; }
         IPostOfContestRepository PostOfContest { get; }

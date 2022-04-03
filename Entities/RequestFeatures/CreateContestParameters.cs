@@ -22,7 +22,6 @@ namespace Entities.RequestFeatures
         public DateTime? EndDate { get; set; }
         public string BrandName { get; set; }
         public string TypeName { get; set; }
-        public int ProposalId { get; set; }
         public List<string> ImagesUrl { get; set; }
     }
 }

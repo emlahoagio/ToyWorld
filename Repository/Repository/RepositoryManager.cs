@@ -28,10 +28,8 @@ namespace Repository
         private ICommentRepository _commentRepository;
         private IReactCommentRepository _reactCommentRepository;
         private IFollowAccountRepository _followAccountRepository;
-        private IProposalRepository _proposalRepository;
         private IPrizeContestRepository _prizeContestRepository;
         private IPrizeRepository _prizeRepository;
-        private IProposalPrizeRepository _proposalPrizeRepository;
         private IErrorLogsRepository _errorLogsRepository;
         private IJoinedContestRepository _joinedContestRepository;
         private IPostOfContestRepository _postOfContestRepository;
@@ -231,18 +229,6 @@ namespace Repository
             }
         }
 
-        public IProposalRepository Proposal
-        {
-            get
-            {
-                if (_proposalRepository == null)
-                {
-                    _proposalRepository = new ProposalRepository(_context);
-                }
-                return _proposalRepository;
-            }
-        }
-
         public IPrizeContestRepository PrizeContest
         {
             get
@@ -264,16 +250,6 @@ namespace Repository
                     _prizeRepository = new PrizeRepository(_context);
                 }
                 return _prizeRepository;
-            }
-        }
-
-        public IProposalPrizeRepository ProposalPrize
-        {
-            get
-            {
-                if (_proposalPrizeRepository == null)
-                    _proposalPrizeRepository = new ProposalPrizeRepository(_context);
-                return _proposalPrizeRepository;
             }
         }
 
