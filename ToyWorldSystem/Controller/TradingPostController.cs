@@ -247,9 +247,10 @@ namespace ToyWorldSystem.Controller
             else
                 _repositoryManager.ReactTradingPost.Delete(reactTrading);
 
+            await _repositoryManager.SaveAsync();
+
             var numOfReact = await _repositoryManager.TradingPost.GetNumOfReact(trading_post_id, trackChanges: false);
 
-            await _repositoryManager.SaveAsync();
             return Ok(new
             {
                 Message = "Save changes success",
