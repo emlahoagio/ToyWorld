@@ -3,6 +3,7 @@ using Entities.ErrorModel;
 using Entities.Models;
 using Entities.RequestFeatures;
 using Hangfire;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,13 @@ namespace ToyWorldSystem.Controller
         {
             _repositoryManager = repositoryManager;
             _userAccessor = userAccessor;
+        }
+        [HttpGet]
+        [Route("getallcontest")]
+        public async Task<IActionResult> GetAllContest([FromBody]Status status)
+        {
+            var contests = await _repositoryManager.Contest.GetAllContest(status.Id);
+            return Ok(contests);
         }
 
         /// <summary>

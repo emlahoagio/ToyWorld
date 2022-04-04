@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Repository
@@ -286,6 +285,14 @@ namespace Repository
                 PageNumber = paging.PageNumber,
                 PageSize = paging.PageSize
             };
+        }
+
+        public async Task<IEnumerable<Contest>> GetAllContest(int status)
+        {
+            var contests = await FindByCondition(x => x.Status == status, false)
+                .OrderBy(x => x.GroupId)
+                .ToListAsync();
+            return contests;
         }
     }
 }
