@@ -24,5 +24,7 @@ namespace Contracts
         Task<Contest> GetEvaluateContest(int contest_id, bool trackChanges);
         Task<Pagination<ContestInGroup>> GetContestByBrandAndType
             (int account_id, List<Entities.Models.Type> types, List<Entities.Models.Brand> brands, PagingParameters paging, bool trackChanges);
+
+        Task<IEnumerable<Contest>> GetAllContest(int status);
     }
 }
