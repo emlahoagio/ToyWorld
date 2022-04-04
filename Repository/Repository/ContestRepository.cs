@@ -287,12 +287,55 @@ namespace Repository
             };
         }
 
-        public async Task<IEnumerable<Contest>> GetAllContest(int status)
+        public async Task<Pagination<ContestInGroup>> GetContestByStatus(int status, PagingParameters paging, bool trackChanges)
         {
-            var contests = await FindByCondition(x => x.Status == status, false)
-                .OrderBy(x => x.GroupId)
-                .ToListAsync();
-            return contests;
+            var contests = new List<Contest>();
+
+            if (status == 0)
+            {
+                contests = await FindAll(trackChanges)
+                    .OrderBy(x => x.GroupId)
+                    .ToListAsync();
+            }else if(status == 1)
+            {
+                contests = await FindByCondition(x => x.Status == 4, trackChanges)
+                    .OrderBy(x => x.GroupId)
+                    .ToListAsync();
+            }else
+            {
+                contests = await FindByCondition(x => x.Status != 4 && x.Status != 0, trackChanges)
+                    .OrderBy(x => x.GroupId)
+                    .ToListAsync();
+            }
+
+            var paging_contest = contests.Skip((paging.PageNumber - 1) * paging.PageSize).Take(paging.PageSize);
+
+            var result_data = paging_contest.Select(x => new ContestInGroup
+            {
+                CoverImage = x.CoverImage,
+                Description = x.Description,
+                EndDate = x.EndDate,
+                EndRegistration = x.EndRegistration,
+                Id = x.Id,
+                IsJoined = x.Status == 1,
+                MaxRegistration = x.MaxRegistration,
+                MinRegistration = x.MinRegistration,
+                Slogan = x.Slogan,
+                StartDate = x.StartDate,
+                StartRegistration = x.StartRegistration,
+                Title = x.Title,
+                Venue = x.Venue
+            }).ToList();
+
+            var result = new Pagination<ContestInGroup>
+            {
+                Count = contests.Count,
+                Data = result_data,
+                PageNumber = paging.PageNumber,
+                PageSize = paging.PageSize
+            };
+
+            return result;
         }
     }
 }

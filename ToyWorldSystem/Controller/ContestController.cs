@@ -24,11 +24,24 @@ namespace ToyWorldSystem.Controller
             _repositoryManager = repositoryManager;
             _userAccessor = userAccessor;
         }
+
+        /// <summary>
+        /// Get contest by status
+        /// </summary>
+        /// <param name="status">0: all, 1: closed, 2: order contest status</param>
+        /// <param name="paging"></param>
+        /// <returns></returns>
         [HttpGet]
-        [Route("getallcontest")]
-        public async Task<IActionResult> GetAllContest([FromBody]Status status)
+        [Route("status/{status}")]
+        public async Task<IActionResult> GetAllContest(int status, [FromQuery] PagingParameters paging)
         {
-            var contests = await _repositoryManager.Contest.GetAllContest(status.Id);
+            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            var contests = await _repositoryManager.Contest.GetContestByStatus(status, paging, trackChanges: false);
+            if (contests == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No contest matches with input status");
+
+            contests = await _repositoryManager.PrizeContest.GetPrizeForContest(contests);
+
             return Ok(contests);
         }
 
