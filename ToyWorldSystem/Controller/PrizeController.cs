@@ -97,5 +97,23 @@ namespace ToyWorldSystem.Controller
             await _repository.SaveAsync();
             return Ok("Save changes success");
         }
+
+        /// <summary>
+        /// Disable prize (Role: Manager)
+        /// </summary>
+        /// <param name="prize_id"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("{prize_id}")]
+        public async Task<IActionResult> DisablePrize(int prize_id)
+        {
+            var account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            if (account.Role != 1) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to update");
+
+            await _repository.Prize.DisablePrize(prize_id, trackChanges: false);
+            await _repository.SaveAsync();
+
+            return Ok("Save changes success");
+        }
     }
 }

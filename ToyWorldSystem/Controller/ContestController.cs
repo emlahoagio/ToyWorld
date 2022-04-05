@@ -369,11 +369,8 @@ namespace ToyWorldSystem.Controller
             {
                 Title = param.Title,
                 Description = param.Description,
-                Venue = param.Location,
                 CoverImage = param.CoverImage,
                 Slogan = param.Slogan,
-                IsOnlineContest = param.IsOnlineContest,
-                RegisterCost = param.RegisterCost,
                 MinRegistration = param.MinRegistration,
                 MaxRegistration = param.MaxRegistration,
                 StartRegistration = param.StartRegistration,
@@ -383,13 +380,11 @@ namespace ToyWorldSystem.Controller
                 GroupId = group_id,
                 BrandId = brand.Id,
                 TypeId = type.Id,
-                CanAttempt = false,
                 Status = 0
             };
 
             if (contest.StartRegistration.Value.Day == DateTime.UtcNow.Day)
             {
-                contest.CanAttempt = true;
                 contest.Status = 1;
             }
             _repositoryManager.Contest.Create(contest); //created contest

@@ -53,16 +53,13 @@ namespace Repository
                     OwnerName = x.Account.Name
                 }).ToList(),
                 Id = contest.Id,
-                IsOnlineContest = contest.IsOnlineContest,
                 MaxRegistration = contest.MaxRegistration,
                 MinRegistration = contest.MinRegistration,
-                RegisterCost = contest.RegisterCost,
                 Slogan = contest.Slogan,
                 StartDate = contest.StartDate,
                 StartRegistration = contest.StartRegistration,
                 Title = contest.Title,
                 TypeName = contest.Type == null ? "Unknown" : contest.Type.Name,
-                Venue = contest.Venue
             };
 
             return result;
@@ -94,7 +91,6 @@ namespace Repository
                 StartDate = x.StartDate,
                 StartRegistration = x.StartRegistration,
                 Title = x.Title,
-                Venue = x.Venue,
                 IsJoined = x.AccountJoined.Where(x => x.AccountId == account_id).Count() == 0 ? false : true
             }).ToList();
 
@@ -120,7 +116,7 @@ namespace Repository
 
         public async Task<IEnumerable<HighlightContest>> getHightlightContest(bool trackChanges)
         {
-            var listContest = await FindByCondition(c => c.CanAttempt == true && c.EndRegistration >= DateTime.Now, trackChanges)
+            var listContest = await FindByCondition(c => c.Status == 1 && c.EndRegistration >= DateTime.Now, trackChanges)
                 .OrderBy(x => x.EndRegistration)
                 .Take(4)
                 .ToListAsync();
@@ -138,7 +134,6 @@ namespace Repository
                     Id = contest.Id,
                     Slogan = contest.Slogan,
                     Title = contest.Title,
-                    Venue = contest.Venue
                 });
             }
 
@@ -149,7 +144,6 @@ namespace Repository
         {
             var contest = await FindByCondition(x => x.Id == contest_id, trackChanges).FirstOrDefaultAsync();
 
-            contest.CanAttempt = true;
             contest.Status = 1;
 
             Update(contest);
@@ -159,7 +153,6 @@ namespace Repository
         {
             var contest = await FindByCondition(x => x.Id == contest_id, trackChanges).FirstOrDefaultAsync();
 
-            contest.CanAttempt = false;
             contest.Status = 2;
 
             Update(contest);
@@ -178,14 +171,14 @@ namespace Repository
         {
             var contest = await FindByCondition(x => x.Id == contest_id, trackChanges).FirstOrDefaultAsync();
 
-            return contest.CanAttempt;
+            return contest.Status == 1;
         }
 
         public async Task<bool> IsOpenContest(int contest_id, bool trackChanges)
         {
             var contest = await FindByCondition(x => x.Id == contest_id, trackChanges).FirstOrDefaultAsync();
 
-            return contest.Status == 3 ? true : false;
+            return contest.Status == 3;
         }
 
         public async Task<Contest> GetEvaluateContest(int contest_id, bool trackChanges)
@@ -220,7 +213,6 @@ namespace Repository
                         StartDate = x.StartDate,
                         StartRegistration = x.StartRegistration,
                         Title = x.Title,
-                        Venue = x.Venue,
                         IsJoined = x.AccountJoined.Where(x => x.AccountId == account_id).Count() == 0 ? false : true
                     }).ToList(),
                     PageSize = paging.PageSize,
@@ -275,7 +267,6 @@ namespace Repository
                     StartDate = x.StartDate,
                     StartRegistration = x.StartRegistration,
                     Title = x.Title,
-                    Venue = x.Venue,
                     IsJoined = x.AccountJoined.Where(x => x.AccountId == account_id).Count() == 0 ? false : true
                 }).ToList();
             return new Pagination<ContestInGroup>
@@ -324,7 +315,6 @@ namespace Repository
                 StartDate = x.StartDate,
                 StartRegistration = x.StartRegistration,
                 Title = x.Title,
-                Venue = x.Venue
             }).ToList();
 
             var result = new Pagination<ContestInGroup>
