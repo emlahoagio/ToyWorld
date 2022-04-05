@@ -3,6 +3,7 @@ using Entities.DataTransferObject;
 using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -32,7 +33,8 @@ namespace Repository.Repository
                 BrandId = brand_id,
                 TypeId = type_id,
                 GroupId = group_id,
-                Images = tradingPost.ImagesLink.Select(x => new Image { Url = x }).ToList()
+                Images = tradingPost.ImagesLink.Select(x => new Image { Url = x }).ToList(),
+                PostDate = DateTime.UtcNow
             };
 
             Create(newTradingPost);
