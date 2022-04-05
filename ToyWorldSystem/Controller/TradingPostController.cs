@@ -39,10 +39,10 @@ namespace ToyWorldSystem.Controller
 
             if (current_login_account.Role == 1)
                 result_no_image_no_comment = await _repositoryManager.TradingPost
-                    .GetTradingPostInGroupMember(group_id, paging, trackChanges: false, account_id);
+                    .GetTradingPostInGroupManager(group_id, paging, trackChanges: false, account_id);
             else
                 result_no_image_no_comment = await _repositoryManager.TradingPost
-                    .GetTradingPostInGroupManager(group_id, paging, trackChanges: false, account_id);
+                    .GetTradingPostInGroupMember(group_id, paging, trackChanges: false, account_id);
 
             if (result_no_image_no_comment == null)
             {
