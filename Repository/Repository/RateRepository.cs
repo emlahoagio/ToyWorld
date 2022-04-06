@@ -36,19 +36,24 @@ namespace Repository.Repository
                     .Include(x => x.Account)
                     .ToListAsync();
 
-                post.Rates = rates.Select(x => new RateReturn
+                if (rates.Count != 0)
                 {
-                    Id = x.Id,
-                    Note = x.Note,
-                    NumOfStar = x.NumOfStar,
-                    OwnerAvatar = x.Account.Avatar,
-                    OwnerId = x.AccountId.Value,
-                    OwnerName = x.Account.Name
-                }).ToList();
-
-                post.AverageStar = rates.Select(x => x.NumOfStar).Average();
-                post.IsRated = rates.Where(x => x.AccountId.Value == account_id).Count() != 0;
-
+                    post.Rates = rates.Select(x => new RateReturn
+                    {
+                        Id = x.Id,
+                        Note = x.Note,
+                        NumOfStar = x.NumOfStar,
+                        OwnerAvatar = x.Account.Avatar,
+                        OwnerId = x.AccountId.Value,
+                        OwnerName = x.Account.Name
+                    }).ToList();
+                    post.AverageStar = rates.Select(x => x.NumOfStar).Average();
+                    post.IsRated = rates.Where(x => x.AccountId.Value == account_id).Count() != 0;
+                }else
+                {
+                    post.AverageStar = 0;
+                    post.IsRated = false;
+                }
                 data.Add(post);
             }
 
