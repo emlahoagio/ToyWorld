@@ -17,6 +17,16 @@ namespace Repository.Repository
         {
         }
 
+        public async Task Delete(int contestId, bool trackChanges)
+        {
+            var posts = await FindByCondition(x => x.ContestId == contestId, trackChanges).ToListAsync();
+            
+            foreach(var post in posts)
+            {
+                Delete(post);
+            }
+        }
+
         public async Task<int> GetOwnerByPostOfContestId(int id)
         {
             int result = 0;
@@ -51,6 +61,13 @@ namespace Repository.Repository
                 PageNumber = paging.PageNumber,
                 PageSize = paging.PageSize
             };
+
+            return result;
+        }
+
+        public async Task<List<int>> GetPostOfContest(int contest_id, bool trackChanges)
+        {
+            var result = await FindByCondition(x => x.ContestId == contest_id, trackChanges).Select(x => x.Id).ToListAsync();
 
             return result;
         }

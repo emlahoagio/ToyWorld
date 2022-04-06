@@ -204,13 +204,12 @@ namespace ToyWorldSystem.Controller
         /// Get list subscribers of contest (Role: Manager)
         /// </summary>
         /// <param name="contest_id"></param>
-        /// <param name="paging"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("{contest_id}/subscribers")]
-        public async Task<IActionResult> GetListSubscribers(int contest_id, PagingParameters paging)
+        public async Task<IActionResult> GetListSubscribers(int contest_id)
         {
-            var subscribers = await _repositoryManager.JoinContest.GetListSubscribers(contest_id, paging, trackChanges: false);
+            var subscribers = await _repositoryManager.JoinContest.GetListSubscribers(contest_id, trackChanges: false);
 
             if (subscribers == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No subscribers in this contest");
 
@@ -253,9 +252,46 @@ namespace ToyWorldSystem.Controller
         [Route("{contest_id}/subscribers/{account_id}")]
         public async Task<IActionResult> RemoveSubscribers(int contest_id, int account_id)
         {
+            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            if (account.Role != 1) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to remove");
+
             var joinContest = await _repositoryManager.JoinContest.GetSubsCriberToDelete(contest_id, account_id, trackChanges: false);
 
             _repositoryManager.JoinContest.Delete(joinContest);
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Save changes success");
+        }
+
+        /// <summary>
+        /// Delete contest (Role: Manager)
+        /// </summary>
+        /// <param name="contest_id"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("{contest_id}")]
+        public async Task<IActionResult> DeleteContest(int contest_id)
+        {
+            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            if (account.Role != 1) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to remove");
+
+            //Remove prize contest
+            await _repositoryManager.PrizeContest.Delete(contest_id, trackChanges: false);
+            //Remove reward
+            await _repositoryManager.Reward.Delete(contest_id, trackChanges: false);
+            //Remove evaluate
+            await _repositoryManager.EvaluateContest.Delete(contest_id, trackChanges: false);
+            //Remove post of contest and rate
+            var listPostId = await _repositoryManager.PostOfContest.GetPostOfContest(contest_id, trackChanges: false);
+            await _repositoryManager.Rate.Delete(listPostId, trackChanges: false);
+            await _repositoryManager.PostOfContest.Delete(contest_id, trackChanges: false);
+            //Remove subcribers
+            await _repositoryManager.JoinContest.Delete(contest_id, trackChanges: false);
+            //Remove notification
+            await _repositoryManager.Notification.Delete(contest_id, trackChanges: false);
+            await _repositoryManager.SaveAsync();
+            //Remove contest
+            await _repositoryManager.Contest.Delete(contest_id, trackChanges: false);
             await _repositoryManager.SaveAsync();
 
             return Ok("Save changes success");
