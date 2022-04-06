@@ -60,6 +60,7 @@ namespace Repository
                 StartRegistration = contest.StartRegistration,
                 Title = contest.Title,
                 TypeName = contest.Type == null ? "Unknown" : contest.Type.Name,
+                Status = contest.Status.Value
             };
 
             return result;
@@ -91,7 +92,8 @@ namespace Repository
                 StartDate = x.StartDate,
                 StartRegistration = x.StartRegistration,
                 Title = x.Title,
-                IsJoined = x.AccountJoined.Where(x => x.AccountId == account_id).Count() == 0 ? false : true
+                IsJoined = x.AccountJoined.Where(x => x.AccountId == account_id).Count() == 0 ? false : true,
+                Status = x.Status.Value
             }).ToList();
 
             var result = new Pagination<ContestInGroup>
@@ -213,7 +215,8 @@ namespace Repository
                         StartDate = x.StartDate,
                         StartRegistration = x.StartRegistration,
                         Title = x.Title,
-                        IsJoined = x.AccountJoined.Where(x => x.AccountId == account_id).Count() == 0 ? false : true
+                        IsJoined = x.AccountJoined.Where(x => x.AccountId == account_id).Count() == 0 ? false : true,
+                        Status = x.Status.Value
                     }).ToList(),
                     PageSize = paging.PageSize,
                     PageNumber = paging.PageNumber
@@ -267,7 +270,8 @@ namespace Repository
                     StartDate = x.StartDate,
                     StartRegistration = x.StartRegistration,
                     Title = x.Title,
-                    IsJoined = x.AccountJoined.Where(x => x.AccountId == account_id).Count() == 0 ? false : true
+                    IsJoined = x.AccountJoined.Where(x => x.AccountId == account_id).Count() == 0 ? false : true,
+                    Status = x.Status.Value
                 }).ToList();
             return new Pagination<ContestInGroup>
             {
@@ -315,6 +319,7 @@ namespace Repository
                 StartDate = x.StartDate,
                 StartRegistration = x.StartRegistration,
                 Title = x.Title,
+                Status = x.Status.Value
             }).ToList();
 
             var result = new Pagination<ContestInGroup>
