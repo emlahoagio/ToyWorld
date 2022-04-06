@@ -383,14 +383,14 @@ namespace ToyWorldSystem.Controller
         {
             DateTime startDate, endDate, startRegis, endRegis;
 
-            var brand = await _repositoryManager.Brand
-                .GetBrandByName(param.BrandName == null ? "Unknow Brand" : param.BrandName, trackChanges: false);
-            if (brand == null)
-            {
-                _repositoryManager.Brand.CreateBrand(new Brand { Name = param.BrandName });
-                await _repositoryManager.SaveAsync();
-                brand = await _repositoryManager.Brand.GetBrandByName(param.BrandName, trackChanges: false);
-            }
+            //var brand = await _repositoryManager.Brand
+            //    .GetBrandByName(param.BrandName == null ? "Unknow Brand" : param.BrandName, trackChanges: false);
+            //if (brand == null)
+            //{
+            //    _repositoryManager.Brand.CreateBrand(new Brand { Name = param.BrandName });
+            //    await _repositoryManager.SaveAsync();
+            //    brand = await _repositoryManager.Brand.GetBrandByName(param.BrandName, trackChanges: false);
+            //}
 
             var type = await _repositoryManager.Type
                 .GetTypeByName(param.TypeName == null ? "Unknow Type" : param.TypeName, trackChanges: false);
@@ -398,7 +398,7 @@ namespace ToyWorldSystem.Controller
             {
                 _repositoryManager.Type.CreateType(new Entities.Models.Type { Name = param.TypeName });
                 await _repositoryManager.SaveAsync();
-                type = await _repositoryManager.Type.GetTypeByName(param.BrandName, trackChanges: false);
+                //type = await _repositoryManager.Type.GetTypeByName(param.BrandName, trackChanges: false);
             }
 
             var contest = new Contest
@@ -407,14 +407,14 @@ namespace ToyWorldSystem.Controller
                 Description = param.Description,
                 CoverImage = param.CoverImage,
                 Slogan = param.Slogan,
-                MinRegistration = param.MinRegistration,
-                MaxRegistration = param.MaxRegistration,
+                //MinRegistration = param.MinRegistration,
+                //MaxRegistration = param.MaxRegistration,
                 StartRegistration = param.StartRegistration,
                 EndRegistration = param.EndRegistration,
                 StartDate = param.StartDate,
                 EndDate = param.EndDate,
                 GroupId = group_id,
-                BrandId = brand.Id,
+                //BrandId = brand.Id,
                 TypeId = type.Id,
                 Status = 0
             };

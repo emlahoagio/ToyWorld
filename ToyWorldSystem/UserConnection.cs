@@ -7,7 +7,7 @@ namespace ToyWorldSystem
 {
     public class UserConnection
     {
-        public string User { get; set; }
+        public int User { get; set; }
         public string Room { get; set; }
     }
 }
