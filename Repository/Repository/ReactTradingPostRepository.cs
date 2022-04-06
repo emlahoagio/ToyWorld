@@ -1,4 +1,5 @@
 ﻿using Contracts.Repositories;
+using Entities.DataTransferObject;
 using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -20,6 +21,22 @@ namespace Repository.Repository
                 .FirstOrDefaultAsync();
 
             return react;
+        }
+
+        public async Task<Pagination<TradingManaged>> GetIsReactedReactTrading(Pagination<TradingManaged> result, int account_id, bool trackChanges)
+        {
+            var data_result = new List<TradingManaged>();
+
+            foreach(var trading in result.Data)
+            {
+                var isLiked = await FindByCondition(x => x.TradingPostId == trading.Id && x.AccountId == account_id, trackChanges).FirstOrDefaultAsync() != null;
+
+                trading.IsLikedPost = isLiked;
+                data_result.Add(trading);
+            }
+            result.Data = data_result;
+
+            return result;
         }
     }
 }

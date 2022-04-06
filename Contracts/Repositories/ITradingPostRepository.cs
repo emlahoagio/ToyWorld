@@ -13,7 +13,7 @@ namespace Contracts.Repositories
         void DisableOrEnable(TradingPost tradingPost, int disable_or_enable);
         Task UpdateTradingStatus(int trading_post_id, int trading_status, bool trackChanges);
         Task<Pagination<TradingPostInList>> GetTradingPostInGroupMember(int group_id, PagingParameters paging, bool trackChanges, int account_id);
-        Task<Pagination<TradingPostInList>> GetTradingPostInGroupManager(int group_id, PagingParameters paging, bool trackChanges, int account_id);
+        Task<Pagination<TradingManaged>> GetTradingPostForManager(int status, PagingParameters paging, bool trackChanges, int account_id);
         Task<TradingPost> GetTradingPostById(int tradingpost_id, bool trackChanges);
         Task<UpdateTradingPost> GetUpdateDetail(int tradingpost_id, bool trackChanges);
         Task<TradingPostDetail> GetDetail(int trading_post_id, int current_account_id, bool trackChanges);

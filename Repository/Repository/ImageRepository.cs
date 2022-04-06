@@ -99,6 +99,23 @@ namespace Repository
             result_no_image.Data = data;
             return result_no_image;
         }
+        
+        public async Task<Pagination<TradingManaged>> GetImageForListTradingPost(Pagination<TradingManaged> result_no_image, bool trackChanges)
+        {
+            var data = new List<TradingManaged>();
+
+            foreach (var post in result_no_image.Data)
+            {
+                var images = await FindByCondition(x => x.TradingPostId == post.Id, trackChanges).ToListAsync();
+
+                if (images != null) post.Images = images.Select(x => new ImageReturn { Id = x.Id, Url = x.Url }).ToList();
+
+                data.Add(post);
+            }
+
+            result_no_image.Data = data;
+            return result_no_image;
+        }
 
         public async Task<Pagination<PostOfContestInList>> GetImageForPostOfContest(Pagination<PostOfContestInList> posts_no_rate_no_image, bool trackChanges)
         {
