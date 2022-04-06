@@ -161,8 +161,6 @@ namespace ToyWorldSystem.Controller
 
             var posts = await _repositoryManager.Rate.GetRateForPostOfContest(post_no_rate, account_id, trackChanges: false);
 
-            if (posts == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "This contest has no post");
-
             return Ok(posts);
         }
 
