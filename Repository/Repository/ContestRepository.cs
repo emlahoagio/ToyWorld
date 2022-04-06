@@ -327,5 +327,11 @@ namespace Repository
 
             return result;
         }
+
+        public async Task Delete(int contest_id, bool trackChanges)
+        {
+            var contest = await FindByCondition(x => x.Id == contest_id, trackChanges).FirstOrDefaultAsync();
+            Delete(contest);
+        }
     }
 }

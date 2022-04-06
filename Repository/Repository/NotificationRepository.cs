@@ -37,6 +37,16 @@ namespace Repository.Repository
             Create(noti);
         }
 
+        public async Task Delete(int contest_id, bool trackChanges)
+        {
+            var notifications = await FindByCondition(x => x.ContestId == contest_id, trackChanges).ToListAsync();
+
+            foreach(var notification in notifications)
+            {
+                Delete(notification);
+            }
+        }
+
         public async Task<Pagination<Notification>> GetByAccountId(int accountId, PagingParameters paging)
         {
             var notifies = await FindByCondition(x => x.AccountId == accountId, false)

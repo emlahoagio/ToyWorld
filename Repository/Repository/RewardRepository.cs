@@ -16,6 +16,17 @@ namespace Repository.Repository
         {
         }
 
+        public async Task Delete(int contestId, bool trackChanges)
+        {
+
+            var rewards = await FindByCondition(x => x.ContestId == contestId, trackChanges).ToListAsync();
+
+            foreach(var reward in rewards)
+            {
+                Delete(reward);
+            }
+        }
+
         public async Task<List<RewardReturn>> GetContestReward(int contest_id, bool trackChanges)
         {
             var rewards = await FindByCondition(x => x.ContestId == contest_id, trackChanges)

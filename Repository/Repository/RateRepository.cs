@@ -16,6 +16,16 @@ namespace Repository.Repository
         {
         }
 
+        public async Task Delete(List<int> listPostId, bool trackChanges)
+        {
+            foreach(var postId in listPostId)
+            {
+                var rates = await FindByCondition(x => x.PostOfContestId == postId, trackChanges).ToListAsync();
+                foreach (var rate in rates)
+                    Delete(rate);
+            }
+        }
+
         public async Task<Pagination<PostOfContestInList>> GetRateForPostOfContest(Pagination<PostOfContestInList> post_no_rate, int account_id, bool trackChanges)
         {
             var data = new List<PostOfContestInList>();
