@@ -21,7 +21,7 @@ namespace Repository.Repository
 
         public async Task<Pagination<PrizeOfContest>> GetPrize(PagingParameters paging, bool trackChanges)
         {
-            var prizes = await FindAll(trackChanges).ToListAsync();
+            var prizes = await FindByCondition(x => x.IsDisabled == false, trackChanges).ToListAsync();
 
             var count = prizes.Count;
 
@@ -74,6 +74,14 @@ namespace Repository.Repository
             };
 
             return result;
+        }
+
+        public async Task DisablePrize(int prize_id, bool trackChanges)
+        {
+            var prize = await FindByCondition(x => x.Id == prize_id, trackChanges).FirstOrDefaultAsync();
+
+            prize.IsDisabled = true;
+            Update(prize);
         }
     }
 }

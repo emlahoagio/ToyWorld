@@ -10,7 +10,6 @@ namespace Entities.DataTransferObject
         public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public string Venue { get; set; }
         public int? MinRegistration { get; set; }
         public int? MaxRegistration { get; set; }
         public bool IsJoined { get; set; }

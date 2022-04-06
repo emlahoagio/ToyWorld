@@ -33,16 +33,9 @@ namespace ToyWorldSystem.Controller
         public async Task<IActionResult> GetListTradingPost([FromQuery] PagingParameters paging, int group_id)
         {
             var account_id = _userAccessor.getAccountId();
-            var current_login_account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
 
-            var result_no_image_no_comment = new Pagination<TradingPostInList>();
-
-            if (current_login_account.Role == 1)
-                result_no_image_no_comment = await _repositoryManager.TradingPost
+            var result_no_image_no_comment = await _repositoryManager.TradingPost
                     .GetTradingPostInGroupMember(group_id, paging, trackChanges: false, account_id);
-            else
-                result_no_image_no_comment = await _repositoryManager.TradingPost
-                    .GetTradingPostInGroupManager(group_id, paging, trackChanges: false, account_id);
 
             if (result_no_image_no_comment == null)
             {
@@ -52,6 +45,40 @@ namespace ToyWorldSystem.Controller
             var result_no_comment = await _repositoryManager.Image.GetImageForListTradingPost(result_no_image_no_comment, trackChanges: false);
 
             var result = await _repositoryManager.Comment.GetNumOfCommentForTradingPostList(result_no_comment, trackChanges: false);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Get trading post by disable status (Role: Manager)
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <param name="status">0: All, 1: disabled, 2: enable</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("Status/{status}")]
+        public async Task<IActionResult> GetTradingByStatus([FromQuery] PagingParameters paging, int status)
+        {
+            if (status < 0 && status > 2) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Invalid status");
+
+            var accountId = _userAccessor.getAccountId();
+            var account = await _repositoryManager.Account.GetAccountById(accountId, trackChanges: false);
+
+            if (account.Role != 1) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to get");
+
+            var result_no_image_no_comment = await _repositoryManager.TradingPost
+                .GetTradingPostForManager(status, paging, trackChanges: false, accountId);
+
+            if (result_no_image_no_comment == null)
+            {
+                throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
+            }
+
+            var result_no_comment = await _repositoryManager.Image.GetImageForListTradingPost(result_no_image_no_comment, trackChanges: false);
+
+            var result = await _repositoryManager.Comment.GetNumOfCommentForTradingPostList(result_no_comment, trackChanges: false);
+
+            result = await _repositoryManager.ReactTradingPost.GetIsReactedReactTrading(result, accountId, trackChanges: false);
 
             return Ok(result);
         }

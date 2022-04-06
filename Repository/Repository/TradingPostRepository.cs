@@ -3,6 +3,8 @@ using Entities.DataTransferObject;
 using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -32,7 +34,8 @@ namespace Repository.Repository
                 BrandId = brand_id,
                 TypeId = type_id,
                 GroupId = group_id,
-                Images = tradingPost.ImagesLink.Select(x => new Image { Url = x }).ToList()
+                Images = tradingPost.ImagesLink.Select(x => new Image { Url = x }).ToList(),
+                PostDate = DateTime.UtcNow
             };
 
             Create(newTradingPost);
@@ -204,28 +207,56 @@ namespace Repository.Repository
             return result;
         }
 
-        public async Task<Pagination<TradingPostInList>> GetTradingPostInGroupManager(int group_id, PagingParameters paging, bool trackChanges, int account_id)
+        public async Task<Pagination<TradingManaged>> GetTradingPostForManager(int status, PagingParameters paging, bool trackChanges, int account_id)
         {
-            var tradingPosts = await FindByCondition(x => x.GroupId == group_id, trackChanges)
-                .Include(x => x.Toy)
-                .Include(x => x.Brand)
-                .Include(x => x.Type)
-                .Include(x => x.ReactTradingPosts)
-                .Include(x => x.Account)
-                .OrderByDescending(x => x.PostDate)
-                .ToListAsync();
+            var tradingPosts = new List<TradingPost>();
+            int count = 0;
+            if (status == 0)
+            {
+                tradingPosts = await FindAll(trackChanges)
+                    .Include(x => x.Toy)
+                    .Include(x => x.Brand)
+                    .Include(x => x.Type)
+                    .Include(x => x.Account)
+                    .OrderByDescending(x => x.PostDate)
+                    .Skip((paging.PageNumber - 1) * paging.PageSize)
+                    .Take(paging.PageSize)
+                    .ToListAsync();
+                count = FindAll(trackChanges).Count();
+            }
+            else if (status == 1)
+            {
+                tradingPosts = await FindByCondition(x => x.IsDeleted == true, trackChanges)
+                    .Include(x => x.Toy)
+                    .Include(x => x.Brand)
+                    .Include(x => x.Type)
+                    .Include(x => x.Account)
+                    .OrderByDescending(x => x.PostDate)
+                    .Skip((paging.PageNumber - 1) * paging.PageSize)
+                    .Take(paging.PageSize)
+                    .ToListAsync();
+                count = FindByCondition(x => x.IsDeleted == true, trackChanges).Count();
+            }
+            else
+            {
+                tradingPosts = await FindByCondition(x => x.IsDeleted == false, trackChanges)
+                    .Include(x => x.Toy)
+                    .Include(x => x.Brand)
+                    .Include(x => x.Type)
+                    .Include(x => x.Account)
+                    .OrderByDescending(x => x.PostDate)
+                    .Skip((paging.PageNumber - 1) * paging.PageSize)
+                    .Take(paging.PageSize)
+                    .ToListAsync();
+                count = FindByCondition(x => x.IsDeleted == false, trackChanges).Count();
+            }
 
-            var count = tradingPosts.Count;
-
-            var pagingList = tradingPosts.Skip((paging.PageNumber - 1) * paging.PageSize)
-                .Take(paging.PageSize);
-
-            var result = new Pagination<TradingPostInList>
+            var result = new Pagination<TradingManaged>
             {
                 PageSize = paging.PageSize,
                 PageNumber = paging.PageNumber,
                 Count = count,
-                Data = pagingList.Select(x => new TradingPostInList
+                Data = tradingPosts.Select(x => new TradingManaged
                 {
                     Address = x.Address,
                     Brand = x.Brand == null ? "Unknow" : x.Brand.Name,
@@ -244,6 +275,7 @@ namespace Repository.Repository
                     Title = x.Title,
                     Phone = x.Phone,
                     Status = x.Status,
+                    IsDisabled = x.IsDeleted
                 })
             };
 

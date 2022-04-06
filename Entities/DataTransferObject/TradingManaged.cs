@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Entities.DataTransferObject
 {
-    public class TradingPostInList
+    public class TradingManaged
     {
         public int Id { get; set; }
         public int? OwnerId { get; set; }
@@ -24,5 +25,6 @@ namespace Entities.DataTransferObject
         public string Title { get; set; }
         public string Phone { get; set; }
         public int Status { get; set; }
+        public bool IsDisabled { get; set; }
     }
 }

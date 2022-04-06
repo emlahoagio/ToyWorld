@@ -24,11 +24,24 @@ namespace ToyWorldSystem.Controller
             _repositoryManager = repositoryManager;
             _userAccessor = userAccessor;
         }
+
+        /// <summary>
+        /// Get contest by status
+        /// </summary>
+        /// <param name="status">0: all, 1: closed, 2: order contest status</param>
+        /// <param name="paging"></param>
+        /// <returns></returns>
         [HttpGet]
-        [Route("getallcontest")]
-        public async Task<IActionResult> GetAllContest([FromBody]Status status)
+        [Route("status/{status}")]
+        public async Task<IActionResult> GetAllContest(int status, [FromQuery] PagingParameters paging)
         {
-            var contests = await _repositoryManager.Contest.GetAllContest(status.Id);
+            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            var contests = await _repositoryManager.Contest.GetContestByStatus(status, paging, trackChanges: false);
+            if (contests == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No contest matches with input status");
+
+            contests = await _repositoryManager.PrizeContest.GetPrizeForContest(contests);
+
             return Ok(contests);
         }
 
@@ -334,14 +347,14 @@ namespace ToyWorldSystem.Controller
         {
             DateTime startDate, endDate, startRegis, endRegis;
 
-            var brand = await _repositoryManager.Brand
-                .GetBrandByName(param.BrandName == null ? "Unknow Brand" : param.BrandName, trackChanges: false);
-            if (brand == null)
-            {
-                _repositoryManager.Brand.CreateBrand(new Brand { Name = param.BrandName });
-                await _repositoryManager.SaveAsync();
-                brand = await _repositoryManager.Brand.GetBrandByName(param.BrandName, trackChanges: false);
-            }
+            //var brand = await _repositoryManager.Brand
+            //    .GetBrandByName(param.BrandName == null ? "Unknow Brand" : param.BrandName, trackChanges: false);
+            //if (brand == null)
+            //{
+            //    _repositoryManager.Brand.CreateBrand(new Brand { Name = param.BrandName });
+            //    await _repositoryManager.SaveAsync();
+            //    brand = await _repositoryManager.Brand.GetBrandByName(param.BrandName, trackChanges: false);
+            //}
 
             var type = await _repositoryManager.Type
                 .GetTypeByName(param.TypeName == null ? "Unknow Type" : param.TypeName, trackChanges: false);
@@ -349,34 +362,29 @@ namespace ToyWorldSystem.Controller
             {
                 _repositoryManager.Type.CreateType(new Entities.Models.Type { Name = param.TypeName });
                 await _repositoryManager.SaveAsync();
-                type = await _repositoryManager.Type.GetTypeByName(param.BrandName, trackChanges: false);
+                //type = await _repositoryManager.Type.GetTypeByName(param.BrandName, trackChanges: false);
             }
 
             var contest = new Contest
             {
                 Title = param.Title,
                 Description = param.Description,
-                Venue = param.Location,
                 CoverImage = param.CoverImage,
                 Slogan = param.Slogan,
-                IsOnlineContest = param.IsOnlineContest,
-                RegisterCost = param.RegisterCost,
-                MinRegistration = param.MinRegistration,
-                MaxRegistration = param.MaxRegistration,
+                //MinRegistration = param.MinRegistration,
+                //MaxRegistration = param.MaxRegistration,
                 StartRegistration = param.StartRegistration,
                 EndRegistration = param.EndRegistration,
                 StartDate = param.StartDate,
                 EndDate = param.EndDate,
                 GroupId = group_id,
-                BrandId = brand.Id,
+                //BrandId = brand.Id,
                 TypeId = type.Id,
-                CanAttempt = false,
                 Status = 0
             };
 
             if (contest.StartRegistration.Value.Day == DateTime.UtcNow.Day)
             {
-                contest.CanAttempt = true;
                 contest.Status = 1;
             }
             _repositoryManager.Contest.Create(contest); //created contest

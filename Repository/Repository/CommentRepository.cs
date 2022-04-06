@@ -63,6 +63,23 @@ namespace Repository.Repository
             result_no_comment.Data = result;
             return result_no_comment;
         }
+        
+        public async Task<Pagination<TradingManaged>> GetNumOfCommentForTradingPostList(Pagination<TradingManaged> result_no_comment, bool trackChanges)
+        {
+            var result = new List<TradingManaged>();
+
+            foreach (var post in result_no_comment.Data)
+            {
+                var comments = await FindByCondition(x => x.TradingPostId == post.Id, trackChanges).ToListAsync();
+
+                post.NoOfComment = comments.Count();
+
+                result.Add(post);
+            }
+
+            result_no_comment.Data = result;
+            return result_no_comment;
+        }
 
         public async Task<PostDetail> GetPostComment(PostDetail result_no_comment, bool trackChanges, int account_id)
         {
