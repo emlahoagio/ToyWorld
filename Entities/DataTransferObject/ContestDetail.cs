@@ -20,6 +20,7 @@ namespace Entities.DataTransferObject
         public DateTime? EndDate { get; set; }
         public string BrandName { get; set; }
         public string TypeName { get; set; }
+        public int Status { get; set; }
         public List<EvaluateInContestDetail> Evaluates { get; set; }
     }
 }

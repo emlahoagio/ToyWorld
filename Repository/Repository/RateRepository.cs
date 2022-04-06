@@ -51,6 +51,7 @@ namespace Repository.Repository
                     post.IsRated = rates.Where(x => x.AccountId.Value == account_id).Count() != 0;
                 }else
                 {
+                    post.Rates = new List<RateReturn>();
                     post.AverageStar = 0;
                     post.IsRated = false;
                 }
