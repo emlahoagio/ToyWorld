@@ -71,10 +71,7 @@ namespace ToyWorldSystem.Controller
                 Description = newPrize.Description,
                 Name = newPrize.Name,
                 Value = newPrize.Value,
-                Images = newPrize.Images.Select(x => new Entities.Models.Image
-                {
-                    Url = x
-                }).ToList()
+                Images = new List<Image>{new Image { Url = newPrize.Image }}
             };
 
             _repository.Prize.CreatePrize(prize);
