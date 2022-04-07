@@ -422,7 +422,8 @@ namespace ToyWorldSystem.Controller
                 GroupId = group_id,
                 //BrandId = brand.Id,
                 TypeId = type.Id,
-                Status = 0
+                Status = 0,
+                Rule = param.Rule
             };
 
             if (contest.StartRegistration.Value.Day == DateTime.UtcNow.Day)
