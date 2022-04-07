@@ -180,7 +180,7 @@ namespace Repository
         {
             var contest = await FindByCondition(x => x.Id == contest_id, trackChanges).FirstOrDefaultAsync();
 
-            return contest.Status == 3;
+            return contest.Status != 0 && contest.Status != 4;
         }
 
         public async Task<Contest> GetEvaluateContest(int contest_id, bool trackChanges)
