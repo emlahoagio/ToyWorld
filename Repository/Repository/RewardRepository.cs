@@ -46,6 +46,13 @@ namespace Repository.Repository
                     OwnerAvatar = x.Account.Avatar,
                     OwnerName = x.Account.Name,
                     SumOfStart = x.PostOfContest.Rates.Select(y => y.NumOfStar).ToList().Sum()
+                },
+                Prizes = new PrizeReturn
+                {
+                    Description = x.Prize.Description,
+                    Id = x.Prize.Id,
+                    Name = x.Prize.Name,
+                    Value = x.Prize.Value
                 }
             }).ToList();
 
