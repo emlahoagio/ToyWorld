@@ -93,7 +93,6 @@ namespace Repository
                 StartDate = x.StartDate,
                 StartRegistration = x.StartRegistration,
                 Title = x.Title,
-                IsJoined = x.AccountJoined.Where(x => x.AccountId == account_id).Count() == 0 ? false : true,
                 Status = x.Status.Value
             }).ToList();
 
@@ -216,7 +215,6 @@ namespace Repository
                         StartDate = x.StartDate,
                         StartRegistration = x.StartRegistration,
                         Title = x.Title,
-                        IsJoined = x.AccountJoined.Where(x => x.AccountId == account_id).Count() == 0 ? false : true,
                         Status = x.Status.Value
                     }).ToList(),
                     PageSize = paging.PageSize,
@@ -271,7 +269,6 @@ namespace Repository
                     StartDate = x.StartDate,
                     StartRegistration = x.StartRegistration,
                     Title = x.Title,
-                    IsJoined = x.AccountJoined.Where(x => x.AccountId == account_id).Count() == 0 ? false : true,
                     Status = x.Status.Value
                 }).ToList();
             return new Pagination<ContestInGroup>
@@ -313,7 +310,6 @@ namespace Repository
                 EndDate = x.EndDate,
                 EndRegistration = x.EndRegistration,
                 Id = x.Id,
-                IsJoined = x.Status == 1,
                 MaxRegistration = x.MaxRegistration,
                 MinRegistration = x.MinRegistration,
                 Slogan = x.Slogan,
