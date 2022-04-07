@@ -60,7 +60,8 @@ namespace Repository
                 StartRegistration = contest.StartRegistration,
                 Title = contest.Title,
                 TypeName = contest.Type == null ? "Unknown" : contest.Type.Name,
-                Status = contest.Status.Value
+                Status = contest.Status.Value,
+                Rule = contest.Rule
             };
 
             return result;

@@ -12,6 +12,7 @@ namespace Entities.DataTransferObject
         public string Description { get; set; }
         public string CoverImage { get; set; }
         public string Slogan { get; set; }
+        public string Rule { get; set; }
         public int? MinRegistration { get; set; }
         public int? MaxRegistration { get; set; }
         public DateTime? StartRegistration { get; set; }
