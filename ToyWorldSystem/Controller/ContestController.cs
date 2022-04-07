@@ -439,14 +439,14 @@ namespace ToyWorldSystem.Controller
             if (contest.StartRegistration.Value.Day != DateTime.UtcNow.Day)
             {
                 startRegis = contest.StartRegistration.Value;
-                BackgroundJob.Schedule(() => StartRegisContest(createdContest.Id), new DateTime(startRegis.Year, startRegis.Month, startRegis.Day, 0, 0, 1, DateTimeKind.Local));
+                BackgroundJob.Schedule(() => StartRegisContest(createdContest.Id), DateTime.SpecifyKind(startRegis, DateTimeKind.Local));
             }
             endRegis = contest.EndRegistration.Value;
-            BackgroundJob.Schedule(() => ClosedRegisContest(createdContest.Id), new DateTime(endRegis.Year, endRegis.Month, endRegis.Day, 23, 59, 59, DateTimeKind.Local));
+            BackgroundJob.Schedule(() => ClosedRegisContest(createdContest.Id), DateTime.SpecifyKind(endRegis, DateTimeKind.Local));
             startDate = contest.StartDate.Value;
-            BackgroundJob.Schedule(() => OpenContest(createdContest.Id), new DateTime(startDate.Year, startDate.Month, startDate.Day, 0, 0, 1, DateTimeKind.Local));
+            BackgroundJob.Schedule(() => OpenContest(createdContest.Id), DateTime.SpecifyKind(startDate, DateTimeKind.Local));
             endDate = contest.EndDate.Value;
-            BackgroundJob.Schedule(() => ClosedContest(createdContest.Id), new DateTime(endDate.Year, endDate.Month, endDate.Day, 23, 59, 59, DateTimeKind.Local));
+            BackgroundJob.Schedule(() => ClosedContest(createdContest.Id), DateTime.SpecifyKind(endDate, DateTimeKind.Local));
 
             //CREATE NOTIFICATION
             var users = await _repositoryManager.FollowGroup.GetUserFollowGroup(group_id);
