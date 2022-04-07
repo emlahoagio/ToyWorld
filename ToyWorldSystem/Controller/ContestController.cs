@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using Entities.DataTransferObject;
 using Entities.ErrorModel;
 using Entities.Models;
 using Entities.RequestFeatures;
@@ -191,11 +192,18 @@ namespace ToyWorldSystem.Controller
         {
             var rewards_post_no_image = await _repositoryManager.Reward.GetContestReward(contest_id, trackChanges: false);
 
+            if (rewards_post_no_image == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "This contest has no reward");
+            
             var rewards = await _repositoryManager.Image.GetImageForRewards(rewards_post_no_image, trackChanges: false);
 
-            if (rewards == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "This contest has no reward");
+            var result = new List<RewardReturn>();
+            foreach(var reward in rewards)
+            {
+                reward.Prizes = await _repositoryManager.Image.GetImageForPrize(reward.Prizes, trackChanges: false);
+                result.Add(reward);
+            }
 
-            return Ok(rewards);
+            return Ok(result);
         }
 
         /// <summary>
