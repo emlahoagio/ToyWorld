@@ -263,7 +263,7 @@ namespace ToyWorldSystem.Controller
 
             var joinContest = await _repositoryManager.JoinContest.GetSubsCriberToDelete(contest_id, account_id, trackChanges: false);
 
-            _repositoryManager.JoinContest.Delete(joinContest);
+            _repositoryManager.JoinContest.BandSubscribers(joinContest);
             await _repositoryManager.SaveAsync();
 
             return Ok("Save changes success");
@@ -561,18 +561,23 @@ namespace ToyWorldSystem.Controller
         {
             var account_id = _userAccessor.getAccountId();
 
-            bool can_attemp = await _repositoryManager.Contest.CanJoin(contest_id, trackChanges: false);
+            bool is_start_regis = await _repositoryManager.Contest.IsStartRegis(contest_id, trackChanges: false);
 
-            if (!can_attemp)
+            if (!is_start_regis)
             {
                 throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Contest has closed attemp");
             }
+
+            bool isband = await _repositoryManager.JoinContest.IsBand(contest_id, account_id, trackChanges: false);
+
+            if (isband) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Your account is band from this contest");
 
             _repositoryManager.JoinContest.Create(
                 new JoinedToContest
                 {
                     AccountId = account_id,
-                    ContestId = contest_id
+                    ContestId = contest_id,
+                    IsBand = false
                 });
             await _repositoryManager.SaveAsync();
 
