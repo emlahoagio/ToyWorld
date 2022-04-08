@@ -563,7 +563,7 @@ namespace ToyWorldSystem.Controller
 
             bool IsBan = await _repositoryManager.JoinContest.IsBan(contest_id, account_id, trackChanges: false);
 
-            if (IsBan) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Your account is band from this contest");
+            if (IsBan) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Your account is ban from this contest");
 
             _repositoryManager.JoinContest.Create(
                 new JoinedToContest

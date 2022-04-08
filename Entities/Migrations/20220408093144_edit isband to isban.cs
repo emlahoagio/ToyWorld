@@ -6,12 +6,18 @@ namespace Entities.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-
+            migrationBuilder.RenameColumn(
+            name: "IsBand",
+            table: "JoinedToContest",
+            newName: "IsBan");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
+            migrationBuilder.RenameColumn(
+            name: "IsBan",
+            table: "JoinedToContest",
+            newName: "IsBand");
         }
     }
 }
