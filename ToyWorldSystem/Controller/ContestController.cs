@@ -436,16 +436,16 @@ namespace ToyWorldSystem.Controller
             var createdContest = await _repositoryManager.Contest.GetCreatedContest(group_id, param.Title, param.StartRegistration, trackChanges: false);
 
             //schedule for contest
-            startRegis = DateTime.SpecifyKind(param.StartRegistration.Value, DateTimeKind.Local);
+            startRegis = DateTime.SpecifyKind(param.StartRegistration.Value, DateTimeKind.Local).AddHours(-7);
             Console.WriteLine("Start reigis: "+startRegis);
             BackgroundJob.Schedule(() => StartRegisContest(createdContest.Id), startRegis);
-            endRegis = DateTime.SpecifyKind(param.EndRegistration.Value, DateTimeKind.Local);
+            endRegis = DateTime.SpecifyKind(param.EndRegistration.Value, DateTimeKind.Local).AddHours(-7);
             Console.WriteLine("End reigis: " + endRegis);
             BackgroundJob.Schedule(() => ClosedRegisContest(createdContest.Id), endRegis);
-            startDate = DateTime.SpecifyKind(param.StartDate.Value, DateTimeKind.Local);
+            startDate = DateTime.SpecifyKind(param.StartDate.Value, DateTimeKind.Local).AddHours(-7);
             Console.WriteLine("Start date: " + startDate);
             BackgroundJob.Schedule(() => OpenContest(createdContest.Id), startDate);
-            endDate = DateTime.SpecifyKind(param.EndDate.Value, DateTimeKind.Local);
+            endDate = DateTime.SpecifyKind(param.EndDate.Value, DateTimeKind.Local).AddHours(-7);
             Console.WriteLine("End date: " + endDate);
             BackgroundJob.Schedule(() => ClosedContest(createdContest.Id), endDate);
 
