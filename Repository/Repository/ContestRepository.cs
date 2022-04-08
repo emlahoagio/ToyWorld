@@ -42,8 +42,8 @@ namespace Repository
                 BrandName = contest.Brand == null ? "Unknown" : contest.Brand.Name,
                 CoverImage = contest.CoverImage,
                 Description = contest.Description,
-                EndDate = contest.EndDate,
-                EndRegistration = contest.EndRegistration,
+                EndDate = contest.EndDate.Value.AddHours(7),
+                EndRegistration = contest.EndRegistration.Value.AddHours(7),
                 Evaluates = contest.Evaluates.Select(x => new EvaluateInContestDetail
                 {
                     AccountId = x.AccountId,
@@ -56,8 +56,8 @@ namespace Repository
                 MaxRegistration = contest.MaxRegistration,
                 MinRegistration = contest.MinRegistration,
                 Slogan = contest.Slogan,
-                StartDate = contest.StartDate,
-                StartRegistration = contest.StartRegistration,
+                StartDate = contest.StartDate.Value.AddHours(7),
+                StartRegistration = contest.StartRegistration.Value.AddHours(7),
                 Title = contest.Title,
                 TypeName = contest.Type == null ? "Unknown" : contest.Type.Name,
                 Status = contest.Status.Value,
@@ -84,14 +84,14 @@ namespace Repository
             {
                 CoverImage = x.CoverImage,
                 Description = x.Description,
-                EndDate = x.EndDate,
-                EndRegistration = x.EndRegistration,
+                EndDate = x.EndDate.Value.AddHours(7),
+                EndRegistration = x.EndRegistration.Value.AddHours(7),
                 Id = x.Id,
                 Slogan = x.Slogan,
                 MaxRegistration = x.MaxRegistration,
                 MinRegistration = x.MinRegistration,
-                StartDate = x.StartDate,
-                StartRegistration = x.StartRegistration,
+                StartDate = x.StartDate.Value.AddHours(7),
+                StartRegistration = x.StartRegistration.Value.AddHours(7),
                 Title = x.Title,
                 Status = x.Status.Value
             }).ToList();
@@ -206,14 +206,14 @@ namespace Repository
                     {
                         CoverImage = x.CoverImage,
                         Description = x.Description,
-                        EndDate = x.EndDate,
-                        EndRegistration = x.EndRegistration,
+                        EndDate = x.EndDate.Value.AddHours(7),
+                        EndRegistration = x.EndRegistration.Value.AddHours(7),
                         Id = x.Id,
                         Slogan = x.Slogan,
                         MaxRegistration = x.MaxRegistration,
                         MinRegistration = x.MinRegistration,
-                        StartDate = x.StartDate,
-                        StartRegistration = x.StartRegistration,
+                        StartDate = x.StartDate.Value.AddHours(7),
+                        StartRegistration = x.StartRegistration.Value.AddHours(7),
                         Title = x.Title,
                         Status = x.Status.Value
                     }).ToList(),
@@ -260,14 +260,14 @@ namespace Repository
                 {
                     CoverImage = x.CoverImage,
                     Description = x.Description,
-                    EndDate = x.EndDate,
-                    EndRegistration = x.EndRegistration,
+                    EndDate = x.EndDate.Value.AddHours(7),
+                    EndRegistration = x.EndRegistration.Value.AddHours(7),
                     Id = x.Id,
                     Slogan = x.Slogan,
                     MaxRegistration = x.MaxRegistration,
                     MinRegistration = x.MinRegistration,
-                    StartDate = x.StartDate,
-                    StartRegistration = x.StartRegistration,
+                    StartDate = x.StartDate.Value.AddHours(7),
+                    StartRegistration = x.StartRegistration.Value.AddHours(7),
                     Title = x.Title,
                     Status = x.Status.Value
                 }).ToList();
@@ -307,14 +307,14 @@ namespace Repository
             {
                 CoverImage = x.CoverImage,
                 Description = x.Description,
-                EndDate = x.EndDate,
-                EndRegistration = x.EndRegistration,
+                EndDate = x.EndDate.Value.AddHours(7),
+                EndRegistration = x.EndRegistration.Value.AddHours(7),
                 Id = x.Id,
                 MaxRegistration = x.MaxRegistration,
                 MinRegistration = x.MinRegistration,
                 Slogan = x.Slogan,
-                StartDate = x.StartDate,
-                StartRegistration = x.StartRegistration,
+                StartDate = x.StartDate.Value.AddHours(7),
+                StartRegistration = x.StartRegistration.Value.AddHours(7),
                 Title = x.Title,
                 Status = x.Status.Value
             }).ToList();

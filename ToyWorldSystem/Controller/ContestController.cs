@@ -426,10 +426,6 @@ namespace ToyWorldSystem.Controller
                 Rule = param.Rule
             };
 
-            if (contest.StartRegistration.Value.Day == DateTime.UtcNow.Day)
-            {
-                contest.Status = 1;
-            }
             _repositoryManager.Contest.Create(contest); //created contest
             await _repositoryManager.SaveAsync(); //inserted to DB
 
