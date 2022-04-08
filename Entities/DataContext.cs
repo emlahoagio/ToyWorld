@@ -298,6 +298,11 @@ namespace Entities.Models
                     .WithMany(p => p.Images)
                     .HasForeignKey(d => d.TradingPostId)
                     .HasConstraintName("FK_Image_TradingPost");
+
+                entity.HasOne(d => d.Bill)
+                    .WithMany(p => p.Images)
+                    .HasForeignKey(d => d.BillId)
+                    .HasConstraintName("FK_Image_Bill");
             });
 
             modelBuilder.Entity<ManageGroup>(entity =>

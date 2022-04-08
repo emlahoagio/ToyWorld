@@ -169,7 +169,7 @@ namespace Repository
             Update(contest);
         }
 
-        public async Task<bool> CanJoin(int contest_id, bool trackChanges)
+        public async Task<bool> IsStartRegis(int contest_id, bool trackChanges)
         {
             var contest = await FindByCondition(x => x.Id == contest_id, trackChanges).FirstOrDefaultAsync();
 

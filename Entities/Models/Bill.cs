@@ -6,6 +6,11 @@ namespace Entities.Models
 {
     public partial class Bill
     {
+        public Bill()
+        {
+            Images = new HashSet<Image>();
+        }
+
         public int Id { get; set; }
         public string ToyOfSellerName { get; set; }
         public string ToyOfBuyerName { get; set; }
@@ -20,5 +25,6 @@ namespace Entities.Models
         public virtual Account Seller { get; set; }
         public virtual Account Buyer { get; set; }
         public virtual TradingPost TradingPost { get; set; }
+        public virtual ICollection<Image> Images { get; set; }
     }
 }

@@ -36,6 +36,8 @@ namespace ToyWorldSystem.Controller
 
             if (detail == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No bill matches with id send");
             
+            detail.Images = await _repository.Image.GetImageForBill(bill_id, trackChanges: false);
+            
             detail.IsRated = await _repository.RateSeller.IsRated(detail.SellerId, detail.BuyerId, trackChanges: false);
 
             return Ok(detail);
@@ -73,6 +75,8 @@ namespace ToyWorldSystem.Controller
 
             var findTime = DateTime.UtcNow;
 
+            var images = await _repository.Image.GetImageOfTrading(newBill.TradingPostId, trackChanges: false);
+
             _repository.Bill.Create(new Entities.Models.Bill
             {
                 ToyOfSellerName = newBill.ToyOfSellerName,
@@ -83,7 +87,8 @@ namespace ToyWorldSystem.Controller
                 BuyerId = newBill.BuyerId,
                 TradingPostId = newBill.TradingPostId,
                 Status = 0,
-                CreateTime = findTime
+                CreateTime = findTime,
+                Images = images.Select(x => new Entities.Models.Image { Url = x}).ToList()
             });
 
             await _repository.SaveAsync();
