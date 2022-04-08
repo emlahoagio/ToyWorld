@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Entities.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220408091133_add isband to joincontest")]
-    partial class addisbandtojoincontest
+    [Migration("20220408093144_edit isband to isban")]
+    partial class editisbandtoisban
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -193,11 +193,11 @@ namespace ToyWorldSystem.Controller
             var rewards_post_no_image = await _repositoryManager.Reward.GetContestReward(contest_id, trackChanges: false);
 
             if (rewards_post_no_image == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "This contest has no reward");
-            
+
             var rewards = await _repositoryManager.Image.GetImageForRewards(rewards_post_no_image, trackChanges: false);
 
             var result = new List<RewardReturn>();
-            foreach(var reward in rewards)
+            foreach (var reward in rewards)
             {
                 reward.Prizes = await _repositoryManager.Image.GetImageForPrize(reward.Prizes, trackChanges: false);
                 result.Add(reward);
@@ -436,17 +436,18 @@ namespace ToyWorldSystem.Controller
             var createdContest = await _repositoryManager.Contest.GetCreatedContest(group_id, param.Title, param.StartRegistration, trackChanges: false);
 
             //schedule for contest
-            if (contest.StartRegistration.Value.Day != DateTime.UtcNow.Day)
-            {
-                startRegis = contest.StartRegistration.Value;
-                BackgroundJob.Schedule(() => StartRegisContest(createdContest.Id), DateTime.SpecifyKind(startRegis, DateTimeKind.Local));
-            }
-            endRegis = contest.EndRegistration.Value;
-            BackgroundJob.Schedule(() => ClosedRegisContest(createdContest.Id), DateTime.SpecifyKind(endRegis, DateTimeKind.Local));
-            startDate = contest.StartDate.Value;
-            BackgroundJob.Schedule(() => OpenContest(createdContest.Id), DateTime.SpecifyKind(startDate, DateTimeKind.Local));
-            endDate = contest.EndDate.Value;
-            BackgroundJob.Schedule(() => ClosedContest(createdContest.Id), DateTime.SpecifyKind(endDate, DateTimeKind.Local));
+            startRegis = DateTime.SpecifyKind(param.StartRegistration.Value, DateTimeKind.Local);
+            Console.WriteLine("Start reigis: "+startRegis);
+            BackgroundJob.Schedule(() => StartRegisContest(createdContest.Id), startRegis);
+            endRegis = DateTime.SpecifyKind(param.EndRegistration.Value, DateTimeKind.Local);
+            Console.WriteLine("End reigis: " + endRegis);
+            BackgroundJob.Schedule(() => ClosedRegisContest(createdContest.Id), endRegis);
+            startDate = DateTime.SpecifyKind(param.StartDate.Value, DateTimeKind.Local);
+            Console.WriteLine("Start date: " + startDate);
+            BackgroundJob.Schedule(() => OpenContest(createdContest.Id), startDate);
+            endDate = DateTime.SpecifyKind(param.EndDate.Value, DateTimeKind.Local);
+            Console.WriteLine("End date: " + endDate);
+            BackgroundJob.Schedule(() => ClosedContest(createdContest.Id), endDate);
 
             //CREATE NOTIFICATION
             var users = await _repositoryManager.FollowGroup.GetUserFollowGroup(group_id);
@@ -568,16 +569,16 @@ namespace ToyWorldSystem.Controller
                 throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Contest has closed attemp");
             }
 
-            bool isband = await _repositoryManager.JoinContest.IsBand(contest_id, account_id, trackChanges: false);
+            bool IsBan = await _repositoryManager.JoinContest.IsBan(contest_id, account_id, trackChanges: false);
 
-            if (isband) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Your account is band from this contest");
+            if (IsBan) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Your account is band from this contest");
 
             _repositoryManager.JoinContest.Create(
                 new JoinedToContest
                 {
                     AccountId = account_id,
                     ContestId = contest_id,
-                    IsBand = false
+                    IsBan = false
                 });
             await _repositoryManager.SaveAsync();
 

@@ -16,6 +16,6 @@ namespace Contracts.Repositories
         void Create(JoinedToContest join);
         void BandSubscribers(JoinedToContest join);
         Task Delete(int contest_id, bool trackChanges);
-        Task<bool> IsBand(int contest_id, int account_id, bool trackChanges);
+        Task<bool> IsBan(int contest_id, int account_id, bool trackChanges);
     }
 }
