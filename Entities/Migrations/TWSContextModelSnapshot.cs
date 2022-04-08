@@ -488,7 +488,7 @@ namespace Entities.Migrations
                     b.Property<int>("ContestId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsBand")
+                    b.Property<bool>("IsBan")
                         .HasColumnType("bit");
 
                     b.HasKey("AccountId", "ContestId");

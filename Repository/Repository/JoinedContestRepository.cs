@@ -19,7 +19,7 @@ namespace Repository.Repository
 
         public void BandSubscribers(JoinedToContest join)
         {
-            join.IsBand = true;
+            join.IsBan = true;
             Update(join);
         }
 
@@ -35,7 +35,7 @@ namespace Repository.Repository
 
         public async Task<List<AccountInList>> GetListSubscribers(int contest_id, bool trackChanges)
         {
-            var accounts = await FindByCondition(x => x.ContestId == contest_id && x.IsBand == false && x.Account.Role != 1, trackChanges)
+            var accounts = await FindByCondition(x => x.ContestId == contest_id && x.IsBan == false && x.Account.Role != 1, trackChanges)
                 .Include(x => x.Account)
                 .OrderBy(x => x.Account.Name)
                 .ToListAsync();
@@ -59,9 +59,9 @@ namespace Repository.Repository
             return result;
         }
 
-        public async Task<bool> IsBand(int contest_id, int account_id, bool trackChanges)
+        public async Task<bool> IsBan(int contest_id, int account_id, bool trackChanges)
         {
-            var joincontest = await FindByCondition(x => x.ContestId == contest_id && x.AccountId == account_id && x.IsBand == true, trackChanges)
+            var joincontest = await FindByCondition(x => x.ContestId == contest_id && x.AccountId == account_id && x.IsBan == true, trackChanges)
                 .FirstOrDefaultAsync();
 
             return joincontest != null;
