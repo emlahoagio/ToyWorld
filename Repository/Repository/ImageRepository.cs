@@ -207,5 +207,23 @@ namespace Repository
             }
             return result;
         }
+
+        public async Task<Pagination<BillByStatus>> GetImageForBill(Pagination<BillByStatus> bills, bool trackChanges)
+        {
+            var data_result = new List<BillByStatus>();
+
+            foreach(var bill in bills.Data)
+            {
+                var images = await FindByCondition(x => x.BillId == bill.Id, trackChanges)
+                    .Select(y => new ImageReturn {Id =  y.Id, Url = y.Url})
+                    .ToListAsync();
+
+                bill.Images = images;
+                data_result.Add(bill);
+            }
+            bills.Data = data_result;
+
+            return bills;
+        }
     }
 }

@@ -26,5 +26,6 @@ namespace Contracts
         Task<List<string>> GetImageOfTrading(int tradingPostId, bool trackChanges);
         Task<List<ImageReturn>> GetImageForBill(int bill_id, bool trackChanges);
         Task<List<TopSubmission>> GetImageForPostOfContest(List<TopSubmission> post, bool trackChanges);
+        Task<Pagination<BillByStatus>> GetImageForBill(Pagination<BillByStatus> bills, bool trackChanges);
     }
 }
