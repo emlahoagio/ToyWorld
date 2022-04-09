@@ -46,7 +46,7 @@ namespace Repository.Repository
                     }).ToList(),
                     Name = x.Prize.Name,
                     Value = x.Prize.Value
-                }).ToList();
+                }).OrderByDescending(x => x.Value).ToList();
                 dataResult.Add(contest);
             }
 
