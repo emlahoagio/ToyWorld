@@ -193,5 +193,19 @@ namespace Repository
 
             return images;
         }
+
+        public async Task<List<TopSubmission>> GetImageForPostOfContest(List<TopSubmission> post, bool trackChanges)
+        {
+            var result = new List<TopSubmission>();
+
+            foreach(var temp in post)
+            {
+                temp.Images = await FindByCondition(x => x.PostOfContestId == temp.Id, trackChanges)
+                    .Select(y => new ImageReturn { Id = y.Id, Url = y.Url })
+                    .ToListAsync();
+                result.Add(temp);
+            }
+            return result;
+        }
     }
 }

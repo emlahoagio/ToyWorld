@@ -26,6 +26,7 @@ namespace ToyWorldSystem.Controller
             _userAccessor = userAccessor;
         }
 
+        #region Get contest by status
         /// <summary>
         /// Get contest by status
         /// </summary>
@@ -45,7 +46,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(contests);
         }
+        #endregion
 
+        #region Get highlight contest
         /// <summary>
         /// Get highlight contest for the home page (Role: Manager, Member)
         /// </summary>
@@ -63,7 +66,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(result);
         }
+        #endregion
 
+        #region Get favorite cotnest
         /// <summary>
         /// Get favorite contest
         /// </summary>
@@ -85,7 +90,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(favorite_contests);
         }
+        #endregion
 
+        #region Check is account joined to contest
         /// <summary>
         /// Check is user attended to the contest (Role: Manager, Member)
         /// </summary>
@@ -101,7 +108,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(new { IsJoinedToContest = isInContest });
         }
+        #endregion
 
+        #region Get contest by group id
         /// <summary>
         /// Get contest by group id (Role: Manager, Member)
         /// </summary>
@@ -125,7 +134,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(result);
         }
+        #endregion
 
+        #region Get contest detail
         /// <summary>
         /// Get detail information of contest (Role: Manager, Member)
         /// </summary>
@@ -141,7 +152,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(contest_detail);
         }
+        #endregion
 
+        #region Get post of contest
         /// <summary>
         /// Get post of contest (Role: Manager, Member)
         /// </summary>
@@ -164,7 +177,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(posts);
         }
+        #endregion
 
+        #region Get prize for contest
         /// <summary>
         /// Get prize for contest detail page (Role: Manager, Member)
         /// </summary>
@@ -180,7 +195,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(rewards);
         }
+        #endregion
 
+        #region Get reward for contest
         /// <summary>
         /// Get Reward of contest (Role: Manager, Member)
         /// </summary>
@@ -205,7 +222,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(result);
         }
+        #endregion
 
+        #region Get list subcribers
         /// <summary>
         /// Get list subscribers of contest (Role: Manager)
         /// </summary>
@@ -221,7 +240,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(subscribers);
         }
+        #endregion
 
+        #region Get list Brand
         /// <summary>
         /// Get brand to create contest (Role: Manager)
         /// </summary>
@@ -234,7 +255,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(brands);
         }
+        #endregion
 
+        #region Get list type
         /// <summary>
         /// Get type to create contest (Role: Manager)
         /// </summary>
@@ -247,7 +270,33 @@ namespace ToyWorldSystem.Controller
 
             return Ok(types);
         }
+        #endregion
 
+        #region Get top runner
+        /// <summary>
+        /// Get top 3 post have highest sum of star (Role: Member, Manager)
+        /// </summary>
+        /// <param name="contest_id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{contest_id}/top_3")]
+        public async Task<IActionResult> GetTopSubmission(int contest_id)
+        {
+            var submissionsId = await _repositoryManager.PostOfContest.GetIdOfPost(contest_id, trackChanges: false);
+
+            if (submissionsId.Count == 0) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No post in this contest");
+
+            var idsPostInTop = await _repositoryManager.Rate.GetIdOfPostInTop(submissionsId, trackChanges: false);
+
+            var posts = await _repositoryManager.PostOfContest.GetPostOfContestById(idsPostInTop, trackchanges: false);
+            posts = await _repositoryManager.Rate.GetRateForPostOfContest(posts, trackChanges: false);
+            posts = await _repositoryManager.Image.GetImageForPostOfContest(posts, trackChanges: false);
+
+            return Ok(posts);
+        }
+        #endregion
+
+        #region Remove subscriber
         /// <summary>
         /// Remove subscribers of contest (Role: Manager)
         /// </summary>
@@ -268,7 +317,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Delete contest
         /// <summary>
         /// Delete contest (Role: Manager)
         /// </summary>
@@ -302,7 +353,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region End contest
         /// <summary>
         /// End contest (Role: Manager)
         /// </summary>
@@ -345,7 +398,9 @@ namespace ToyWorldSystem.Controller
             await _repositoryManager.SaveAsync();
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Create post of contest
         /// <summary>
         /// Create post in contest, call after check is user in the contest (Role: Manager, Member)
         /// </summary>
@@ -376,7 +431,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save change success");
         }
+        #endregion
 
+        #region Create contest
         /// <summary>
         /// Create contest (Role: Manager)
         /// </summary>
@@ -457,7 +514,9 @@ namespace ToyWorldSystem.Controller
             await _repositoryManager.SaveAsync();
             return Ok(new { contestId = createdContest.Id });
         }
+        #endregion
 
+        #region Evaluate contest
         /// <summary>
         /// Evaluate contest (Role: Member, manager => Only user joined to contest)
         /// </summary>
@@ -488,7 +547,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Feedback post of contest
         /// <summary>
         /// Feedback post of contest (Role: Member)
         /// </summary>
@@ -514,37 +575,47 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Start regis contest
         [HttpPut("startregis")]
         public void StartRegisContest(int contest_id)
         {
             _repositoryManager.Contest.StartRegistration(contest_id, trackChanges: false).Wait();
             _repositoryManager.SaveAsync().Wait();
         }
+        #endregion
 
+        #region End regist contest
         [HttpPut("endregis")]
         public void ClosedRegisContest(int contest_id)
         {
             _repositoryManager.Contest.EndRegistration(contest_id, trackChanges: false).Wait();
             _repositoryManager.SaveAsync().Wait();
         }
+        #endregion
 
+        #region Open contest
         [HttpPut("open")]
         public void OpenContest(int contest_id)
         {
             _repositoryManager.Contest.StartContest(contest_id, trackChanges: false).Wait();
             _repositoryManager.SaveAsync().Wait();
         }
+        #endregion
 
+        #region Close contest
         [HttpPut("closed")]
         public void ClosedContest(int contest_id)
         {
             _repositoryManager.Contest.EndContest(contest_id, trackChanges: false).Wait();
             _repositoryManager.SaveAsync().Wait();
         }
+        #endregion
 
+        #region Join to contest
         /// <summary>
-        /// Join to contest after payment (Role: Manager, Member)
+        /// Join to contest (Role: Manager, Member)
         /// </summary>
         /// <param name="contest_id"></param>
         /// <returns></returns>
@@ -576,7 +647,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save change success");
         }
+        #endregion
 
+        #region Rate post of contest
         /// <summary>
         /// Rate post of contest (Role: Manager, Member)
         /// </summary>
@@ -622,7 +695,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Add prize to contest
         /// <summary>
         /// Add prizes to contest
         /// </summary>
@@ -641,5 +716,6 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Saves change success");
         }
+        #endregion
     }
 }

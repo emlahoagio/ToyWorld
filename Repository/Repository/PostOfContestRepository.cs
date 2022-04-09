@@ -86,5 +86,30 @@ namespace Repository.Repository
 
             return result;
         }
+
+        public async Task<List<int>> GetIdOfPost(int contest_id, bool trackChanges)
+        {
+            var idList = await FindByCondition(X => X.ContestId == contest_id, trackChanges)
+                .Select(x => x.Id)
+                .ToListAsync();
+
+            return idList;
+        }
+
+        public async Task<List<TopSubmission>> GetPostOfContestById(List<int> ids, bool trackchanges)
+        {
+            var result = new List<TopSubmission>();
+            foreach(var id in ids)
+            {
+                var data = await FindByCondition(x => x.Id == id, trackchanges)
+                    .Select(x => new TopSubmission
+                    {
+                        Id = x.Id,
+                        Content = x.Content
+                    }).FirstOrDefaultAsync();
+                result.Add(data);
+            }
+            return result;
+        }
     }
 }

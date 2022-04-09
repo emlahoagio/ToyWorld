@@ -14,5 +14,7 @@ namespace Contracts.Repositories
         Task<int> GetOwnerByPostOfContestId(int id);
         Task<List<int>> GetPostOfContest(int contest_id, bool trackChanges);
         Task Delete(int contest_id, bool trackChanges);
+        Task<List<int>> GetIdOfPost(int contest_id, bool trackChanges);
+        Task<List<TopSubmission>> GetPostOfContestById(List<int> ids, bool trackchanges);
     }
 }
