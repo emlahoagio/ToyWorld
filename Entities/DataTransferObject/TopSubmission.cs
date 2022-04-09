@@ -10,5 +10,6 @@ namespace Entities.DataTransferObject
         public string Content { get; set; }
         public List<ImageReturn> Images { get; set; }
         public double AverageStar { get; set; }
+        public string OwnerName { get; set; }
     }
 }

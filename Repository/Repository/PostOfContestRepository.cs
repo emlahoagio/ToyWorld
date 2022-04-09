@@ -102,10 +102,12 @@ namespace Repository.Repository
             foreach(var id in ids)
             {
                 var data = await FindByCondition(x => x.Id == id, trackchanges)
+                    .Include(x => x.Account)
                     .Select(x => new TopSubmission
                     {
                         Id = x.Id,
-                        Content = x.Content
+                        Content = x.Content,
+                        OwnerName = x.Account.Name
                     }).FirstOrDefaultAsync();
                 result.Add(data);
             }
