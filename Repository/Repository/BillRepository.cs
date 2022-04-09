@@ -36,6 +36,42 @@ namespace Repository.Repository
             return result;
         }
 
+        public async Task<Pagination<BillByStatus>> GetBillByStatus(int status, PagingParameters paging, bool trackChanges)
+        {
+            var bills = await FindByCondition(x => x.Status == status, trackChanges)
+                .Skip((paging.PageNumber - 1) * paging.PageSize).Take(paging.PageSize)
+                .Include(x => x.Buyer)
+                .Include(x => x.Seller)
+                .Include(x => x.TradingPost)
+                .OrderByDescending(x => x.CreateTime)
+                .ToListAsync();
+
+            var count = await FindByCondition(x => x.Status == status, trackChanges).CountAsync();
+
+            var data_result = bills.Select(x => new BillByStatus
+            {
+                DateCreate = x.CreateTime,
+                Id = x.Id,
+                IdPost = x.TradingPostId,
+                PostTitle = x.TradingPost.Title,
+                ReceiverName = x.Buyer.Name,
+                ReceiverToy = x.ToyOfBuyerName,
+                SenderName = x.Seller.Name,
+                SenderToy = x.ToyOfSellerName,
+                Status = x.Status
+            }).ToList();
+
+            var result = new Pagination<BillByStatus>
+            {
+                Count = count,
+                Data = data_result,
+                PageNumber = paging.PageNumber,
+                PageSize = paging.PageSize
+            };
+
+            return result;
+        }
+
         public async Task<List<BillInList>> GetBillByTradingPost(int trading_id, bool trackChanges)
         {
             var bills = await FindByCondition(x => x.TradingPostId == trading_id, trackChanges)

@@ -19,5 +19,6 @@ namespace Contracts.Repositories
         Task<BillDetail> GetBillDetail(int bill_id, bool trackChanges);
         Task<List<BillInList>> GetBillByTradingPost(int trading_id, bool trackChanges);
         Task<RateAccount> GetDataForRate(int account_id, RateAccount rateOfAccount, bool trackChanges);
+        Task<Pagination<BillByStatus>> GetBillByStatus(int status, PagingParameters paging, bool trackChanges);
     }
 }
