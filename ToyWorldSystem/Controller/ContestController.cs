@@ -554,18 +554,18 @@ namespace ToyWorldSystem.Controller
         /// Feedback post of contest (Role: Member)
         /// </summary>
         /// <param name="post_of_contest_id">Post of contest you want to feedback</param>
-        /// <param name="content"></param>
+        /// <param name="newFeedback"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("post_of_contest/{post_of_contest_id}/feedback")]
-        public async Task<IActionResult> FeedbackPost(int post_of_contest_id, [FromBody]string content)
+        public async Task<IActionResult> FeedbackPost(int post_of_contest_id, NewFeedback newFeedback)
         {
             var sender_id = _userAccessor.getAccountId();
 
             var feedback = new Feedback
             {
                 PostOfContestId = post_of_contest_id,
-                Content = content,
+                Content = newFeedback.Content,
                 SenderId = sender_id,
                 SendDate = DateTime.UtcNow
             };
