@@ -7,6 +7,6 @@ namespace Entities.DataTransferObject
     public class PostOnTop
     {
         public int Id { get; set; }
-        public int SumOfStar { get; set; }
+        public double SumOfStar { get; set; }
     }
 }

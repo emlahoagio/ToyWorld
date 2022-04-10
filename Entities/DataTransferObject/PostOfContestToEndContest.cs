@@ -8,6 +8,6 @@ namespace Entities.DataTransferObject
     {
         public int Id { get; set; }
         public int AccountId { get; set; }
-        public int SumOfStart { get; set; }
+        public double SumOfStart { get; set; }
     }
 }

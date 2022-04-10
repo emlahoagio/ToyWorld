@@ -28,7 +28,7 @@ namespace Repository.Repository
 
         public async Task<List<int>> GetIdOfPostInTop(List<int> submissionsId, bool trackChanges)
         {
-            int top1 = 0, top2 = 0, top3 = 0;
+            double top1 = 0, top2 = 0, top3 = 0;
             int idTop1 = 0, idTop2 = 0, idTop3 = 0;
             var posts = new List<PostOnTop>();
             //get data from db

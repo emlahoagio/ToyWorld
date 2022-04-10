@@ -11,6 +11,6 @@ namespace Entities.DataTransferObject
         public string OwnerAvatar { get; set; }
         public string OwnerName { get; set; }
         public virtual List<ImageReturn> Images { get; set; }
-        public int SumOfStart { get; set; }
+        public double SumOfStart { get; set; }
     }
 }
