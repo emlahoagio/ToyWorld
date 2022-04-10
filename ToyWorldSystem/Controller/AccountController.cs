@@ -330,7 +330,7 @@ namespace ToyWorldSystem.Controller
         /// <returns></returns>
         [HttpPost]
         [Route("{account_id}/feedback")]
-        public async Task<IActionResult> FeedbackPost(int account_id, string content)
+        public async Task<IActionResult> FeedbackPost(int account_id, [FromBody]string content)
         {
             var sender_id = _userAccessor.getAccountId();
 
