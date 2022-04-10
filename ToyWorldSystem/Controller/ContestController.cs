@@ -558,7 +558,7 @@ namespace ToyWorldSystem.Controller
         /// <returns></returns>
         [HttpPost]
         [Route("post_of_contest/{post_of_contest_id}/feedback")]
-        public async Task<IActionResult> FeedbackPost(int post_of_contest_id, string content)
+        public async Task<IActionResult> FeedbackPost(int post_of_contest_id, [FromBody]string content)
         {
             var sender_id = _userAccessor.getAccountId();
 
