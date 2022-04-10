@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Entities.RequestFeatures
 {
-    public class RateContestParameters
+    public class RateSubmissionParameters
     {
-        public int NumOfStar { get; set; }
+        public double NumOfStar { get; set; }
         public string Note { get; set; }
     }
 }

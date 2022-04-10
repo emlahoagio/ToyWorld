@@ -659,7 +659,7 @@ namespace ToyWorldSystem.Controller
         /// <returns></returns>
         [HttpPost]
         [Route("{contest_id}/rate/{post_of_contest_id}")]
-        public async Task<IActionResult> RateTheContest(int post_of_contest_id, int contest_id, RateContestParameters parameters)
+        public async Task<IActionResult> RateTheContest(int post_of_contest_id, int contest_id, RateSubmissionParameters parameters)
         {
             var account_id = _userAccessor.getAccountId();
 

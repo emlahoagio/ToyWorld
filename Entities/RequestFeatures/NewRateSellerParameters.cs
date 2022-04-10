@@ -6,7 +6,7 @@ namespace Entities.RequestFeatures
 {
     public class NewRateSellerParameters
     {
-        public int NumOfStar { get; set; }
+        public double NumOfStar { get; set; }
         public string Content { get; set; }
     }
 }

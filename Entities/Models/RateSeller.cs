@@ -9,7 +9,7 @@ namespace Entities.Models
         public int Id { get; set; }
         public int BuyerId { get; set; }
         public int SellerId { get; set; }
-        public int NumOfStar { get; set; }
+        public double NumOfStar { get; set; }
         public string Content { get; set; }
 
         public Account Buyer { get; set; }
