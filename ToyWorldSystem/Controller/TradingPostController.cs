@@ -49,6 +49,32 @@ namespace ToyWorldSystem.Controller
             return Ok(result);
         }
 
+        [HttpGet]
+        [Route("favorite")]
+        public async Task<IActionResult> GetFavoriteTradingPost([FromQuery]PagingParameters paging)
+        {
+            var account_id = _userAccessor.getAccountId();
+
+            //Get favorite type
+            var types = await _repositoryManager.FavoriteType.GetFavoriteType(account_id, trackChanges: false);
+            //Get favorite brand
+            var brands = await _repositoryManager.FavoriteBrand.GetFavoriteBrand(account_id, trackChanges: false);
+            //Get contest by type and brand
+            var trading = await _repositoryManager.TradingPost.GetTradingByBrandAndType(account_id, types, brands, paging, trackChanges: false);
+            
+            if (trading == null)
+            {
+                throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
+            }
+
+            trading = await _repositoryManager.Image.GetImageForListTradingPost(trading, trackChanges: false);
+
+            trading = await _repositoryManager.Comment.GetNumOfCommentForTradingPostList(trading, trackChanges: false);
+
+
+            return Ok(trading);
+        }
+
         /// <summary>
         /// Get trading post by disable status (Role: Manager)
         /// </summary>

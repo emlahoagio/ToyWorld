@@ -225,5 +225,17 @@ namespace Repository
 
             return bills;
         }
+
+        public async Task<List<ImageReturn>> GetImageForPrize(int prize_id, bool trackChanges)
+        {
+            var result = await FindByCondition(x => x.PrizeId == prize_id, trackChanges)
+                .Select(y => new ImageReturn
+                {
+                    Id = y.Id,
+                    Url = y.Url
+                }).ToListAsync();
+
+            return result;
+        }
     }
 }

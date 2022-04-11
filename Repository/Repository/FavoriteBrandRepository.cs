@@ -18,7 +18,7 @@ namespace Repository.Repository
         public async Task<List<Brand>> GetFavoriteBrand(int account_id, bool trackChanges)
         {
             var result = await FindByCondition(x => x.AccountId == account_id, trackChanges).Include(x => x.Brand).ToListAsync();
-
+            if (result.Count == 0) return null;
             return result.Select(x => x.Brand).ToList();
         }
 

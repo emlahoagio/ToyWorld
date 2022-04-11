@@ -57,7 +57,7 @@ namespace ToyWorldSystem.Controller
         [Route("highlight")]
         public async Task<IActionResult> GetHighlightContest()
         {
-            var result = await _repositoryManager.Contest.getHightlightContest(trackChanges: false);
+            var result = await _repositoryManager.Contest.GetHightlightContest(trackChanges: false);
 
             if (result == null || result.Count() == 0)
             {
@@ -76,7 +76,7 @@ namespace ToyWorldSystem.Controller
         /// <returns></returns>
         [HttpGet]
         [Route("favorite")]
-        public async Task<IActionResult> GetFavoriteContest(PagingParameters paging)
+        public async Task<IActionResult> GetFavoriteContest([FromQuery]PagingParameters paging)
         {
             var account_id = _userAccessor.getAccountId();
 
