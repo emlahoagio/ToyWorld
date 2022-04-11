@@ -39,7 +39,8 @@ namespace Repository
             {
                 Id = x.Id,
                 Name = x.Name,
-                Description = x.Description
+                Description = x.Description,
+                CoverImage = x.CoverImage
             }).ToList();
 
             return result;

@@ -18,6 +18,7 @@ namespace Entities.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public string CoverImage { get; set; }
         public bool IsDisable { get; set; }
 
         public virtual ICollection<FollowGroup> FollowGroups { get; set; }

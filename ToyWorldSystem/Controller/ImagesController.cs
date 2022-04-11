@@ -37,6 +37,20 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Get Image for prize in contest
+        /// </summary>
+        /// <param name="prize_id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("prize/{prize_id}")]
+        public async Task<IActionResult> GetImageForPrize(int prize_id)
+        {
+            var images = await _repository.Image.GetImageForPrize(prize_id, trackChanges: false);
+
+            return Ok(images);
+        }
+
+        /// <summary>
         /// Create new image (Role: ALL)
         /// </summary>
         /// <param name="image"></param>

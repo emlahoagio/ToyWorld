@@ -20,6 +20,7 @@ namespace Contracts
         Task<Pagination<TradingPostInList>> GetImageForListTradingPost(Pagination<TradingPostInList> result_no_image, bool trackChanges);
         Task<Pagination<TradingManaged>> GetImageForListTradingPost(Pagination<TradingManaged> result_no_image, bool trackChanges);
         Task<Pagination<PostOfContestInList>> GetImageForPostOfContest(Pagination<PostOfContestInList> posts_no_rate_no_image, bool trackChanges);
+        Task<List<ImageReturn>> GetImageForPrize(int prize_id, bool trackChanges);
         Task<Pagination<WaitingPost>> GetImageForWaitingPostDetail(Pagination<WaitingPost> result_no_image, bool trackChanges);
         Task<Pagination<PrizeOfContest>> GetImageForPrizeList(Pagination<PrizeOfContest> pagignationPrize_no_image, bool trackChanges);
         Task<PrizeReturn> GetImageForPrize(PrizeReturn prize_no_image, bool trackChanges);
@@ -27,5 +28,6 @@ namespace Contracts
         Task<List<ImageReturn>> GetImageForBill(int bill_id, bool trackChanges);
         Task<List<TopSubmission>> GetImageForPostOfContest(List<TopSubmission> post, bool trackChanges);
         Task<Pagination<BillByStatus>> GetImageForBill(Pagination<BillByStatus> bills, bool trackChanges);
+        
     }
 }

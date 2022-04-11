@@ -214,7 +214,6 @@ namespace Repository.Repository
             if (status == 0)
             {
                 tradingPosts = await FindAll(trackChanges)
-                    .Include(x => x.Toy)
                     .Include(x => x.Brand)
                     .Include(x => x.Type)
                     .Include(x => x.Account)
@@ -227,7 +226,6 @@ namespace Repository.Repository
             else if (status == 1)
             {
                 tradingPosts = await FindByCondition(x => x.IsDeleted == true, trackChanges)
-                    .Include(x => x.Toy)
                     .Include(x => x.Brand)
                     .Include(x => x.Type)
                     .Include(x => x.Account)
@@ -240,7 +238,6 @@ namespace Repository.Repository
             else
             {
                 tradingPosts = await FindByCondition(x => x.IsDeleted == false, trackChanges)
-                    .Include(x => x.Toy)
                     .Include(x => x.Brand)
                     .Include(x => x.Type)
                     .Include(x => x.Account)
@@ -289,6 +286,108 @@ namespace Repository.Repository
                 .FirstOrDefaultAsync();
 
             return trading.ReactTradingPosts.Count();
+        }
+
+        public async Task<Pagination<TradingPostInList>> GetTradingByBrandAndType(int account_id, List<Entities.Models.Type> types, List<Brand> brands, PagingParameters paging, bool trackChanges)
+        {
+            var tradings = await FindByCondition(x => x.PostDate >= DateTime.UtcNow.AddMonths(-2) && x.IsDeleted == false, trackChanges)
+                .Include(x => x.Brand)
+                .Include(x => x.Type)
+                .Include(x => x.Account)
+                .ToListAsync();
+
+            //Account have no favorite
+            if (types == null && brands == null)
+            {
+                return new Pagination<TradingPostInList>
+                {
+                    Count = tradings.Count,
+                    Data = tradings.Skip((paging.PageNumber - 1) * paging.PageSize).Take(paging.PageSize).Select(x => new TradingPostInList
+                    {
+                        Address = x.Address,
+                        Brand = x.Brand == null ? "Unknow" : x.Brand.Name,
+                        Exchange = x.Trading,
+                        Id = x.Id,
+                        NoOfReact = x.ReactTradingPosts.Count,
+                        OwnerId = x.AccountId,
+                        OwnerAvatar = x.Account.Avatar,
+                        OwnerName = x.Account.Name,
+                        PostDate = x.PostDate,
+                        ToyName = x.ToyName,
+                        Type = x.Type == null ? "Unknow" : x.Type.Name,
+                        IsLikedPost = x.ReactTradingPosts.Where(y => y.AccountId == account_id).Count() == 0 ? false : true,
+                        Value = x.Value,
+                        Content = x.Content,
+                        Title = x.Title,
+                        Phone = x.Phone,
+                        Status = x.Status
+                    }).ToList(),
+                    PageSize = paging.PageSize,
+                    PageNumber = paging.PageNumber
+                };
+            }
+
+            var result = new List<TradingPost>();
+            //select by brand
+            if (brands != null)
+            {
+                foreach (var brand in brands)
+                {
+                    foreach (var trading in tradings)
+                    {
+                        if (trading.BrandId == brand.Id)
+                        {
+                            result.Add(trading);
+                            tradings.Remove(trading);
+                        }
+                    }
+                }
+            }
+            //select by type
+            if (types != null)
+            {
+                foreach (var type in types)
+                {
+                    foreach (var trading in tradings)
+                    {
+                        if (trading.TypeId == type.Id)
+                        {
+                            result.Add(trading);
+                            tradings.Remove(trading);
+                        }
+                    }
+                }
+            }
+            var count = result.Count;
+            //paging result
+            var paging_result = result.Skip((paging.PageNumber - 1) * paging.PageSize).Take(paging.PageSize)
+                .Select(x => new TradingPostInList
+                {
+                    Address = x.Address,
+                    Brand = x.Brand == null ? "Unknow" : x.Brand.Name,
+                    Exchange = x.Trading,
+                    Id = x.Id,
+                    NoOfReact = x.ReactTradingPosts.Count,
+                    OwnerId = x.AccountId,
+                    OwnerAvatar = x.Account.Avatar,
+                    OwnerName = x.Account.Name,
+                    PostDate = x.PostDate,
+                    ToyName = x.ToyName,
+                    Type = x.Type == null ? "Unknow" : x.Type.Name,
+                    IsLikedPost = x.ReactTradingPosts.Where(y => y.AccountId == account_id).Count() == 0 ? false : true,
+                    Value = x.Value,
+                    Content = x.Content,
+                    Title = x.Title,
+                    Phone = x.Phone,
+                    Status = x.Status
+                }).ToList();
+            return new Pagination<TradingPostInList>
+            {
+                Count = count,
+                Data = paging_result,
+                PageNumber = paging.PageNumber,
+                PageSize = paging.PageSize
+            };
         }
     }
 }

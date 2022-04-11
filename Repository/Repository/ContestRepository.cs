@@ -116,11 +116,10 @@ namespace Repository
             return result;
         }
 
-        public async Task<IEnumerable<HighlightContest>> getHightlightContest(bool trackChanges)
+        public async Task<IEnumerable<HighlightContest>> GetHightlightContest(bool trackChanges)
         {
-            var listContest = await FindByCondition(c => c.Status == 1 && c.EndRegistration >= DateTime.Now, trackChanges)
+            var listContest = await FindByCondition(c => c.Status == 1 || c.Status == 3, trackChanges)
                 .OrderBy(x => x.EndRegistration)
-                .Take(4)
                 .ToListAsync();
 
             if (listContest == null)
