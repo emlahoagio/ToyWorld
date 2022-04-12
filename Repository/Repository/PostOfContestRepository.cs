@@ -113,5 +113,13 @@ namespace Repository.Repository
             }
             return result;
         }
+
+        public async Task<List<PostOfContest>> GetPostToDelete(int contest_id, int account_id, bool trackChanges)
+        {
+            var posts = await FindByCondition(x => x.ContestId == contest_id && x.AccountId == account_id, trackChanges)
+                .ToListAsync();
+
+            return posts;
+        }
     }
 }
