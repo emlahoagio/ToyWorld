@@ -378,6 +378,12 @@ namespace ToyWorldSystem.Controller
                 await _repositoryManager.SaveAsync();
             }
 
+            //Delete notification
+            await _repositoryManager.Notification.DeleteByPostId(post_id, trackChanges: true);
+
+            //Delete feedback
+            await _repositoryManager.Feedback.DeleteByPostId(post_id, trackChanges: true);
+
             //delete post
             _repositoryManager.Post.Delete(post);
             await _repositoryManager.SaveAsync();

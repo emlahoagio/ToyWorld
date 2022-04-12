@@ -329,8 +329,21 @@ namespace ToyWorldSystem.Controller
 
         #region Delete post of contest
         [HttpDelete]
-        [Route("postofcontest/{contest_id}")]
+        [Route("postofcontest/{post_of_contest_id}")]
+        public async Task<IActionResult> DeletePostOfContest(int post_of_contest_id)
+        {
+            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
 
+            var post = await _repositoryManager.PostOfContest.GetPostOfContestById(post_of_contest_id, trackchanges: false);
+            if (account.Role != 1 && post.AccountId != post.AccountId)
+                throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to delete");
+
+            await _repositoryManager.Rate.DeleteRateOfPost(post, trackChanges: true);
+            _repositoryManager.PostOfContest.Delete(post);
+            await _repositoryManager.SaveAsync();
+
+            return Ok("Save changes success");
+        }
         #endregion
 
         #region Delete contest

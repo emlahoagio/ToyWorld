@@ -14,5 +14,6 @@ namespace Contracts.Repositories
         Task ChangeNotificationStatus(int id);
         Task<Pagination<Notification>> GetByAccountId(int accountId, PagingParameters paging); //Realtime
         Task Delete(int contest_id, bool trackChanges);
+        Task DeleteByPostId(int post_id, bool trackChanges);
     }
 }

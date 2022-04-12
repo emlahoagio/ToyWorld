@@ -14,5 +14,6 @@ namespace Contracts.Repositories
         Task<Pagination<NotReplyFeedback>> GetFeedbacksNotReply(PagingParameters paging, bool trackChanges);
         Task<Pagination<RepliedFeedback>> GetRepliedFeedback(PagingParameters paging, bool trackChanges);
         Task ReplyFeedback(int feedback_id, int replier_id, string reply_content, bool trackChanges);
+        Task DeleteByPostId(int post_id, bool trackChanges);
     }
 }

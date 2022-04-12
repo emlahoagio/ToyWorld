@@ -26,6 +26,19 @@ namespace Repository.Repository
             }
         }
 
+        public async Task DeleteRateOfPost(PostOfContest post, bool trackChanges)
+        {
+            var rates = await FindByCondition(x => x.PostOfContestId == post.Id, trackChanges).ToListAsync();
+
+            if(rates.Count != 0)
+            {
+                foreach(var rate in rates)
+                {
+                    Delete(rate);
+                }
+            }
+        }
+
         public async Task<List<int>> GetIdOfPostInTop(List<int> submissionsId, bool trackChanges)
         {
             double top1 = 0, top2 = 0, top3 = 0;
