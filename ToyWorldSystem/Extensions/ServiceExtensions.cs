@@ -21,7 +21,7 @@ namespace ToyWorldSystem.Extensions
                 option.AddPolicy("CorsPolicy", builder =>
                 builder.AllowAnyOrigin()
                 .AllowAnyMethod()
-                .AllowCredentials()
+                //.AllowCredentials()
                 .AllowAnyHeader());
             });
 
