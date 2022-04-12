@@ -51,7 +51,8 @@ namespace Repository.Repository
                 Content = x.Content,
                 Id = x.Id,
                 OwnerAvatar = x.Account.Avatar,
-                OwnerName = x.Account.Name
+                OwnerName = x.Account.Name,
+                OwnerId = x.AccountId
             }).ToList();
 
             var result = new Pagination<PostOfContestInList>
@@ -120,6 +121,13 @@ namespace Repository.Repository
                 .ToListAsync();
 
             return posts;
+        }
+
+        public async Task<PostOfContest> GetPostOfContestById(int post_of_contest_id, bool trackchanges)
+        {
+            var result = await FindByCondition(x => x.Id == post_of_contest_id, trackchanges).FirstOrDefaultAsync();
+
+            return result;
         }
     }
 }

@@ -18,5 +18,6 @@ namespace Contracts.Repositories
         Task<List<TopSubmission>> GetPostOfContestById(List<int> ids, bool trackchanges);
         Task<List<PostOfContest>> GetPostToDelete(int contest_id, int account_id, bool trackChanges);
         void Delete(PostOfContest post);
+        Task<PostOfContest> GetPostOfContestById(int post_of_contest_id, bool trackchanges);
     }
 }
