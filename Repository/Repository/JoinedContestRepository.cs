@@ -17,18 +17,30 @@ namespace Repository.Repository
         {
         }
 
-        public async Task<Pagination<AccountInList>> GetListSubscribers(int contest_id, PagingParameters paging, bool trackChanges)
+        public void BandSubscribers(JoinedToContest join)
         {
-            var accounts = await FindByCondition(x => x.ContestId == contest_id, trackChanges)
+            join.IsBan = true;
+            Update(join);
+        }
+
+        public async Task Delete(int contest_id, bool trackChanges)
+        {
+            var joins = await FindByCondition(x => x.ContestId == contest_id, trackChanges).ToListAsync();
+
+            foreach(var join in joins)
+            {
+                Delete(join);
+            }
+        }
+
+        public async Task<List<AccountInList>> GetListSubscribers(int contest_id, bool trackChanges)
+        {
+            var accounts = await FindByCondition(x => x.ContestId == contest_id && x.IsBan == false && x.Account.Role != 1, trackChanges)
                 .Include(x => x.Account)
                 .OrderBy(x => x.Account.Name)
                 .ToListAsync();
 
-            var count = accounts.Count;
-
-            var paging_accounts = accounts.Skip((paging.PageNumber - 1) * paging.PageSize).Take(paging.PageSize);
-
-            var account_list = paging_accounts.Select(x => new AccountInList
+            var account_list = accounts.Select(x => new AccountInList
             {
                 Avatar = x.Account.Avatar,
                 Id = x.Account.Id,
@@ -37,15 +49,7 @@ namespace Repository.Repository
                 Status = x.Account.Status.ToString()
             }).ToList();
 
-            var result = new Pagination<AccountInList>
-            {
-                Count = count,
-                Data = account_list,
-                PageNumber = paging.PageNumber,
-                PageSize = paging.PageSize
-            };
-
-            return result;
+            return account_list;
         }
 
         public Task<JoinedToContest> GetSubsCriberToDelete(int contest_id, int account_id, bool trackChanges)
@@ -53,6 +57,14 @@ namespace Repository.Repository
             var result = FindByCondition(x => x.AccountId == account_id && x.ContestId == contest_id, trackChanges).FirstOrDefaultAsync();
 
             return result;
+        }
+
+        public async Task<bool> IsBan(int contest_id, int account_id, bool trackChanges)
+        {
+            var joincontest = await FindByCondition(x => x.ContestId == contest_id && x.AccountId == account_id && x.IsBan == true, trackChanges)
+                .FirstOrDefaultAsync();
+
+            return joincontest != null;
         }
 
         public async Task<bool> IsJoinedToContest(int contest_id, int account_id, bool trackChanges)

@@ -16,6 +16,30 @@ namespace Repository.Repository
         {
         }
 
+        public async Task Delete(int contestId, bool trackChanges)
+        {
+
+            var rewards = await FindByCondition(x => x.ContestId == contestId, trackChanges).ToListAsync();
+
+            foreach(var reward in rewards)
+            {
+                Delete(reward);
+            }
+        }
+
+        public async Task Delete(int account_id, int contest_id, bool trackChanges)
+        {
+            var rewards = await FindByCondition(x => x.ContestId == contest_id && x.AccountId == account_id, trackChanges).ToListAsync();
+
+            if(rewards.Count > 0)
+            {
+                foreach(var reward in rewards)
+                {
+                    Delete(reward);
+                }
+            }
+        }
+
         public async Task<List<RewardReturn>> GetContestReward(int contest_id, bool trackChanges)
         {
             var rewards = await FindByCondition(x => x.ContestId == contest_id, trackChanges)
@@ -35,6 +59,13 @@ namespace Repository.Repository
                     OwnerAvatar = x.Account.Avatar,
                     OwnerName = x.Account.Name,
                     SumOfStart = x.PostOfContest.Rates.Select(y => y.NumOfStar).ToList().Sum()
+                },
+                Prizes = new PrizeReturn
+                {
+                    Description = x.Prize.Description,
+                    Id = x.Prize.Id,
+                    Name = x.Prize.Name,
+                    Value = x.Prize.Value
                 }
             }).ToList();
 

@@ -17,6 +17,16 @@ namespace Repository.Repository
         {
         }
 
+        public async Task Delete(int contestId, bool trackChanges)
+        {
+            var posts = await FindByCondition(x => x.ContestId == contestId, trackChanges).ToListAsync();
+            
+            foreach(var post in posts)
+            {
+                Delete(post);
+            }
+        }
+
         public async Task<int> GetOwnerByPostOfContestId(int id)
         {
             int result = 0;
@@ -55,6 +65,13 @@ namespace Repository.Repository
             return result;
         }
 
+        public async Task<List<int>> GetPostOfContest(int contest_id, bool trackChanges)
+        {
+            var result = await FindByCondition(x => x.ContestId == contest_id, trackChanges).Select(x => x.Id).ToListAsync();
+
+            return result;
+        }
+
         public async Task<List<PostOfContestToEndContest>> GetPostOfContestForEndContest(int contest_id, bool trackChanges)
         {
             var list_post = await FindByCondition(x => x.ContestId == contest_id, trackChanges)
@@ -68,6 +85,41 @@ namespace Repository.Repository
             }).OrderByDescending(y => y.SumOfStart).ToList();
 
             return result;
+        }
+
+        public async Task<List<int>> GetIdOfPost(int contest_id, bool trackChanges)
+        {
+            var idList = await FindByCondition(X => X.ContestId == contest_id, trackChanges)
+                .Select(x => x.Id)
+                .ToListAsync();
+
+            return idList;
+        }
+
+        public async Task<List<TopSubmission>> GetPostOfContestById(List<int> ids, bool trackchanges)
+        {
+            var result = new List<TopSubmission>();
+            foreach(var id in ids)
+            {
+                var data = await FindByCondition(x => x.Id == id, trackchanges)
+                    .Include(x => x.Account)
+                    .Select(x => new TopSubmission
+                    {
+                        Id = x.Id,
+                        Content = x.Content,
+                        OwnerName = x.Account.Name
+                    }).FirstOrDefaultAsync();
+                result.Add(data);
+            }
+            return result;
+        }
+
+        public async Task<List<PostOfContest>> GetPostToDelete(int contest_id, int account_id, bool trackChanges)
+        {
+            var posts = await FindByCondition(x => x.ContestId == contest_id && x.AccountId == account_id, trackChanges)
+                .ToListAsync();
+
+            return posts;
         }
     }
 }

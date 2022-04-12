@@ -226,6 +226,9 @@ namespace Entities.Migrations
                     b.Property<int?>("MinRegistration")
                         .HasColumnType("int");
 
+                    b.Property<string>("Rule")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Slogan")
                         .HasColumnType("nvarchar(max)");
 
@@ -415,6 +418,9 @@ namespace Entities.Migrations
                         .HasColumnName("id")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("CoverImage")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -438,6 +444,9 @@ namespace Entities.Migrations
                         .HasColumnName("id")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int?>("BillId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("PostId")
                         .HasColumnType("int");
 
@@ -459,6 +468,8 @@ namespace Entities.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BillId");
+
                     b.HasIndex("PostId");
 
                     b.HasIndex("PostOfContestId");
@@ -479,6 +490,9 @@ namespace Entities.Migrations
 
                     b.Property<int>("ContestId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsBan")
+                        .HasColumnType("bit");
 
                     b.HasKey("AccountId", "ContestId");
 
@@ -675,8 +689,8 @@ namespace Entities.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("NumOfStar")
-                        .HasColumnType("int");
+                    b.Property<double>("NumOfStar")
+                        .HasColumnType("float");
 
                     b.Property<int>("PostOfContestId")
                         .HasColumnType("int");
@@ -703,8 +717,8 @@ namespace Entities.Migrations
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("NumOfStar")
-                        .HasColumnType("int");
+                    b.Property<double>("NumOfStar")
+                        .HasColumnType("float");
 
                     b.Property<int>("SellerId")
                         .HasColumnType("int");
@@ -1143,6 +1157,11 @@ namespace Entities.Migrations
 
             modelBuilder.Entity("Entities.Models.Image", b =>
                 {
+                    b.HasOne("Entities.Models.Bill", "Bill")
+                        .WithMany("Images")
+                        .HasForeignKey("BillId")
+                        .HasConstraintName("FK_Image_Bill");
+
                     b.HasOne("Entities.Models.Post", "Post")
                         .WithMany("Images")
                         .HasForeignKey("PostId")
@@ -1166,6 +1185,8 @@ namespace Entities.Migrations
                         .WithMany("Images")
                         .HasForeignKey("TradingPostId")
                         .HasConstraintName("FK_Image_TradingPost");
+
+                    b.Navigation("Bill");
 
                     b.Navigation("Post");
 
@@ -1561,6 +1582,11 @@ namespace Entities.Migrations
                     b.Navigation("Rewards");
 
                     b.Navigation("TradingPosts");
+                });
+
+            modelBuilder.Entity("Entities.Models.Bill", b =>
+                {
+                    b.Navigation("Images");
                 });
 
             modelBuilder.Entity("Entities.Models.Brand", b =>

@@ -290,5 +290,33 @@ namespace Repository
             var post = await FindByCondition(x => x.Id == postId, false).FirstOrDefaultAsync();
             return (int)post.AccountId;
         }
+
+        public async Task<Pagination<PostInList>> GetPostByFavorite(PagingParameters paging, int account_id, bool trackChanges)
+        {
+            var posts = await FindByCondition(x => x.PostDate >= DateTime.UtcNow.AddMonths(-1), trackChanges)
+                .Include(x => x.Account)
+                .Include(x => x.ReactPosts)
+                .OrderByDescending(x => x.PostDate)
+                .ToListAsync();
+
+            return new Pagination<PostInList>
+            {
+                Count = posts.Count,
+                Data = posts.Skip((paging.PageNumber - 1) * paging.PageSize).Take(paging.PageSize).Select(x => new PostInList
+                {
+                    Id = x.Id,
+                    NumOfReact = x.ReactPosts.Count,
+                    Content = x.Content,
+                    OwnerId = x.AccountId,
+                    OwnerAvatar = x.Account.Avatar,
+                    IsLikedPost = x.ReactPosts.Where(y => y.AccountId == account_id).Count() == 0 ? false : true,
+                    OwnerName = x.Account.Name,
+                    PublicDate = x.PublicDate
+                }).ToList(),
+                PageSize = paging.PageSize,
+                PageNumber = paging.PageNumber
+            };
+
+        }
     }
 }

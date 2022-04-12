@@ -11,5 +11,7 @@ namespace Contracts.Repositories
     {
         void Create(Reward reward);
         Task<List<RewardReturn>> GetContestReward(int contest_id, bool trackChanges);
+        Task Delete(int contestId, bool trackChanges);
+        Task Delete(int account_id, int contest_id, bool trackChanges);
     }
 }

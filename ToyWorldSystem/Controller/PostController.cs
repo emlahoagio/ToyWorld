@@ -50,6 +50,30 @@ namespace ToyWorldSystem.Controller
         }
 
         /// <summary>
+        /// Get post list for home page
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("popular")]
+        public async Task<IActionResult> GetPopularPost([FromQuery]PagingParameters paging)
+        {
+            var account_id = _userAccessor.getAccountId();
+
+            var posts = await _repositoryManager.Post.GetPostByFavorite(paging, account_id, trackChanges: false);
+            if (posts == null)
+            {
+                throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
+            }
+
+            posts = await _repositoryManager.Image.GetImageForListPost(posts, trackChanges: false);
+
+            posts = await _repositoryManager.Comment.GetNumOfCommentForPostList(posts, trackChanges: false);
+
+            return Ok(posts);
+        }
+
+        /// <summary>
         /// Get post by account Id (Role: Manager, Member)
         /// </summary>
         /// <param name="account_id">Id of account return in login function</param>
@@ -146,18 +170,18 @@ namespace ToyWorldSystem.Controller
         /// Feedback Post (Role: Member)
         /// </summary>
         /// <param name="post_id">Post id want to feedback</param>
-        /// <param name="content"></param>
+        /// <param name="newFeedback"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("{post_id}/feedback")]
-        public async Task<IActionResult> FeedbackPost(int post_id, string content)
+        public async Task<IActionResult> FeedbackPost(int post_id, NewFeedback newFeedback)
         {
             var sender_id = _userAccessor.getAccountId();
 
             var feedback = new Feedback
             {
                 PostId = post_id,
-                Content = content,
+                Content = newFeedback.Content,
                 SenderId = sender_id,
                 SendDate = DateTime.UtcNow
             };

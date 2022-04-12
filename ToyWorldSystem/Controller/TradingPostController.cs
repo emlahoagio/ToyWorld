@@ -49,6 +49,32 @@ namespace ToyWorldSystem.Controller
             return Ok(result);
         }
 
+        [HttpGet]
+        [Route("favorite")]
+        public async Task<IActionResult> GetFavoriteTradingPost([FromQuery]PagingParameters paging)
+        {
+            var account_id = _userAccessor.getAccountId();
+
+            //Get favorite type
+            var types = await _repositoryManager.FavoriteType.GetFavoriteType(account_id, trackChanges: false);
+            //Get favorite brand
+            var brands = await _repositoryManager.FavoriteBrand.GetFavoriteBrand(account_id, trackChanges: false);
+            //Get contest by type and brand
+            var trading = await _repositoryManager.TradingPost.GetTradingByBrandAndType(account_id, types, brands, paging, trackChanges: false);
+            
+            if (trading == null)
+            {
+                throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
+            }
+
+            trading = await _repositoryManager.Image.GetImageForListTradingPost(trading, trackChanges: false);
+
+            trading = await _repositoryManager.Comment.GetNumOfCommentForTradingPostList(trading, trackChanges: false);
+
+
+            return Ok(trading);
+        }
+
         /// <summary>
         /// Get trading post by disable status (Role: Manager)
         /// </summary>
@@ -224,18 +250,18 @@ namespace ToyWorldSystem.Controller
         /// Feedback trading post (Role: Member)
         /// </summary>
         /// <param name="trading_post_id">Trading post you want to feedback</param>
-        /// <param name="content"></param>
+        /// <param name="newFeedback"></param>
         /// <returns></returns>
         [HttpPost]
         [Route("{trading_post_id}/feedback")]
-        public async Task<IActionResult> FeedbackPost(int trading_post_id, string content)
+        public async Task<IActionResult> FeedbackPost(int trading_post_id, NewFeedback newFeedback)
         {
             var sender_id = _userAccessor.getAccountId();
 
             var feedback = new Feedback
             {
                 TradingPostId = trading_post_id,
-                Content = content,
+                Content = newFeedback.Content,
                 SenderId = sender_id,
                 SendDate = DateTime.UtcNow
             };

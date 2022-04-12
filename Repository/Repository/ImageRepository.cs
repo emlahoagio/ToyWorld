@@ -176,5 +176,66 @@ namespace Repository
 
             return prize_no_image;
         }
+
+        public async Task<List<string>> GetImageOfTrading(int tradingPostId, bool trackChanges)
+        {
+            var imagelinks = await FindByCondition(x => x.TradingPostId == tradingPostId, trackChanges)
+                .Select(x => x.Url).ToListAsync();
+
+            return imagelinks;
+        }
+
+        public async Task<List<ImageReturn>> GetImageForBill(int bill_id, bool trackChanges)
+        {
+            var images = await FindByCondition(x => x.BillId == bill_id, trackChanges)
+                .Select(x => new ImageReturn { Id = x.Id, Url = x.Url })
+                .ToListAsync();
+
+            return images;
+        }
+
+        public async Task<List<TopSubmission>> GetImageForPostOfContest(List<TopSubmission> post, bool trackChanges)
+        {
+            var result = new List<TopSubmission>();
+
+            foreach(var temp in post)
+            {
+                temp.Images = await FindByCondition(x => x.PostOfContestId == temp.Id, trackChanges)
+                    .Select(y => new ImageReturn { Id = y.Id, Url = y.Url })
+                    .ToListAsync();
+                result.Add(temp);
+            }
+            return result;
+        }
+
+        public async Task<Pagination<BillByStatus>> GetImageForBill(Pagination<BillByStatus> bills, bool trackChanges)
+        {
+            var data_result = new List<BillByStatus>();
+
+            foreach(var bill in bills.Data)
+            {
+                var images = await FindByCondition(x => x.BillId == bill.Id, trackChanges)
+                    .Select(y => new ImageReturn {Id =  y.Id, Url = y.Url})
+                    .ToListAsync();
+
+                bill.Images = images;
+                data_result.Add(bill);
+            }
+            bills.Data = data_result;
+
+            return bills;
+        }
+
+        public async Task<List<ImageReturn>> GetImageForPrize(int prize_id, bool trackChanges)
+        {
+            var result = await FindByCondition(x => x.PrizeId == prize_id, trackChanges)
+                .Select(y => new ImageReturn
+                {
+                    Id = y.Id,
+                    Url = y.Url
+                }).ToListAsync();
+
+            return result;
+        }
     }
 }

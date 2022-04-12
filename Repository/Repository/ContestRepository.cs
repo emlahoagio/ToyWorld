@@ -60,6 +60,8 @@ namespace Repository
                 StartRegistration = contest.StartRegistration,
                 Title = contest.Title,
                 TypeName = contest.Type == null ? "Unknown" : contest.Type.Name,
+                Status = contest.Status.Value,
+                Rule = contest.Rule
             };
 
             return result;
@@ -91,7 +93,7 @@ namespace Repository
                 StartDate = x.StartDate,
                 StartRegistration = x.StartRegistration,
                 Title = x.Title,
-                IsJoined = x.AccountJoined.Where(x => x.AccountId == account_id).Count() == 0 ? false : true
+                Status = x.Status.Value
             }).ToList();
 
             var result = new Pagination<ContestInGroup>
@@ -114,11 +116,10 @@ namespace Repository
             return result;
         }
 
-        public async Task<IEnumerable<HighlightContest>> getHightlightContest(bool trackChanges)
+        public async Task<IEnumerable<HighlightContest>> GetHightlightContest(bool trackChanges)
         {
-            var listContest = await FindByCondition(c => c.Status == 1 && c.EndRegistration >= DateTime.Now, trackChanges)
+            var listContest = await FindByCondition(c => c.Status == 1 || c.Status == 3, trackChanges)
                 .OrderBy(x => x.EndRegistration)
-                .Take(4)
                 .ToListAsync();
 
             if (listContest == null)
@@ -167,7 +168,7 @@ namespace Repository
             Update(contest);
         }
 
-        public async Task<bool> CanJoin(int contest_id, bool trackChanges)
+        public async Task<bool> IsStartRegis(int contest_id, bool trackChanges)
         {
             var contest = await FindByCondition(x => x.Id == contest_id, trackChanges).FirstOrDefaultAsync();
 
@@ -178,7 +179,7 @@ namespace Repository
         {
             var contest = await FindByCondition(x => x.Id == contest_id, trackChanges).FirstOrDefaultAsync();
 
-            return contest.Status == 3;
+            return contest.Status != 0 && contest.Status != 4;
         }
 
         public async Task<Contest> GetEvaluateContest(int contest_id, bool trackChanges)
@@ -213,7 +214,7 @@ namespace Repository
                         StartDate = x.StartDate,
                         StartRegistration = x.StartRegistration,
                         Title = x.Title,
-                        IsJoined = x.AccountJoined.Where(x => x.AccountId == account_id).Count() == 0 ? false : true
+                        Status = x.Status.Value
                     }).ToList(),
                     PageSize = paging.PageSize,
                     PageNumber = paging.PageNumber
@@ -267,7 +268,7 @@ namespace Repository
                     StartDate = x.StartDate,
                     StartRegistration = x.StartRegistration,
                     Title = x.Title,
-                    IsJoined = x.AccountJoined.Where(x => x.AccountId == account_id).Count() == 0 ? false : true
+                    Status = x.Status.Value
                 }).ToList();
             return new Pagination<ContestInGroup>
             {
@@ -308,13 +309,13 @@ namespace Repository
                 EndDate = x.EndDate,
                 EndRegistration = x.EndRegistration,
                 Id = x.Id,
-                IsJoined = x.Status == 1,
                 MaxRegistration = x.MaxRegistration,
                 MinRegistration = x.MinRegistration,
                 Slogan = x.Slogan,
                 StartDate = x.StartDate,
                 StartRegistration = x.StartRegistration,
                 Title = x.Title,
+                Status = x.Status.Value
             }).ToList();
 
             var result = new Pagination<ContestInGroup>
@@ -326,6 +327,12 @@ namespace Repository
             };
 
             return result;
+        }
+
+        public async Task Delete(int contest_id, bool trackChanges)
+        {
+            var contest = await FindByCondition(x => x.Id == contest_id, trackChanges).FirstOrDefaultAsync();
+            Delete(contest);
         }
     }
 }

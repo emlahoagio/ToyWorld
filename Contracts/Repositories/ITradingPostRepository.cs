@@ -1,6 +1,7 @@
 ﻿using Entities.DataTransferObject;
 using Entities.Models;
 using Entities.RequestFeatures;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Contracts.Repositories
@@ -20,5 +21,6 @@ namespace Contracts.Repositories
         Task<int> GetOwnerById(int trading_post_id);
         Task<DataForMess> GetDataForTradingMess(int tradingpostId);
         Task<int> GetNumOfReact(int trading_post_id, bool trackChanges);
+        Task<Pagination<TradingPostInList>> GetTradingByBrandAndType(int account_id, List<Type> types, List<Brand> brands, PagingParameters paging, bool trackChanges);
     }
 }

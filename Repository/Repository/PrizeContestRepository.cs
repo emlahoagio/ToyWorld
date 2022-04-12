@@ -16,6 +16,16 @@ namespace Repository.Repository
         {
         }
 
+        public async Task Delete(int contest_id, bool trackChanges)
+        {
+            var prizeContests = await FindByCondition(x => x.ContestId == contest_id, trackChanges).ToListAsync();
+            
+            foreach(var prize in prizeContests)
+            {
+                Delete(prize);
+            }
+        }
+
         public async Task<Pagination<ContestInGroup>> GetPrizeForContest(Pagination<ContestInGroup> param)
         {
             var contests = param.Data;
@@ -36,7 +46,7 @@ namespace Repository.Repository
                     }).ToList(),
                     Name = x.Prize.Name,
                     Value = x.Prize.Value
-                }).ToList();
+                }).OrderByDescending(x => x.Value).ToList();
                 dataResult.Add(contest);
             }
 
