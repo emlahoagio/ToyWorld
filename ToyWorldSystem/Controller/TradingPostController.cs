@@ -49,6 +49,11 @@ namespace ToyWorldSystem.Controller
             return Ok(result);
         }
 
+        /// <summary>
+        /// Get favorite trading post for home page
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("favorite")]
         public async Task<IActionResult> GetFavoriteTradingPost([FromQuery]PagingParameters paging)

@@ -28,6 +28,6 @@ namespace Contracts
         Task<List<ImageReturn>> GetImageForBill(int bill_id, bool trackChanges);
         Task<List<TopSubmission>> GetImageForPostOfContest(List<TopSubmission> post, bool trackChanges);
         Task<Pagination<BillByStatus>> GetImageForBill(Pagination<BillByStatus> bills, bool trackChanges);
-        
+        Task DeleteByPostOfContestId(int id, bool trackChanges);
     }
 }

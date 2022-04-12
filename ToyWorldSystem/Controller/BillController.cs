@@ -90,7 +90,7 @@ namespace ToyWorldSystem.Controller
         {
             var current_userId = _userAccessor.getAccountId();
 
-            var findTime = DateTime.UtcNow;
+            var findTime = DateTime.UtcNow.AddHours(-7);
 
             var images = await _repository.Image.GetImageOfTrading(newBill.TradingPostId, trackChanges: false);
 
@@ -104,7 +104,7 @@ namespace ToyWorldSystem.Controller
                 BuyerId = newBill.BuyerId,
                 TradingPostId = newBill.TradingPostId,
                 Status = 0,
-                CreateTime = findTime,
+                UpdateTime = findTime,
                 Images = images.Select(x => new Entities.Models.Image { Url = x}).ToList()
             });
 

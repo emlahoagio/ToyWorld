@@ -14,7 +14,7 @@ namespace Entities.DataTransferObject
         public string PostTitle { get; set; }
         public int IdPost { get; set; }
         public int Status { get; set; }
-        public DateTime DateCreate { get; set; }
+        public DateTime UpdateTime { get; set; }
         public List<ImageReturn> Images { get; set; }
     }
 }

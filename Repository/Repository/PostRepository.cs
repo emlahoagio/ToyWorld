@@ -43,7 +43,7 @@ namespace Repository
                 IsWaiting = true,
                 IsPublic = false,
                 IsDeleted = false,
-                PostDate = DateTime.Now
+                PostDate = DateTime.Now.AddHours(7)
             };
             Create(post);
         }

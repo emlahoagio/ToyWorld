@@ -35,7 +35,7 @@ namespace Repository.Repository
                 TypeId = type_id,
                 GroupId = group_id,
                 Images = tradingPost.ImagesLink.Select(x => new Image { Url = x }).ToList(),
-                PostDate = DateTime.UtcNow
+                PostDate = DateTime.UtcNow.AddHours(7)
             };
 
             Create(newTradingPost);

@@ -20,7 +20,7 @@ namespace Entities.Models
         public int BuyerId { get; set; }
         public int TradingPostId { get; set; }
         public int Status { get; set; }
-        public DateTime CreateTime { get; set; }
+        public DateTime UpdateTime { get; set; }
 
         public virtual Account Seller { get; set; }
         public virtual Account Buyer { get; set; }

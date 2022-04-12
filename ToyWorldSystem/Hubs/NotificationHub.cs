@@ -10,9 +10,8 @@ namespace ToyWorldSystem.Hubs
     public class NotificationHub : Hub
     {
         private readonly IDictionary<string, UserConnection> _connections;
-        private readonly IRepositoryManager _repositoryManager;
 
-        public NotificationHub(IDictionary<string, UserConnection> connections, IRepositoryManager repositoryManager)
+        public NotificationHub(IDictionary<string, UserConnection> connections)
         {
             _connections = connections;
         }
