@@ -338,7 +338,18 @@ namespace ToyWorldSystem.Controller
             if (account.Role != 1 && post.AccountId != post.AccountId)
                 throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to delete");
 
+            //delete rate
             await _repositoryManager.Rate.DeleteRateOfPost(post, trackChanges: true);
+
+            //delete feedback
+            await _repositoryManager.Feedback.DeleteByPostOfContestId(post.Id, trackChanges: true);
+
+            //delete notification
+            await _repositoryManager.Notification.DeleteByPostOfContestId(post.Id, trackChanges: true);
+
+            //delete image
+            await _repositoryManager.Image.DeleteByPostOfContestId(post.Id, trackChanges: true);
+
             _repositoryManager.PostOfContest.Delete(post);
             await _repositoryManager.SaveAsync();
 
@@ -441,8 +452,10 @@ namespace ToyWorldSystem.Controller
             var accountId = _userAccessor.getAccountId();
 
             var isOpenContest = await _repositoryManager.Contest.IsOpenContest(contest_id, trackChanges: false);
-
             if (!isOpenContest) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "This contest is not open for post");
+
+            var isReachLimit = await _repositoryManager.PostOfContest.IsReachPostLimit(accountId, contest_id, trackChanges: false);
+            if (isReachLimit) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "User have reach the limit of submission");
 
             var postOfContest = new PostOfContest
             {

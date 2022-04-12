@@ -129,5 +129,12 @@ namespace Repository.Repository
 
             return result;
         }
+
+        public async Task<bool> IsReachPostLimit(int accountId, int contest_id, bool trackChanges)
+        {
+            var numOfPost = await FindByCondition(x => x.AccountId == accountId && x.ContestId == contest_id, trackChanges).CountAsync();
+
+            return numOfPost >= 3;
+        }
     }
 }

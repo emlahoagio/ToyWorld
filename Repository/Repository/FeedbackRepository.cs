@@ -30,6 +30,19 @@ namespace Repository.Repository
             }
         }
 
+        public async Task DeleteByPostOfContestId(int id, bool trackChanges)
+        {
+            var feedbacks = await FindByCondition(x => x.PostOfContestId == id, trackChanges).ToListAsync();
+
+            if (feedbacks.Count != 0)
+            {
+                foreach (var feedback in feedbacks)
+                {
+                    Delete(feedback);
+                }
+            }
+        }
+
         public async Task<Pagination<NotReplyFeedback>> GetFeedbacksNotReply(PagingParameters paging, bool trackChanges)
         {
             var feedback = await FindByCondition(x => x.ReplyDate == null, trackChanges)

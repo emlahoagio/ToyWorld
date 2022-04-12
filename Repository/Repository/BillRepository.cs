@@ -20,12 +20,14 @@ namespace Repository.Repository
         public void AcceptBill(Bill bill)
         {
             bill.Status = 1;
+            bill.UpdateTime = DateTime.UtcNow.AddHours(7);
             Update(bill);
         }
 
         public void DenyBill(Bill bill)
         {
             bill.Status = 3;
+            bill.UpdateTime = DateTime.UtcNow.AddHours(7);
             Update(bill);
         }
 
@@ -43,14 +45,14 @@ namespace Repository.Repository
                 .Include(x => x.Buyer)
                 .Include(x => x.Seller)
                 .Include(x => x.TradingPost)
-                .OrderByDescending(x => x.CreateTime)
+                .OrderByDescending(x => x.UpdateTime)
                 .ToListAsync();
 
             var count = await FindByCondition(x => x.Status == status, trackChanges).CountAsync();
 
             var data_result = bills.Select(x => new BillByStatus
             {
-                DateCreate = x.CreateTime,
+                UpdateTime = x.UpdateTime,
                 Id = x.Id,
                 IdPost = x.TradingPostId,
                 PostTitle = x.TradingPost.Title,
@@ -83,7 +85,7 @@ namespace Repository.Repository
             {
                 BuyerId = x.BuyerId,
                 BuyerName = x.Buyer.Name,
-                CreateTime = x.CreateTime,
+                UpdateTime = x.UpdateTime,
                 ExchangeValue = x.ExchangeValue,
                 Id = x.Id,
                 IsExchangeByMoney = x.IsExchangeByMoney,
@@ -108,7 +110,7 @@ namespace Repository.Repository
             var result = new BillDetail
             {
                 BuyerName = bill.Buyer.Name,
-                CreateTime = bill.CreateTime,
+                UpdateTime = bill.UpdateTime,
                 ExchangeValue = bill.ExchangeValue,
                 Id = bill.Id,
                 IsExchangeByMoney = bill.IsExchangeByMoney,
@@ -144,7 +146,7 @@ namespace Repository.Repository
 
         public async Task<int> GetIdOfCreatedBill(DateTime findTime, bool trackChanges)
         {
-            var result = await FindByCondition(x => x.CreateTime == findTime, trackChanges).FirstOrDefaultAsync();
+            var result = await FindByCondition(x => x.UpdateTime == findTime, trackChanges).FirstOrDefaultAsync();
 
             return result.Id;
         }
@@ -152,6 +154,7 @@ namespace Repository.Repository
         public void UpdateBillStatus(Bill bill, int update_status)
         {
             bill.Status = update_status;
+            bill.UpdateTime = DateTime.UtcNow.AddHours(7);
             Update(bill);
         }
     }

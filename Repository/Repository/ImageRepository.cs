@@ -237,5 +237,18 @@ namespace Repository
 
             return result;
         }
+
+        public async Task DeleteByPostOfContestId(int id, bool trackChanges)
+        {
+            var images = await FindByCondition(x => x.PostOfContestId == id, trackChanges).ToListAsync();
+
+            if(images.Count != 0)
+            {
+                foreach(var image in images)
+                {
+                    Delete(image);
+                }
+            }
+        }
     }
 }

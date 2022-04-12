@@ -17,6 +17,6 @@ namespace Entities.DataTransferObject
         public string BuyerName { get; set; }
         public int TradingPostId { get; set; }
         public int Status { get; set; }
-        public DateTime CreateTime { get; set; }
+        public DateTime UpdateTime { get; set; }
     }
 }
