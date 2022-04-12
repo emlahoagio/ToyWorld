@@ -4,7 +4,6 @@ using Entities.ErrorModel;
 using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
@@ -213,7 +212,6 @@ namespace ToyWorldSystem.Controller
         [AllowAnonymous]
         [HttpPost]
         [Route("login_by_system_account")]
-        [EnableCors("CorsPolicy")]
         public async Task<IActionResult> LoginByAccountSystem(AccountSystemParameters unverify_account)
         {
             var account = await _repository.Account.getAccountByEmail(unverify_account.Email, unverify_account.Password, trackChanges: false);
