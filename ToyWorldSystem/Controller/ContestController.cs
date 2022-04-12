@@ -313,12 +313,12 @@ namespace ToyWorldSystem.Controller
             var joinContest = await _repositoryManager.JoinContest.GetSubsCriberToDelete(contest_id, account_id, trackChanges: false);
 
             _repositoryManager.JoinContest.BandSubscribers(joinContest);
-            await _repositoryManager.Reward.Delete(account_id, contest_id, trackChanges: false);
+
             var posts = await _repositoryManager.PostOfContest.GetPostToDelete(contest_id, account_id, trackChanges: false);
-            await _repositoryManager.Rate.Delete(posts.Select(x => x.Id).ToList(), trackChanges: false);
+            
             foreach(var post in posts)
             {
-                _repositoryManager.PostOfContest.Delete(post);
+                await DeletePostOfContest(post.Id);
             }
 
             await _repositoryManager.SaveAsync();
