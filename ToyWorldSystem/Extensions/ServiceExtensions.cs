@@ -19,7 +19,7 @@ namespace ToyWorldSystem.Extensions
             => services.AddCors(option =>
             {
                 option.AddPolicy("CorsPolicy", builder =>
-                builder.WithOrigins("http://localhost:3000", "https://tws-staging-fe.herokuapp.com")
+                builder.AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowCredentials()
                 .AllowAnyHeader());
