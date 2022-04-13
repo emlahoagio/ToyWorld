@@ -84,7 +84,7 @@ namespace ToyWorldSystem.Controller
         /// <returns></returns>
         [HttpGet]
         [Route("popular")]
-        public async Task<IActionResult> GetPopularPost([FromQuery]PagingParameters paging)
+        public async Task<IActionResult> GetPopularPost([FromQuery] PagingParameters paging)
         {
             var account_id = _userAccessor.getAccountId();
 
@@ -120,7 +120,7 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
-        #region get waiting post
+        #region Get waiting post
         /// <summary>
         /// Get Waiting post (Role: Manager, Member)
         /// </summary>
@@ -159,14 +159,21 @@ namespace ToyWorldSystem.Controller
         {
             var account_id = _userAccessor.getAccountId();
 
-            var result_no_comment_no_image = await _repositoryManager.Post.GetPostDetail(post_id, trackChanges: false, account_id);
+            var result = await _repositoryManager.Post.GetPostDetail(post_id, trackChanges: false, account_id);
 
-            if (result_no_comment_no_image == null)
+            if (result == null)
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No post matches with the id: " + post_id);
 
-            var result_no_image = await _repositoryManager.Comment.GetPostComment(result_no_comment_no_image, trackChanges: false, account_id);
+            return Ok(result);
+        }
+        #endregion
 
-            var result = await _repositoryManager.Image.GetImageForPostDetail(result_no_image, trackChanges: false);
+        #region Get comment for post detail
+        [HttpGet]
+        [Route("{post_id}/comment_detail")]
+        public async Task<IActionResult> GetDetailComment(int post_id)
+        {
+            var result = await _repositoryManager.Comment.GetCommentDetailOfPost(_userAccessor.getAccountId(), post_id, trackChanges: false);
 
             return Ok(result);
         }

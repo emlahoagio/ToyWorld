@@ -19,6 +19,34 @@ namespace Repository.Repository
 
         public void DeleteComment(Comment comment) => Delete(comment);
 
+        public async Task<CommentInPostDetail> GetCommentDetailOfPost(int accountId, int post_id, bool trackChanges)
+        {
+            var comments = await FindByCondition(x => x.PostId == post_id, trackChanges)
+                .OrderByDescending(x => x.CommentDate)
+                .Include(x => x.Account)
+                .Include(x => x.ReactComments)
+                .ToListAsync();
+            var count = await FindByCondition(x => x.PostId == post_id, trackChanges).CountAsync();
+
+            var result = new CommentInPostDetail
+            {
+                Count = count,
+                Comments = comments.Select(x => new CommentReturn
+                {
+                    CommentDate = x.CommentDate,
+                    Content = x.Content,
+                    Id = x.Id,
+                    IsReacted = x.ReactComments.Where(y => y.AccountId == accountId).Count() != 0,
+                    NumOfReact = x.ReactComments.Count,
+                    OwnerAvatar = x.Account.Avatar,
+                    OwnerId = x.AccountId.Value,
+                    OwnerName = x.Account.Name
+                }).ToList()
+            };
+
+            return result;
+        }
+
         public async Task<Comment> GetCommentReactById(int comment_id, bool trackChanges)
         {
             var comment = await FindByCondition(x => x.Id == comment_id, trackChanges)
@@ -68,32 +96,6 @@ namespace Repository.Repository
             }
 
             result_no_comment.Data = result;
-            return result_no_comment;
-        }
-
-        public async Task<PostDetail> GetPostComment(PostDetail result_no_comment, bool trackChanges, int account_id)
-        {
-            var comments = await FindByCondition(x => x.PostId == result_no_comment.Id, trackChanges)
-                .Include(x => x.ReactComments)
-                .Include(x => x.Account)
-                .ToListAsync();
-
-            if (comments != null)
-            {
-                result_no_comment.Comments = comments.Select(x => new CommentReturn
-                {
-                    Id = x.Id,
-                    CommentDate = x.CommentDate,
-                    Content = x.Content,
-                    IsReacted = x.ReactComments.Where(y => y.AccountId == account_id).Count() != 0,
-                    OwnerAvatar = x.Account.Avatar,
-                    OwnerName = x.Account.Name,
-                    OwnerId = x.AccountId.Value,
-                    NumOfReact = x.ReactComments.Count,
-                }).ToList();
-                result_no_comment.NumOfComment = comments.Count();
-            }
-
             return result_no_comment;
         }
 

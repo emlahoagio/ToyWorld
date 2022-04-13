@@ -47,6 +47,10 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
+        #region Get images of trading post
+        #endregion
+
+        #region Get favorite trading post
         /// <summary>
         /// Get favorite trading post for home page
         /// </summary>
@@ -77,6 +81,7 @@ namespace ToyWorldSystem.Controller
 
             return Ok(trading);
         }
+        #endregion
 
         /// <summary>
         /// Get trading post by disable status (Role: Manager)
