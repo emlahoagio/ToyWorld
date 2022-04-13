@@ -250,5 +250,13 @@ namespace Repository
                 }
             }
         }
+
+        public async Task<List<ImageReturn>> GetImageByPostId(int post_id, bool trackChanges)
+        {
+            var images = await FindByCondition(x => x.PostId == post_id, trackChanges).ToListAsync();
+
+            if (images.Count == 0) return null;
+            return images.Select(x => new ImageReturn { Id = x.Id, Url = x.Url }).ToList();
+        }
     }
 }

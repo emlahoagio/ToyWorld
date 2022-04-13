@@ -20,5 +20,6 @@ namespace Contracts.Repositories
         Task<Pagination<PostInList>> GetNumOfCommentForPostList(Pagination<PostInList> result_no_comment, bool trackChanges);
         Task<Pagination<TradingPostInList>> GetNumOfCommentForTradingPostList(Pagination<TradingPostInList> result_no_comment, bool trackChanges);
         Task<Pagination<TradingManaged>> GetNumOfCommentForTradingPostList(Pagination<TradingManaged> result_no_comment, bool trackChanges);
+        Task<int> GetNumOfCommentByPostId(int post_id, bool trackChanges);
     }
 }

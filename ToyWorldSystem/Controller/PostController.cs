@@ -23,6 +23,7 @@ namespace ToyWorldSystem.Controller
             _userAccessor = userAccessor;
         }
 
+        #region  Get post by group id
         /// <summary>
         /// Get list post by group id (Role: Members, Manager)
         /// </summary>
@@ -35,19 +36,47 @@ namespace ToyWorldSystem.Controller
         {
             var account_id = _userAccessor.getAccountId();
 
-            var result_no_image_no_comment = await _repositoryManager.Post.GetPostByGroupId(group_id, trackChanges: false, paging, account_id);
-            
-            if (result_no_image_no_comment == null)
-            {
-                throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
-            }
+            var result = await _repositoryManager.Post.GetPostByGroupId(group_id, trackChanges: false, paging, account_id);
 
-            var result_no_comment = await _repositoryManager.Image.GetImageForListPost(result_no_image_no_comment, trackChanges: false);
+            //result = await _repositoryManager.Image.GetImageForListPost(result, trackChanges: false);
 
-            var result = await _repositoryManager.Comment.GetNumOfCommentForPostList(result_no_comment, trackChanges: false);
+            //result = await _repositoryManager.Comment.GetNumOfCommentForPostList(result, trackChanges: false);
 
             return Ok(result);
         }
+        #endregion
+
+        #region Get image of post
+        /// <summary>
+        /// Get Image for post
+        /// </summary>
+        /// <param name="post_id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{post_id}/images")]
+        public async Task<IActionResult> GetImagesByPostId(int post_id)
+        {
+            var images = await _repositoryManager.Image.GetImageByPostId(post_id, trackChanges: false);
+
+            return Ok(images);
+        }
+        #endregion
+
+        #region Get num of comment for post
+        /// <summary>
+        /// Get num of comment for post
+        /// </summary>
+        /// <param name="post_id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{post_id}/num_of_comment")]
+        public async Task<IActionResult> GetNumOfComment(int post_id)
+        {
+            var numOfComment = await _repositoryManager.Comment.GetNumOfCommentByPostId(post_id, trackChanges: false);
+
+            return Ok(numOfComment);
+        }
+        #endregion
 
         /// <summary>
         /// Get post list for home page

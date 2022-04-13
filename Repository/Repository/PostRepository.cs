@@ -51,22 +51,22 @@ namespace Repository
         public async Task<Pagination<PostInList>> GetPostByGroupId(int groupId, bool trackChanges, PagingParameters paging, int accountId)
         {
             var listPost = await FindByCondition(post => post.GroupId == groupId && post.IsPublic == true && post.IsDeleted == false, trackChanges)
+                .OrderByDescending(x => x.PostDate)
+                .Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize)
                 .Include(x => x.Account)
                 .Include(x => x.ReactPosts)
-                .OrderByDescending(x => x.PostDate)
                 .ToListAsync();
 
-            var count = listPost.Count();
+            var count = await FindByCondition(post => post.GroupId == groupId && post.IsPublic == true && post.IsDeleted == false, trackChanges)
+                .CountAsync();
 
-            var pagingList = listPost.Skip((paging.PageNumber - 1) * paging.PageSize)
-                .Take(paging.PageSize);
-
-            if (count == 0 || listPost == null)
+            if (listPost.Count == 0)
             {
                 return null;
             }
 
-            var result = pagingList.Select(x => new PostInList
+            var result = listPost.Select(x => new PostInList
             {
                 Id = x.Id,
                 NumOfReact = x.ReactPosts.Count,

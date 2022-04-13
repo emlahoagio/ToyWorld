@@ -30,6 +30,13 @@ namespace Repository.Repository
             return comment;
         }
 
+        public async Task<int> GetNumOfCommentByPostId(int post_id, bool trackChanges)
+        {
+            var count = await FindByCondition(x => x.PostId == post_id, trackChanges).CountAsync();
+
+            return count;
+        }
+
         public async Task<Pagination<PostInList>> GetNumOfCommentForPostList(Pagination<PostInList> result_no_comment, bool trackChanges)
         {
             var result = new List<PostInList>();
