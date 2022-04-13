@@ -58,6 +58,8 @@ namespace ToyWorldSystem.Controller
         {
             var images = await _repositoryManager.Image.GetImageByPostId(post_id, trackChanges: false);
 
+            if (images == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No image in post");
+
             return Ok(images);
         }
         #endregion
@@ -78,6 +80,7 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
+        #region Get popular post
         /// <summary>
         /// Get post list for home page
         /// </summary>
@@ -101,7 +104,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(posts);
         }
+        #endregion
 
+        #region Get post of account
         /// <summary>
         /// Get post by account Id (Role: Manager, Member)
         /// </summary>
@@ -126,7 +131,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(result);
         }
+        #endregion
 
+        #region get waiting post
         /// <summary>
         /// Get Waiting post (Role: Manager, Member)
         /// </summary>
@@ -153,7 +160,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(result);
         }
+        #endregion
 
+        #region Get post detail
         /// <summary>
         /// Get post detail (Role: Member, Manager)
         /// </summary>
@@ -176,7 +185,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(result);
         }
+        #endregion
 
+        #region Create new post
         /// <summary>
         /// Create new post (Role: Manager, Member)
         /// </summary>
@@ -194,7 +205,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Create feedback about post
         /// <summary>
         /// Feedback Post (Role: Member)
         /// </summary>
@@ -220,7 +233,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region React post
         /// <summary>
         /// React Post
         /// </summary>
@@ -282,7 +297,9 @@ namespace ToyWorldSystem.Controller
                 IsLiked = isLiked
             });
         }
+        #endregion
 
+        #region Approve post
         /// <summary>
         /// Approve post (Role: Manager)
         /// </summary>
@@ -326,7 +343,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Deny post
         /// <summary>
         /// Deny post (Role: Manager)
         /// </summary>
@@ -351,9 +370,11 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Delete post
         /// <summary>
-        /// Disable post (Role: Manager, Member)
+        /// Delete post (Role: Manager, Member)
         /// </summary>
         /// <param name="post_id">Id of post return in get list, or get detail</param>
         /// <returns></returns>
@@ -419,5 +440,6 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
     }
 }

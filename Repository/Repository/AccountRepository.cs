@@ -133,7 +133,8 @@ namespace Repository
                 Id = x.Id,
                 Name = x.Name,
                 Phone = x.Phone,
-                Status = getStatus(x.Status)
+                Status = getStatus(x.Status),
+                Role = x.Role.Value
             }).ToList();
 
             var result = new Pagination<AccountInList>

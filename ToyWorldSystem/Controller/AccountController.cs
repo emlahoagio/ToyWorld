@@ -28,6 +28,7 @@ namespace ToyWorldSystem.Controller
             _hasingServices = hasingServices;
         }
 
+        #region Get list account
         /// <summary>
         /// Get list account (Role: Admin, Manager)
         /// </summary>
@@ -44,7 +45,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(result);
         }
+        #endregion
 
+        #region Get account detail information
         /// <summary>
         /// Get account detail, not include post of account (Role: Manager, Member)
         /// </summary>
@@ -62,7 +65,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(account);
         }
+        #endregion
 
+        #region Get list account react post
         /// <summary>
         /// Get account react post
         /// </summary>
@@ -78,7 +83,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(result);
         }
+        #endregion
 
+        #region Get list account react comment
         /// <summary>
         /// Get account react comment
         /// </summary>
@@ -94,7 +101,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(result);
         }
+        #endregion
 
+        #region Get following account
         /// <summary>
         /// Get following account
         /// </summary>
@@ -110,7 +119,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(account);
         }
+        #endregion
 
+        #region Get follower account
         /// <summary>
         /// Get follower account
         /// </summary>
@@ -126,7 +137,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(account);
         }
+        #endregion
 
+        #region Get profile information
         /// <summary>
         /// Get profile (Role: Manager, Member, Admin)
         /// </summary>
@@ -142,7 +155,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(profile);
         }
+        #endregion
 
+        #region Get rate of account
         /// <summary>
         /// Get rate of account (Role: All role)
         /// </summary>
@@ -159,6 +174,8 @@ namespace ToyWorldSystem.Controller
 
             return Ok(rateOfAccount);
         }
+        #endregion
+
 
         /// <summary>
         /// Login by google mail (Role: ALL)

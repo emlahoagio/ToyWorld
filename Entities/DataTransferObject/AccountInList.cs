@@ -11,5 +11,6 @@ namespace Entities.DataTransferObject
         public string Name { get; set; }
         public string Phone { get; set; }
         public string Status { get; set; }
+        public int Role { get; set; }
     }
 }
