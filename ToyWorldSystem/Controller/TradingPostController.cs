@@ -105,6 +105,7 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
+        #region Get trading by isdisable
         /// <summary>
         /// Get trading post by disable status (Role: Manager)
         /// </summary>
@@ -134,7 +135,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(result);
         }
+        #endregion
 
+        #region Get update information trading
         /// <summary>
         /// Get detail of trading post to update (Role: Manager, Member)
         /// </summary>
@@ -166,7 +169,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(result);
         }
+        #endregion
 
+        #region Get account information to create trading post
         /// <summary>
         /// Get information to create new trading post page (Role: Manager, Member)
         /// </summary>
@@ -187,6 +192,7 @@ namespace ToyWorldSystem.Controller
 
             return Ok(result);
         }
+        #endregion
 
         #region Get trading post detail
         /// <summary>
@@ -225,6 +231,7 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
+        #region Create trading post
         /// <summary>
         /// Create new trading post (Role: Manager, Member)
         /// </summary>
@@ -284,7 +291,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Create feedback trading post
         /// <summary>
         /// Feedback trading post (Role: Member)
         /// </summary>
@@ -310,7 +319,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region React trading post
         /// <summary>
         /// React trading post (Role: Manager, Member)
         /// </summary>
@@ -350,7 +361,9 @@ namespace ToyWorldSystem.Controller
                 IsLiked = isLiked
             });
         }
+        #endregion
 
+        #region Update trading post to exchanged
         /// <summary>
         /// Update trading post to is exchanged (Role: Manager, Member)
         /// </summary>
@@ -373,7 +386,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Update information of trading
         /// <summary>
         /// Update all information of trading post
         /// </summary>
@@ -410,7 +425,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Disable trading post
         /// <summary>
         /// Disable trading post
         /// </summary>
@@ -437,13 +454,6 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
-
-        [HttpGet]
-        [Route("getdatafortradingmessage")]
-        public async Task<IActionResult> GetDataForTradingMessage(int tradingPostId)
-        {
-            var result = await _repositoryManager.TradingPost.GetDataForTradingMess(tradingPostId);
-            return Ok(result);
-        }
+        #endregion
     }
 }

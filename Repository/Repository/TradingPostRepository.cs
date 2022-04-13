@@ -190,23 +190,6 @@ namespace Repository.Repository
             return result.AccountId.Value;
         }
 
-        public async Task<DataForMess> GetDataForTradingMess(int tradingpostId)
-        {
-            var tradingPost = await FindByCondition(x => x.Id == tradingpostId, false)
-                .FirstOrDefaultAsync();
-            if (tradingPost == null)
-            {
-                return null;
-            }
-            DataForMess result = new DataForMess
-            {
-                Title = tradingPost.Title,
-                ToyName = tradingPost.ToyName
-            };
-
-            return result;
-        }
-
         public async Task<Pagination<TradingManaged>> GetTradingPostForManager(int status, PagingParameters paging, bool trackChanges, int account_id)
         {
             var tradingPosts = new List<TradingPost>();

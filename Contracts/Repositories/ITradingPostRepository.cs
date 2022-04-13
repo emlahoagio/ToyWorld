@@ -19,7 +19,6 @@ namespace Contracts.Repositories
         Task<UpdateTradingPost> GetUpdateDetail(int tradingpost_id, bool trackChanges);
         Task<TradingPostDetail> GetDetail(int trading_post_id, int current_account_id, bool trackChanges);
         Task<int> GetOwnerById(int trading_post_id);
-        Task<DataForMess> GetDataForTradingMess(int tradingpostId);
         Task<int> GetNumOfReact(int trading_post_id, bool trackChanges);
         Task<Pagination<TradingPostInList>> GetTradingByBrandAndType(int account_id, List<Type> types, List<Brand> brands, PagingParameters paging, bool trackChanges);
     }

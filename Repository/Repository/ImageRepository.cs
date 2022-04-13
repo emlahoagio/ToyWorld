@@ -100,15 +100,6 @@ namespace Repository
             return imagelinks;
         }
 
-        public async Task<List<ImageReturn>> GetImageForBill(int bill_id, bool trackChanges)
-        {
-            var images = await FindByCondition(x => x.BillId == bill_id, trackChanges)
-                .Select(x => new ImageReturn { Id = x.Id, Url = x.Url })
-                .ToListAsync();
-
-            return images;
-        }
-
         public async Task<List<TopSubmission>> GetImageForPostOfContest(List<TopSubmission> post, bool trackChanges)
         {
             var result = new List<TopSubmission>();
@@ -121,24 +112,6 @@ namespace Repository
                 result.Add(temp);
             }
             return result;
-        }
-
-        public async Task<Pagination<BillByStatus>> GetImageForBill(Pagination<BillByStatus> bills, bool trackChanges)
-        {
-            var data_result = new List<BillByStatus>();
-
-            foreach(var bill in bills.Data)
-            {
-                var images = await FindByCondition(x => x.BillId == bill.Id, trackChanges)
-                    .Select(y => new ImageReturn {Id =  y.Id, Url = y.Url})
-                    .ToListAsync();
-
-                bill.Images = images;
-                data_result.Add(bill);
-            }
-            bills.Data = data_result;
-
-            return bills;
         }
 
         public async Task<List<ImageReturn>> GetImageForPrize(int prize_id, bool trackChanges)
@@ -177,6 +150,14 @@ namespace Repository
         public async Task<List<ImageReturn>> GetImageByTradingPostId(int trading_id, bool trackChanges)
         {
             var images = await FindByCondition(x => x.TradingPostId == trading_id, trackChanges).ToListAsync();
+
+            if (images.Count == 0) return null;
+            return images.Select(x => new ImageReturn { Id = x.Id, Url = x.Url }).ToList();
+        }
+
+        public async Task<List<ImageReturn>> GetImageByBillId(int bill_id, bool trackChanges)
+        {
+            var images = await FindByCondition(x => x.BillId == bill_id, trackChanges).ToListAsync();
 
             if (images.Count == 0) return null;
             return images.Select(x => new ImageReturn { Id = x.Id, Url = x.Url }).ToList();

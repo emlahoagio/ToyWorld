@@ -20,10 +20,9 @@ namespace Contracts
         Task<PrizeReturn> GetImageForPrize(PrizeReturn prize_no_image, bool trackChanges);
         Task<List<string>> GetImageOfTrading(int tradingPostId, bool trackChanges);
         Task<List<ImageReturn>> GetImageByPostId(int post_id, bool trackChanges);
-        Task<List<ImageReturn>> GetImageForBill(int bill_id, bool trackChanges);
         Task<List<TopSubmission>> GetImageForPostOfContest(List<TopSubmission> post, bool trackChanges);
-        Task<Pagination<BillByStatus>> GetImageForBill(Pagination<BillByStatus> bills, bool trackChanges);
         Task DeleteByPostOfContestId(int id, bool trackChanges);
         Task<List<ImageReturn>> GetImageByTradingPostId(int trading_id, bool trackChanges);
+        Task<List<ImageReturn>> GetImageByBillId(int bill_id, bool trackChanges);
     }
 }

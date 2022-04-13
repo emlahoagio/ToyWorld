@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace ToyWorldSystem.Controller
@@ -17,12 +18,14 @@ namespace ToyWorldSystem.Controller
         private readonly IRepositoryManager _repository;
         private readonly IUserAccessor _userAccessor;
 
+
         public BillController(IRepositoryManager repository, IUserAccessor userAccessor)
         {
             _repository = repository;
             _userAccessor = userAccessor;
         }
 
+        #region Get bill detail
         /// <summary>
         /// Get bill detail in the chat (Role: Manager, Member)
         /// </summary>
@@ -36,13 +39,13 @@ namespace ToyWorldSystem.Controller
 
             if (detail == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No bill matches with id send");
             
-            detail.Images = await _repository.Image.GetImageForBill(bill_id, trackChanges: false);
-            
             detail.IsRated = await _repository.RateSeller.IsRated(detail.SellerId, detail.BuyerId, trackChanges: false);
 
             return Ok(detail);
         }
+        #endregion
 
+        #region Get bill by trading post id
         /// <summary>
         /// Get bill by trading post id (Role: Manager)
         /// </summary>
@@ -62,7 +65,27 @@ namespace ToyWorldSystem.Controller
 
             return Ok(bills);
         }
+        #endregion
 
+        #region Get image of bill
+        /// <summary>
+        /// Get Image for post
+        /// </summary>
+        /// <param name="bill_id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{bill_id}/images")]
+        public async Task<IActionResult> GetImagesByPostId(int bill_id)
+        {
+            var images = await _repository.Image.GetImageByBillId(bill_id, trackChanges: false);
+
+            if (images == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No image of bill");
+
+            return Ok(images);
+        }
+        #endregion
+
+        #region Get bill by status
         /// <summary>
         /// Get bill by status
         /// </summary>
@@ -76,10 +99,11 @@ namespace ToyWorldSystem.Controller
             var bills = await _repository.Bill.GetBillByStatus(status, paging, trackChanges: false);
             if (bills.Data.Count() == 0) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No bill with the status: " + status);
 
-            bills = await _repository.Image.GetImageForBill(bills, trackChanges: false);
             return Ok(bills);
         }
+        #endregion
 
+        #region Create bill
         /// <summary>
         /// Create bill (Role: Manager, Member (Seller))
         /// </summary>
@@ -113,7 +137,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(new {BillId = bill_id});
         }
+        #endregion
 
+        #region Accept or Deny bill
         /// <summary>
         /// Accept bill (Role: Manager, Member (Buyer))
         /// </summary>
@@ -150,7 +176,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Close or Cancel bill
         /// <summary>
         /// Update bill to CANCEL or CLOSED (Role: Manager, member => Only seller can update)
         /// </summary>
@@ -190,5 +218,6 @@ namespace ToyWorldSystem.Controller
             await _repository.SaveAsync();
             return Ok("Save changes success");      
         }
+        #endregion
     }
 }
