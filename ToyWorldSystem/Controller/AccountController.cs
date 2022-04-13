@@ -291,6 +291,7 @@ namespace ToyWorldSystem.Controller
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpPost]
         [Route("AccountSystem")]
         public async Task<IActionResult> CreateNewAccountSystem(NewAccountParameters param)
