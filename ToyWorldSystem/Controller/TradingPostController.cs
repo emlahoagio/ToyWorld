@@ -22,6 +22,7 @@ namespace ToyWorldSystem.Controller
             _userAccessor = userAccessor;
         }
 
+        #region Get trading by group id
         /// <summary>
         /// Get list trading post (Role: Manager, Member)
         /// </summary>
@@ -34,20 +35,17 @@ namespace ToyWorldSystem.Controller
         {
             var account_id = _userAccessor.getAccountId();
 
-            var result_no_image_no_comment = await _repositoryManager.TradingPost
+            var result = await _repositoryManager.TradingPost
                     .GetTradingPostInGroupMember(group_id, paging, trackChanges: false, account_id);
 
-            if (result_no_image_no_comment == null)
+            if (result == null)
             {
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
             }
 
-            var result_no_comment = await _repositoryManager.Image.GetImageForListTradingPost(result_no_image_no_comment, trackChanges: false);
-
-            var result = await _repositoryManager.Comment.GetNumOfCommentForTradingPostList(result_no_comment, trackChanges: false);
-
             return Ok(result);
         }
+        #endregion
 
         /// <summary>
         /// Get favorite trading post for home page

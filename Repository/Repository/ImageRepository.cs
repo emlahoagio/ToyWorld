@@ -66,23 +66,6 @@ namespace Repository
             return result_no_image;
         }
 
-        public async Task<Pagination<PostInList>> GetImageForListPost(Pagination<PostInList> result_no_image, bool trackChanges)
-        {
-            var data = new List<PostInList>();
-
-            foreach(var post in result_no_image.Data)
-            {
-                var images = await FindByCondition(x => x.PostId == post.Id, trackChanges).ToListAsync();
-
-                if (images != null) post.Images = images.Select(x => new ImageReturn { Id = x.Id, Url = x.Url }).ToList();
-
-                data.Add(post);
-            }
-
-            result_no_image.Data = data;
-            return result_no_image;
-        }
-
         public async Task<Pagination<TradingPostInList>> GetImageForListTradingPost(Pagination<TradingPostInList> result_no_image, bool trackChanges)
         {
             var data = new List<TradingPostInList>();
@@ -132,23 +115,6 @@ namespace Repository
 
             posts_no_rate_no_image.Data = data;
             return posts_no_rate_no_image;
-        }
-
-        public async Task<Pagination<WaitingPost>> GetImageForWaitingPostDetail(Pagination<WaitingPost> result_no_image, bool trackChanges)
-        {
-            var data = new List<WaitingPost>();
-
-            foreach (var post in result_no_image.Data)
-            {
-                var images = await FindByCondition(x => x.PostId == post.Id, trackChanges).ToListAsync();
-
-                if (images != null) post.Images = images.Select(x => new ImageReturn { Id = x.Id, Url = x.Url }).ToList();
-
-                data.Add(post);
-            }
-
-            result_no_image.Data = data;
-            return result_no_image;
         }
 
         public async Task<Pagination<PrizeOfContest>> GetImageForPrizeList(Pagination<PrizeOfContest> pagignationPrize_no_image, bool trackChanges)

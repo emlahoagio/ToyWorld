@@ -176,7 +176,7 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
-
+        #region Login by gg mail
         /// <summary>
         /// Login by google mail (Role: ALL)
         /// </summary>
@@ -220,7 +220,9 @@ namespace ToyWorldSystem.Controller
             }
             return Ok(account);
         }
+        #endregion
 
+        #region Login by account system
         /// <summary>
         /// Login by email and password
         /// </summary>
@@ -239,7 +241,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(account);
         }
+        #endregion
 
+        #region Follow/ Unfollow account
         /// <summary>
         /// Follow or unfollow the current visit account
         /// </summary>
@@ -279,7 +283,9 @@ namespace ToyWorldSystem.Controller
             await _repository.SaveAsync();
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Create account system
         /// <summary>
         /// Create account system (Role: Unauthorize user)
         /// </summary>
@@ -307,7 +313,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(created_account);
         }
+        #endregion
 
+        #region Rate seller
         /// <summary>
         /// Rate the seller (Role: ALL => buyer in the bill send this request)
         /// </summary>
@@ -338,7 +346,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Feedback account
         /// <summary>
         /// Feedback Account (Role: Member)
         /// </summary>
@@ -373,7 +383,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Disable/ Enable account
         /// <summary>
         /// Disable or Enable account (Role: Admin)
         /// </summary>
@@ -401,7 +413,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Update role to manager
         /// <summary>
         /// Update account role from member to manager (Role: Admin)
         /// </summary>
@@ -435,7 +449,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Update role to member
         /// <summary>
         /// Update account role from manager to member (Role: Admin)
         /// </summary>
@@ -469,7 +485,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Update profile
         /// <summary>
         /// Update profile (Role: Member, Manager)
         /// </summary>
@@ -496,7 +514,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region new pw of account
         /// <summary>
         /// Use for account doesn't has password (All role)
         /// </summary>
@@ -513,7 +533,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes async");
         }
+        #endregion
 
+        #region update account password
         /// <summary>
         /// Use for change the password of account (All role)
         /// </summary>
@@ -535,5 +557,6 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
     }
 }

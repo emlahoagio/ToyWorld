@@ -37,23 +37,6 @@ namespace Repository.Repository
             return count;
         }
 
-        public async Task<Pagination<PostInList>> GetNumOfCommentForPostList(Pagination<PostInList> result_no_comment, bool trackChanges)
-        {
-            var result = new List<PostInList>();
-
-            foreach(var post in result_no_comment.Data)
-            {
-                var comments = await FindByCondition(x => x.PostId == post.Id, trackChanges).ToListAsync();
-
-                post.NumOfComment = comments.Count();
-
-                result.Add(post);
-            }
-
-            result_no_comment.Data = result;
-            return result_no_comment;
-        }
-
         public async Task<Pagination<TradingPostInList>> GetNumOfCommentForTradingPostList(Pagination<TradingPostInList> result_no_comment, bool trackChanges)
         {
             var result = new List<TradingPostInList>();

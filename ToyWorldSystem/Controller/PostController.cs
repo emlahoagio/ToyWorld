@@ -38,10 +38,6 @@ namespace ToyWorldSystem.Controller
 
             var result = await _repositoryManager.Post.GetPostByGroupId(group_id, trackChanges: false, paging, account_id);
 
-            //result = await _repositoryManager.Image.GetImageForListPost(result, trackChanges: false);
-
-            //result = await _repositoryManager.Comment.GetNumOfCommentForPostList(result, trackChanges: false);
-
             return Ok(result);
         }
         #endregion
@@ -98,10 +94,6 @@ namespace ToyWorldSystem.Controller
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
             }
 
-            posts = await _repositoryManager.Image.GetImageForListPost(posts, trackChanges: false);
-
-            posts = await _repositoryManager.Comment.GetNumOfCommentForPostList(posts, trackChanges: false);
-
             return Ok(posts);
         }
         #endregion
@@ -117,17 +109,12 @@ namespace ToyWorldSystem.Controller
         [Route("account/{account_id}")]
         public async Task<IActionResult> GetListPostByAccount(int account_id, [FromQuery] PagingParameters paging)
         {
-            var result_no_image_no_comment = await _repositoryManager.Post.GetPostByAccountId(account_id, trackChanges: false, paging);
+            var result = await _repositoryManager.Post.GetPostByAccountId(account_id, trackChanges: false, paging);
 
-            if (result_no_image_no_comment == null)
+            if (result == null)
             {
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "This account has no post yet");
             }
-
-            var result_no_comment = await _repositoryManager.Image.GetImageForListPost(result_no_image_no_comment, trackChanges: false);
-
-            var result = await _repositoryManager.Comment.GetNumOfCommentForPostList(result_no_comment, trackChanges: false);
-
 
             return Ok(result);
         }
@@ -145,18 +132,16 @@ namespace ToyWorldSystem.Controller
         {
             var accountId = _userAccessor.getAccountId();
             var account = await _repositoryManager.Account.GetAccountById(accountId, trackChanges: false);
-            Pagination<WaitingPost> result_no_image;
+            Pagination<WaitingPost> result;
             if (account.Role == 1)
             {
-                result_no_image = await _repositoryManager.Post.GetWaitingPost(trackChanges: false, paging);
+                result = await _repositoryManager.Post.GetWaitingPost(trackChanges: false, paging);
             }
             else
             {
-                result_no_image = await _repositoryManager.Post.GetWaitingPost(trackChanges: false, paging, accountId);
+                result = await _repositoryManager.Post.GetWaitingPost(trackChanges: false, paging, accountId);
             }
-            if (result_no_image == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No waiting post was found");
-
-            var result = await _repositoryManager.Image.GetImageForWaitingPostDetail(result_no_image, trackChanges: false);
+            if (result == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No waiting post was found");
 
             return Ok(result);
         }

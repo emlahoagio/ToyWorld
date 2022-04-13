@@ -17,7 +17,6 @@ namespace Contracts.Repositories
         void UpdateComment(Comment comment, string content);
         void DeleteComment(Comment comment);
         Task<PostDetail> GetPostComment(PostDetail result_no_comment, bool trackChanges, int account_id);
-        Task<Pagination<PostInList>> GetNumOfCommentForPostList(Pagination<PostInList> result_no_comment, bool trackChanges);
         Task<Pagination<TradingPostInList>> GetNumOfCommentForTradingPostList(Pagination<TradingPostInList> result_no_comment, bool trackChanges);
         Task<Pagination<TradingManaged>> GetNumOfCommentForTradingPostList(Pagination<TradingManaged> result_no_comment, bool trackChanges);
         Task<int> GetNumOfCommentByPostId(int post_id, bool trackChanges);
