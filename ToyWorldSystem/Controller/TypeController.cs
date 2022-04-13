@@ -23,6 +23,7 @@ namespace ToyWorldSystem.Controller
             _userAccessor = userAccessor;
         }
 
+        #region Get all type of toy
         /// <summary>
         /// get type name for combobox select type
         /// </summary>
@@ -35,7 +36,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(result);
         }
+        #endregion
 
+        #region Get favorite type
         /// <summary>
         /// Get type for add favorite
         /// </summary>
@@ -50,7 +53,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(brands);
         }
+        #endregion
 
+        #region Add/ remove favorite type
         /// <summary>
         /// Add/remove favorite type (All role)
         /// </summary>
@@ -77,5 +82,6 @@ namespace ToyWorldSystem.Controller
             await _repository.SaveAsync();
             return Ok("Save changes success");
         }
+        #endregion
     }
 }

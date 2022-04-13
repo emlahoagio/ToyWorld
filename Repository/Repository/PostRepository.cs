@@ -127,19 +127,18 @@ namespace Repository
         public async Task<Pagination<WaitingPost>> GetWaitingPost(bool trackChanges, PagingParameters param)
         {
             var posts = await FindByCondition(x => x.IsWaiting == true, trackChanges)
+                .OrderByDescending(x => x.PostDate)
+                .Skip((param.PageNumber - 1) * param.PageSize)
+                .Take(param.PageSize)
                 .Include(x => x.Account)
                 .Include(x => x.ReactPosts)
-                .OrderByDescending(x => x.PostDate)
                 .ToListAsync();
 
-            int count = posts.Count;
-
-            var pagingPosts = posts.Skip((param.PageNumber - 1) * param.PageSize)
-                .Take(param.PageSize);
+            int count = await FindByCondition(x => x.IsWaiting == true, trackChanges).CountAsync();
 
             if (posts == null || posts.Count == 0) return null;
 
-            var waitingPosts = pagingPosts.Select(x => new WaitingPost
+            var waitingPosts = posts.Select(x => new WaitingPost
             {
                 Content = x.Content,
                 Id = x.Id,
@@ -163,19 +162,18 @@ namespace Repository
         public async Task<Pagination<WaitingPost>> GetWaitingPost(bool trackChanges, PagingParameters param, int accountId)
         {
             var posts = await FindByCondition(x => x.IsWaiting == true && x.AccountId == accountId, trackChanges)
+                .OrderByDescending(x => x.PostDate)
+                .Skip((param.PageNumber - 1) * param.PageSize)
+                .Take(param.PageSize)
                 .Include(x => x.Account)
                 .Include(x => x.ReactPosts)
-                .OrderByDescending(x => x.PostDate)
                 .ToListAsync();
 
-            int count = posts.Count;
-
-            var pagingPosts = posts.Skip((param.PageNumber - 1) * param.PageSize)
-                .Take(param.PageSize);
+            int count = await FindByCondition(x => x.IsWaiting == true && x.AccountId == accountId, trackChanges).CountAsync();
 
             if (posts == null || posts.Count == 0) return null;
 
-            var waitingPosts = pagingPosts.Select(x => new WaitingPost
+            var waitingPosts = posts.Select(x => new WaitingPost
             {
                 Content = x.Content,
                 Id = x.Id,
@@ -235,22 +233,21 @@ namespace Repository
         public async Task<Pagination<PostInList>> GetPostByAccountId(int accountId, bool trackChanges, PagingParameters paging)
         {
             var listPost = await FindByCondition(post => post.AccountId == accountId && post.IsPublic == true && post.IsDeleted == false, trackChanges)
+                .OrderByDescending(x => x.PostDate)
+                .Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize)
                 .Include(x => x.Account)
                 .Include(x => x.ReactPosts)
-                .OrderByDescending(x => x.PostDate)
                 .ToListAsync();
 
             var count = listPost.Count();
-
-            var pagingList = listPost.Skip((paging.PageNumber - 1) * paging.PageSize)
-                .Take(paging.PageSize);
 
             if (count == 0 || listPost == null)
             {
                 return null;
             }
 
-            var result = pagingList.Select(x => new PostInList
+            var result = listPost.Select(x => new PostInList
             {
                 Id = x.Id,
                 NumOfReact = x.ReactPosts.Count,
@@ -294,15 +291,17 @@ namespace Repository
         public async Task<Pagination<PostInList>> GetPostByFavorite(PagingParameters paging, int account_id, bool trackChanges)
         {
             var posts = await FindByCondition(x => x.PostDate >= DateTime.UtcNow.AddMonths(-1), trackChanges)
+                .OrderByDescending(x => x.PostDate)
+                .Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize)
                 .Include(x => x.Account)
                 .Include(x => x.ReactPosts)
-                .OrderByDescending(x => x.PostDate)
                 .ToListAsync();
 
             return new Pagination<PostInList>
             {
-                Count = posts.Count,
-                Data = posts.Skip((paging.PageNumber - 1) * paging.PageSize).Take(paging.PageSize).Select(x => new PostInList
+                Count = await FindByCondition(x => x.PostDate >= DateTime.UtcNow.AddMonths(-1), trackChanges).CountAsync(),
+                Data = posts.Select(x => new PostInList
                 {
                     Id = x.Id,
                     NumOfReact = x.ReactPosts.Count,

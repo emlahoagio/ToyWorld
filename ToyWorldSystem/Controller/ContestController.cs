@@ -42,8 +42,6 @@ namespace ToyWorldSystem.Controller
             var contests = await _repositoryManager.Contest.GetContestByStatus(status, paging, trackChanges: false);
             if (contests == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No contest matches with input status");
 
-            contests = await _repositoryManager.PrizeContest.GetPrizeForContest(contests);
-
             return Ok(contests);
         }
         #endregion
@@ -85,8 +83,7 @@ namespace ToyWorldSystem.Controller
             //Get favorite brand
             var brands = await _repositoryManager.FavoriteBrand.GetFavoriteBrand(account_id, trackChanges: false);
             //Get contest by type and brand
-            var contest_no_prize = await _repositoryManager.Contest.GetContestByBrandAndType(account_id, types, brands, paging, trackChanges: false);
-            var favorite_contests = await _repositoryManager.PrizeContest.GetPrizeForContest(contest_no_prize);
+            var favorite_contests = await _repositoryManager.Contest.GetContestByBrandAndType(account_id, types, brands, paging, trackChanges: false);
 
             return Ok(favorite_contests);
         }
@@ -123,9 +120,7 @@ namespace ToyWorldSystem.Controller
         {
             var account_id = _userAccessor.getAccountId();
 
-            var contest_have_not_prize = await _repositoryManager.Contest.GetContestInGroup(group_id, account_id, trackChanges: false, paging);
-
-            var result = await _repositoryManager.PrizeContest.GetPrizeForContest(contest_have_not_prize);
+            var result = await _repositoryManager.Contest.GetContestInGroup(group_id, account_id, trackChanges: false, paging);
 
             if (result == null)
             {

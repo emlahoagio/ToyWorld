@@ -29,7 +29,7 @@ namespace Repository
             Update(group);
         }
 
-        public async Task<List<GroupReturn>> getListGroup(bool trackChanges)
+        public async Task<List<GroupReturn>> GetListGroup(bool trackChanges)
         {
             var groupList = await FindByCondition(x => x.IsDisable == false, trackChanges).OrderBy(x => x.Name).ToListAsync();
 

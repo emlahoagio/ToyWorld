@@ -50,8 +50,6 @@ namespace ToyWorldSystem
 
             services.ConfigureUsserAccessor();
 
-            services.ConfigureCrawlDataFromJapanFigure();
-
             services.ConfigureMyKingdomCrawlers(); //quandtm code
 
             services.AddHttpContextAccessor();

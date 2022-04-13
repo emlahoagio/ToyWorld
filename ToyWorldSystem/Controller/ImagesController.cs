@@ -20,6 +20,7 @@ namespace ToyWorldSystem.Controller
             _repository = repository;
         }
 
+        #region Get image by id
         /// <summary>
         /// Get Image (Role: ALL)
         /// </summary>
@@ -35,7 +36,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(image);
         }
+        #endregion
 
+        #region Get image of prize
         /// <summary>
         /// Get Image for prize in contest
         /// </summary>
@@ -49,7 +52,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(images);
         }
+        #endregion
 
+        #region Create new image
         /// <summary>
         /// Create new image (Role: ALL)
         /// </summary>
@@ -63,7 +68,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Delete image
         /// <summary>
         /// Delete image (Role: ALL)
         /// </summary>
@@ -78,5 +85,6 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
     }
 }

@@ -242,6 +242,7 @@ namespace ToyWorldSystem.Controller
         [Route("group/{group_id}")]
         public async Task<IActionResult> CreateTradingPost([FromBody] NewTradingPostParameters tradingPost, int group_id)
         {
+            var createTime = DateTime.UtcNow.AddHours(7);
             var account_id = _userAccessor.getAccountId();
 
             var toy = await _repositoryManager.Toy.GetToyByName(tradingPost.ToyName, trackChanges: false);
@@ -266,25 +267,25 @@ namespace ToyWorldSystem.Controller
 
             if (toy != null)
             {
-                _repositoryManager.TradingPost.CreateTradingPost(tradingPost, group_id, account_id, toy.Id, brand.Id, type.Id);
+                _repositoryManager.TradingPost.CreateTradingPost(tradingPost, group_id, account_id, toy.Id, brand.Id, type.Id, createTime);
             }
             else
             {
-                _repositoryManager.TradingPost.CreateTradingPost(tradingPost, group_id, account_id, 3, brand.Id, type.Id);
+                _repositoryManager.TradingPost.CreateTradingPost(tradingPost, group_id, account_id, 3, brand.Id, type.Id, createTime);
             }
             await _repositoryManager.SaveAsync();
 
             //Create Notifications
             var users = await _repositoryManager.FollowGroup.GetUserFollowGroup(group_id);
             var account = await _repositoryManager.Account.GetAccountById(account_id, false);
-            // var createdTradingPost = _repositoryManager.TradingPost
+            var createdTradingPostId = await _repositoryManager.TradingPost.GetIdOfCreatedTrading(createTime, trackChanges: false);
             foreach (var user in users)
             {
                 CreateNotificationModel noti = new CreateNotificationModel
                 {
                     Content = account.Name + " post a trading post in group",
                     AccountId = user.AccountId,
-                    //TradingPostId = ,
+                    TradingPostId = createdTradingPostId,
                 };
                 _repositoryManager.Notification.CreateNotification(noti);
             }
