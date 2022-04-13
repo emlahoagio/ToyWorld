@@ -47,6 +47,34 @@ namespace Repository.Repository
             return result;
         }
 
+        public async Task<CommentInPostDetail> GetCommentDetailOfTradingPost(int accountId, int post_id, bool trackChanges)
+        {
+            var comments = await FindByCondition(x => x.TradingPostId == post_id, trackChanges)
+                .OrderByDescending(x => x.CommentDate)
+                .Include(x => x.Account)
+                .Include(x => x.ReactComments)
+                .ToListAsync();
+            var count = await FindByCondition(x => x.TradingPostId == post_id, trackChanges).CountAsync();
+
+            var result = new CommentInPostDetail
+            {
+                Count = count,
+                Comments = comments.Select(x => new CommentReturn
+                {
+                    CommentDate = x.CommentDate,
+                    Content = x.Content,
+                    Id = x.Id,
+                    IsReacted = x.ReactComments.Where(y => y.AccountId == accountId).Count() != 0,
+                    NumOfReact = x.ReactComments.Count,
+                    OwnerAvatar = x.Account.Avatar,
+                    OwnerId = x.AccountId.Value,
+                    OwnerName = x.Account.Name
+                }).ToList()
+            };
+
+            return result;
+        }
+
         public async Task<Comment> GetCommentReactById(int comment_id, bool trackChanges)
         {
             var comment = await FindByCondition(x => x.Id == comment_id, trackChanges)
@@ -65,63 +93,11 @@ namespace Repository.Repository
             return count;
         }
 
-        public async Task<Pagination<TradingPostInList>> GetNumOfCommentForTradingPostList(Pagination<TradingPostInList> result_no_comment, bool trackChanges)
+        public async Task<int> GetNumOfCommentByTradingId(int post_id, bool trackChanges)
         {
-            var result = new List<TradingPostInList>();
+            var count = await FindByCondition(x => x.TradingPostId == post_id, trackChanges).CountAsync();
 
-            foreach (var post in result_no_comment.Data)
-            {
-                var comments = await FindByCondition(x => x.TradingPostId == post.Id, trackChanges).ToListAsync();
-
-                post.NoOfComment = comments.Count();
-
-                result.Add(post);
-            }
-
-            result_no_comment.Data = result;
-            return result_no_comment;
-        }
-        
-        public async Task<Pagination<TradingManaged>> GetNumOfCommentForTradingPostList(Pagination<TradingManaged> result_no_comment, bool trackChanges)
-        {
-            var result = new List<TradingManaged>();
-
-            foreach (var post in result_no_comment.Data)
-            {
-                var comments = await FindByCondition(x => x.TradingPostId == post.Id, trackChanges).ToListAsync();
-
-                post.NoOfComment = comments.Count();
-
-                result.Add(post);
-            }
-
-            result_no_comment.Data = result;
-            return result_no_comment;
-        }
-
-        public async Task<TradingPostDetail> GetTradingComment(TradingPostDetail trading_post_detail_no_comment, int account_id ,bool trackChanges)
-        {
-            var comments = await FindByCondition(x => x.TradingPostId == trading_post_detail_no_comment.Id, trackChanges)
-                .Include(x => x.Account)
-                .Include(x => x.ReactComments)
-                .ToListAsync();
-
-            if (comments != null)
-            {
-                trading_post_detail_no_comment.Comment = comments.Select(x => new CommentReturn
-                {
-                    CommentDate = x.CommentDate,
-                    Content = x.Content,
-                    Id = x.Id,
-                    NumOfReact = x.ReactComments.Count(),
-                    OwnerAvatar = x.Account.Avatar,
-                    OwnerId = x.AccountId.Value,
-                    OwnerName = x.Account.Name,
-                    IsReacted = x.ReactComments.Where(x => x.AccountId == account_id).Count() != 0
-                }).ToList();
-            }
-
-            return trading_post_detail_no_comment;
+            return count;
         }
 
         public async Task<Comment> GetUpdateCommentById(int comment_id, bool trackChanges)

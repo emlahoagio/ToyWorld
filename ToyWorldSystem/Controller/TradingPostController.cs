@@ -5,6 +5,7 @@ using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace ToyWorldSystem.Controller
@@ -48,6 +49,32 @@ namespace ToyWorldSystem.Controller
         #endregion
 
         #region Get images of trading post
+        [HttpGet]
+        [Route("{trading_id}/images")]
+        public async Task<IActionResult> GetImagesByPostId(int trading_id)
+        {
+            var images = await _repositoryManager.Image.GetImageByTradingPostId(trading_id, trackChanges: false);
+
+            if (images == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No image in post");
+
+            return Ok(images);
+        }
+        #endregion
+
+        #region Get num of comment for trading post
+        /// <summary>
+        /// Get num of comment for post
+        /// </summary>
+        /// <param name="post_id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{post_id}/num_of_comment")]
+        public async Task<IActionResult> GetNumOfComment(int post_id)
+        {
+            var numOfComment = await _repositoryManager.Comment.GetNumOfCommentByTradingId(post_id, trackChanges: false);
+
+            return Ok(numOfComment);
+        }
         #endregion
 
         #region Get favorite trading post
@@ -74,11 +101,6 @@ namespace ToyWorldSystem.Controller
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
             }
 
-            trading = await _repositoryManager.Image.GetImageForListTradingPost(trading, trackChanges: false);
-
-            trading = await _repositoryManager.Comment.GetNumOfCommentForTradingPostList(trading, trackChanges: false);
-
-
             return Ok(trading);
         }
         #endregion
@@ -100,17 +122,13 @@ namespace ToyWorldSystem.Controller
 
             if (account.Role != 1) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to get");
 
-            var result_no_image_no_comment = await _repositoryManager.TradingPost
+            var result = await _repositoryManager.TradingPost
                 .GetTradingPostForManager(status, paging, trackChanges: false, accountId);
 
-            if (result_no_image_no_comment == null)
+            if (result == null)
             {
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
             }
-
-            var result_no_comment = await _repositoryManager.Image.GetImageForListTradingPost(result_no_image_no_comment, trackChanges: false);
-
-            var result = await _repositoryManager.Comment.GetNumOfCommentForTradingPostList(result_no_comment, trackChanges: false);
 
             result = await _repositoryManager.ReactTradingPost.GetIsReactedReactTrading(result, accountId, trackChanges: false);
 
@@ -170,6 +188,7 @@ namespace ToyWorldSystem.Controller
             return Ok(result);
         }
 
+        #region Get trading post detail
         /// <summary>
         /// Get trading post detail (Role: Manager, Member)
         /// </summary>
@@ -181,18 +200,30 @@ namespace ToyWorldSystem.Controller
         {
             var current_account_id = _userAccessor.getAccountId();
 
-            var trading_post_detail_no_image_no_comment =
+            var trading_post_detail =
                 await _repositoryManager.TradingPost.GetDetail(trading_post_id, current_account_id, trackChanges: false);
-
-            var trading_post_detail_no_comment =
-                await _repositoryManager.Image.GetImageForTradingDetail(trading_post_detail_no_image_no_comment, trackChanges: false);
-
-            var trading_post_detail = await _repositoryManager.Comment.GetTradingComment(trading_post_detail_no_comment, current_account_id, trackChanges: false);
 
             if (trading_post_detail == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "Invalid trading post Id");
 
             return Ok(trading_post_detail);
         }
+        #endregion
+
+        #region Get comment for trading detail
+        /// <summary>
+        /// Get comment for trading post detail page
+        /// </summary>
+        /// <param name="post_id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{post_id}/comment_detail")]
+        public async Task<IActionResult> GetDetailComment(int post_id)
+        {
+            var result = await _repositoryManager.Comment.GetCommentDetailOfTradingPost(_userAccessor.getAccountId(), post_id, trackChanges: false);
+
+            return Ok(result);
+        }
+        #endregion
 
         /// <summary>
         /// Create new trading post (Role: Manager, Member)

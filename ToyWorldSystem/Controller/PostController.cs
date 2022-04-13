@@ -169,6 +169,11 @@ namespace ToyWorldSystem.Controller
         #endregion
 
         #region Get comment for post detail
+        /// <summary>
+        /// Get comment for post detail page
+        /// </summary>
+        /// <param name="post_id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("{post_id}/comment_detail")]
         public async Task<IActionResult> GetDetailComment(int post_id)
