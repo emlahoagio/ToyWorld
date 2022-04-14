@@ -298,15 +298,15 @@ namespace Repository
         {
             var posts = await FindByCondition(x => x.PostDate >= DateTime.UtcNow.AddMonths(-1) && x.IsPublic == true, trackChanges)
                 .OrderByDescending(x => x.PostDate)
-                .Skip((paging.PageNumber - 1) * paging.PageSize)
-                .Take(paging.PageSize)
+                //.Skip((paging.PageNumber - 1) * paging.PageSize)
+                //.Take(paging.PageSize)
                 .Include(x => x.Account)
                 .Include(x => x.ReactPosts)
                 .ToListAsync();
 
             return new Pagination<PostInList>
             {
-                Count = await FindByCondition(x => x.PostDate >= DateTime.UtcNow.AddMonths(-1), trackChanges).CountAsync(),
+                Count = await FindByCondition(x => x.PostDate >= DateTime.UtcNow.AddMonths(-1) && x.IsPublic == true, trackChanges).CountAsync(),
                 Data = posts.Select(x => new PostInList
                 {
                     Id = x.Id,
