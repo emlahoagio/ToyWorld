@@ -261,7 +261,14 @@ namespace ToyWorldSystem.Controller
 
             if (rewards == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "This contest has not prize");
 
-            return Ok(rewards);
+            var result = new List<PrizeReturn>();
+            foreach(var reward in rewards)
+            {
+                reward.Images = await _repositoryManager.Image.GetImageForPrize(reward.Id, trackChanges: false);
+                result.Add(reward);
+            }
+
+            return Ok(result);
         }
         #endregion
 
