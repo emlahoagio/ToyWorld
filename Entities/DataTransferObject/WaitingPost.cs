@@ -13,5 +13,7 @@ namespace Entities.DataTransferObject
         public string Content { get; set; }
         public DateTime? PostDate { get; set; }
         public List<ImageReturn> Images { get; set; }
+        public int GroupId { get; set; }
+        public string GroupName { get; set; }
     }
 }

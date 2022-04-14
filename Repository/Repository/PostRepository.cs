@@ -131,6 +131,7 @@ namespace Repository
                 .Take(param.PageSize)
                 .Include(x => x.Account)
                 .Include(x => x.ReactPosts)
+                .Include(x => x.Group)
                 .ToListAsync();
 
             int count = await FindByCondition(x => x.IsWaiting == true, trackChanges).CountAsync();
@@ -144,7 +145,9 @@ namespace Repository
                 OwnerId = x.AccountId,
                 OwnerAvatar = x.Account.Avatar,
                 OwnerName = x.Account.Name,
-                PostDate = x.PostDate
+                PostDate = x.PostDate,
+                GroupName = x.Group.Name,
+                GroupId = x.GroupId.Value
             });
 
             var result = new Pagination<WaitingPost>
@@ -168,7 +171,9 @@ namespace Repository
                 .Include(x => x.ReactPosts)
                 .ToListAsync();
 
-            int count = await FindByCondition(x => x.IsWaiting == true && x.AccountId == accountId, trackChanges).CountAsync();
+            int count = await FindByCondition(x => x.IsWaiting == true && x.AccountId == accountId, trackChanges)
+                .Include(x => x.Group)
+                .CountAsync();
 
             if (posts == null || posts.Count == 0) return null;
 
@@ -179,7 +184,9 @@ namespace Repository
                 OwnerId = x.AccountId,
                 OwnerAvatar = x.Account.Avatar,
                 OwnerName = x.Account.Name,
-                PostDate = x.PostDate
+                PostDate = x.PostDate,
+                GroupId = x.GroupId.Value,
+                GroupName = x.Group.Name
             });
 
             var result = new Pagination<WaitingPost>
@@ -291,15 +298,15 @@ namespace Repository
         {
             var posts = await FindByCondition(x => x.PostDate >= DateTime.UtcNow.AddMonths(-1) && x.IsPublic == true, trackChanges)
                 .OrderByDescending(x => x.PostDate)
-                .Skip((paging.PageNumber - 1) * paging.PageSize)
-                .Take(paging.PageSize)
+                //.Skip((paging.PageNumber - 1) * paging.PageSize)
+                //.Take(paging.PageSize)
                 .Include(x => x.Account)
                 .Include(x => x.ReactPosts)
                 .ToListAsync();
 
             return new Pagination<PostInList>
             {
-                Count = await FindByCondition(x => x.PostDate >= DateTime.UtcNow.AddMonths(-1), trackChanges).CountAsync(),
+                Count = await FindByCondition(x => x.PostDate >= DateTime.UtcNow.AddMonths(-1) && x.IsPublic == true, trackChanges).CountAsync(),
                 Data = posts.Select(x => new PostInList
                 {
                     Id = x.Id,

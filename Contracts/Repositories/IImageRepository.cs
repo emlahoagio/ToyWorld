@@ -32,5 +32,6 @@ namespace Contracts
         Task<Pagination<TradingManaged>> GetImageForListTradingPost(Pagination<TradingManaged> result_no_image, bool trackChanges);
         Task<List<ImageReturn>> GetImageForBill(int bill_id, bool trackChanges);
         Task<Pagination<BillByStatus>> GetImageForBill(Pagination<BillByStatus> bills, bool trackChanges);
+        Task Delete(List<int> listPostId, bool trackChanges);
     }
 }

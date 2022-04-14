@@ -480,15 +480,16 @@ namespace ToyWorldSystem.Controller
             await _repositoryManager.EvaluateContest.Delete(contest_id, trackChanges: false);
             //Remove post of contest and rate
             var listPostId = await _repositoryManager.PostOfContest.GetPostOfContest(contest_id, trackChanges: false);
-            await _repositoryManager.Rate.Delete(listPostId, trackChanges: false);
-            await _repositoryManager.PostOfContest.Delete(contest_id, trackChanges: false);
+            await _repositoryManager.Rate.Delete(listPostId, trackChanges: true);
+            await _repositoryManager.PostOfContest.Delete(contest_id, trackChanges: true);
+            await _repositoryManager.Image.Delete(listPostId, trackChanges: true);
             //Remove subcribers
-            await _repositoryManager.JoinContest.Delete(contest_id, trackChanges: false);
+            await _repositoryManager.JoinContest.Delete(contest_id, trackChanges: true);
             //Remove notification
-            await _repositoryManager.Notification.Delete(contest_id, trackChanges: false);
+            await _repositoryManager.Notification.Delete(contest_id, trackChanges: true);
             await _repositoryManager.SaveAsync();
             //Remove contest
-            await _repositoryManager.Contest.Delete(contest_id, trackChanges: false);
+            await _repositoryManager.Contest.Delete(contest_id, trackChanges: true);
             await _repositoryManager.SaveAsync();
 
             return Ok("Save changes success");

@@ -275,5 +275,20 @@ namespace Repository
             return bills;
         }
 
+        public async Task Delete(List<int> listPostId, bool trackChanges)
+        {
+            foreach(var id in listPostId)
+            {
+                var images = await FindByCondition(x => x.PostOfContestId == id, trackChanges).ToListAsync();
+
+                if(images != null)
+                {
+                    foreach(var image in images)
+                    {
+                        Delete(image);
+                    }
+                }
+            }
+        }
     }
 }
