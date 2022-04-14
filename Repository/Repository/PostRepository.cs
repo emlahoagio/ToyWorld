@@ -131,6 +131,7 @@ namespace Repository
                 .Take(param.PageSize)
                 .Include(x => x.Account)
                 .Include(x => x.ReactPosts)
+                .Include(x => x.Group)
                 .ToListAsync();
 
             int count = await FindByCondition(x => x.IsWaiting == true, trackChanges).CountAsync();
@@ -144,7 +145,9 @@ namespace Repository
                 OwnerId = x.AccountId,
                 OwnerAvatar = x.Account.Avatar,
                 OwnerName = x.Account.Name,
-                PostDate = x.PostDate
+                PostDate = x.PostDate,
+                GroupName = x.Group.Name,
+                GroupId = x.GroupId.Value
             });
 
             var result = new Pagination<WaitingPost>
