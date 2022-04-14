@@ -151,6 +151,7 @@ namespace Repository.Repository
         public async Task<PostDetail> GetPostComment(PostDetail result_no_comment, bool trackChanges, int account_id)
         {
             var comments = await FindByCondition(x => x.PostId == result_no_comment.Id, trackChanges)
+                .OrderByDescending(x => x.CommentDate)
                 .Include(x => x.ReactComments)
                 .Include(x => x.Account)
                 .ToListAsync();
@@ -210,6 +211,7 @@ namespace Repository.Repository
         public async Task<TradingPostDetail> GetTradingComment(TradingPostDetail trading_post_detail_no_comment, int account_id, bool trackChanges)
         {
             var comments = await FindByCondition(x => x.TradingPostId == trading_post_detail_no_comment.Id, trackChanges)
+                .OrderByDescending(x => x.CommentDate)
                 .Include(x => x.Account)
                 .Include(x => x.ReactComments)
                 .ToListAsync();
