@@ -290,7 +290,7 @@ namespace Repository
 
         public async Task<Pagination<PostInList>> GetPostByFavorite(PagingParameters paging, int account_id, bool trackChanges)
         {
-            var posts = await FindByCondition(x => x.PostDate >= DateTime.UtcNow.AddMonths(-1), trackChanges)
+            var posts = await FindByCondition(x => x.PostDate >= DateTime.UtcNow.AddMonths(-1) && x.IsPublic == true, trackChanges)
                 .OrderByDescending(x => x.PostDate)
                 .Skip((paging.PageNumber - 1) * paging.PageSize)
                 .Take(paging.PageSize)

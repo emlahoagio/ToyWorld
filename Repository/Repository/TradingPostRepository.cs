@@ -397,5 +397,49 @@ namespace Repository.Repository
             return result;
         }
 
+        public async Task<Pagination<TradingPostInList>> GetTradingPostOfAccount(int current_account_id, PagingParameters paging, bool trackChanges, int account_id)
+        {
+            var tradingPosts = await FindByCondition(x => x.IsDeleted == false && x.AccountId == account_id, trackChanges)
+                .OrderByDescending(x => x.PostDate)
+                .Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize)
+                .Include(x => x.Toy)
+                .Include(x => x.Brand)
+                .Include(x => x.Type)
+                .Include(x => x.ReactTradingPosts)
+                .Include(x => x.Account)
+                .ToListAsync();
+
+            var count = await FindByCondition(x => x.IsDeleted == false && x.AccountId == account_id, trackChanges).CountAsync();
+
+            var result = new Pagination<TradingPostInList>
+            {
+                PageSize = paging.PageSize,
+                PageNumber = paging.PageNumber,
+                Count = count,
+                Data = tradingPosts.Select(x => new TradingPostInList
+                {
+                    Address = x.Address,
+                    Brand = x.Brand == null ? "Unknow" : x.Brand.Name,
+                    Exchange = x.Trading,
+                    Id = x.Id,
+                    NoOfReact = x.ReactTradingPosts.Count,
+                    OwnerId = x.AccountId,
+                    OwnerAvatar = x.Account.Avatar,
+                    OwnerName = x.Account.Name,
+                    PostDate = x.PostDate,
+                    ToyName = x.ToyName,
+                    Type = x.Type == null ? "Unknow" : x.Type.Name,
+                    IsLikedPost = x.ReactTradingPosts.Where(y => y.AccountId == account_id).Count() == 0 ? false : true,
+                    Value = x.Value,
+                    Content = x.Content,
+                    Title = x.Title,
+                    Phone = x.Phone,
+                    Status = x.Status,
+                })
+            };
+
+            return result;
+        }
     }
 }
