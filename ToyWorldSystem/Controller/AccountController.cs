@@ -508,7 +508,6 @@ namespace ToyWorldSystem.Controller
             if (account_id != curent_account.Id) throw new ErrorDetails(HttpStatusCode.BadRequest, "Can't update another user profile");
 
             curent_account.Name = param.Name;
-            curent_account.Email = param.Email;
             curent_account.Phone = param.Phone;
             curent_account.Avatar = param.Avatar;
             curent_account.Biography = param.Biography;
