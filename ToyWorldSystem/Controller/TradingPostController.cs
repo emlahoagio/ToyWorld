@@ -5,6 +5,7 @@ using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -43,6 +44,8 @@ namespace ToyWorldSystem.Controller
             {
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
             }
+
+            result = await _repositoryManager.ReactTradingPost.GetIsReactedReactTrading(result, account_id, trackChanges: false);
 
             return Ok(result);
         }
@@ -374,6 +377,8 @@ namespace ToyWorldSystem.Controller
             {
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts of this account");
             }
+
+            result = await _repositoryManager.ReactTradingPost.GetIsReactedReactTrading(result, account_id, trackChanges: false);
 
             return Ok(result);
         }

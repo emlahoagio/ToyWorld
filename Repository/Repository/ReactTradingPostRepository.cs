@@ -4,6 +4,7 @@ using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -32,6 +33,24 @@ namespace Repository.Repository
                 var isLiked = await FindByCondition(x => x.TradingPostId == trading.Id && x.AccountId == account_id, trackChanges).FirstOrDefaultAsync() != null;
 
                 trading.IsLikedPost = isLiked;
+                data_result.Add(trading);
+            }
+            result.Data = data_result;
+
+            return result;
+        }
+
+        public async Task<Pagination<TradingPostInList>> GetIsReactedReactTrading(Pagination<TradingPostInList> result, int account_id, bool trackChanges)
+        {
+            var data_result = new List<TradingPostInList>();
+
+            foreach (var trading in result.Data)
+            {
+                var reacts = await FindByCondition(x => x.TradingPostId == trading.Id, trackChanges).ToListAsync();
+
+                trading.IsLikedPost = reacts.Where(x => x.AccountId == account_id).Count() > 0;
+                trading.NoOfReact = reacts.Count();
+
                 data_result.Add(trading);
             }
             result.Data = data_result;

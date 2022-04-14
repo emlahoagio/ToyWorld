@@ -65,7 +65,7 @@ namespace Repository.Repository
                 .Include(x => x.Toy)
                 .Include(x => x.Brand)
                 .Include(x => x.Type)
-                .Include(x => x.ReactTradingPosts)
+                //.Include(x => x.ReactTradingPosts)
                 .Include(x => x.Account)
                 .ToListAsync();
 
@@ -82,14 +82,14 @@ namespace Repository.Repository
                     Brand = x.Brand == null ? "Unknow" : x.Brand.Name,
                     Exchange = x.Trading,
                     Id = x.Id,
-                    NoOfReact = x.ReactTradingPosts.Count,
+                    //NoOfReact = x.ReactTradingPosts.Count,
                     OwnerId = x.AccountId,
                     OwnerAvatar = x.Account.Avatar,
                     OwnerName = x.Account.Name,
                     PostDate = x.PostDate,
                     ToyName = x.ToyName,
                     Type = x.Type == null ? "Unknow" : x.Type.Name,
-                    IsLikedPost = x.ReactTradingPosts.Where(y => y.AccountId == account_id).Count() == 0 ? false : true,
+                    //IsLikedPost = x.ReactTradingPosts.Where(y => y.AccountId == account_id).Count() == 0 ? false : true,
                     Value = x.Value,
                     Content = x.Content,
                     Title = x.Title,
@@ -403,10 +403,9 @@ namespace Repository.Repository
                 .OrderByDescending(x => x.PostDate)
                 .Skip((paging.PageNumber - 1) * paging.PageSize)
                 .Take(paging.PageSize)
-                .Include(x => x.Toy)
                 .Include(x => x.Brand)
                 .Include(x => x.Type)
-                .Include(x => x.ReactTradingPosts)
+                //.Include(x => x.ReactTradingPosts)
                 .Include(x => x.Account)
                 .ToListAsync();
 
@@ -423,14 +422,14 @@ namespace Repository.Repository
                     Brand = x.Brand == null ? "Unknow" : x.Brand.Name,
                     Exchange = x.Trading,
                     Id = x.Id,
-                    NoOfReact = x.ReactTradingPosts.Count,
+                    //NoOfReact = x.ReactTradingPosts.Count,
                     OwnerId = x.AccountId,
                     OwnerAvatar = x.Account.Avatar,
                     OwnerName = x.Account.Name,
                     PostDate = x.PostDate,
                     ToyName = x.ToyName,
                     Type = x.Type == null ? "Unknow" : x.Type.Name,
-                    IsLikedPost = x.ReactTradingPosts.Where(y => y.AccountId == account_id).Count() == 0 ? false : true,
+                    //IsLikedPost = x.ReactTradingPosts.Where(y => y.AccountId == account_id).Count() == 0 ? false : true,
                     Value = x.Value,
                     Content = x.Content,
                     Title = x.Title,
