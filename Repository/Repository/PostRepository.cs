@@ -38,7 +38,6 @@ namespace Repository
                 AccountId = accountId,
                 Content = param.Content,
                 GroupId = param.GroupId,
-                ToyId = param.ToyId == 0 ? 3 : param.ToyId,
                 Images = param.ImagesLink.Select(x => new Image { Url = x }).ToList(),
                 IsWaiting = true,
                 IsPublic = false,

@@ -177,6 +177,32 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
+        #region Get contest by group id mobile
+        /// <summary>
+        /// Get contest by group id (Role: Manager, Member)
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("highlight/mobile")]
+        public async Task<IActionResult> GetContestHighlightMb([FromQuery] PagingParameters paging)
+        {
+            var account_id = _userAccessor.getAccountId();
+
+            var contest_have_not_prize = await _repositoryManager.Contest.GetContestHighlightMb(account_id, trackChanges: false, paging);
+
+            if (contest_have_not_prize == null)
+            {
+                throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No contest is available");
+            }
+
+
+            var result = await _repositoryManager.PrizeContest.GetPrizeForContest(contest_have_not_prize);
+
+            return Ok(result);
+        }
+        #endregion
+
         #region Get contest by group id
         /// <summary>
         /// Get contest by group id (Role: Manager, Member)
