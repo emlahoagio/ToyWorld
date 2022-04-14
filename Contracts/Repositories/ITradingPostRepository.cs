@@ -23,5 +23,6 @@ namespace Contracts.Repositories
         Task<int> GetNumOfReact(int trading_post_id, bool trackChanges);
         Task<Pagination<TradingPostInList>> GetTradingByBrandAndType(int account_id, List<Entities.Models.Type> types, List<Brand> brands, PagingParameters paging, bool trackChanges);
         Task<int> GetIdOfCreatedTrading(DateTime createTime, bool trackChanges);
+        Task<Pagination<TradingPostInList>> GetTradingPostOfAccount(int current_account_id, PagingParameters paging, bool trackChanges, int account_id2);
     }
 }

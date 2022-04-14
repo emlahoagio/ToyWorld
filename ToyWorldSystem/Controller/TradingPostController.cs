@@ -354,6 +354,60 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
+        #region Get trading by account id
+        /// <summary>
+        /// Get list trading post by account id(Role: Manager, Member)
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <param name="account_id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("account/{account_id}")]
+        public async Task<IActionResult> GetListTradingPostByAccountId([FromQuery] PagingParameters paging, int account_id)
+        {
+            var current_account_id = _userAccessor.getAccountId();
+
+            var result = await _repositoryManager.TradingPost
+                    .GetTradingPostOfAccount(current_account_id, paging, trackChanges: false, account_id);
+
+            if (result == null)
+            {
+                throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts of this account");
+            }
+
+            return Ok(result);
+        }
+        #endregion
+
+        #region Get trading by account id mobile
+        /// <summary>
+        /// Get list trading post by account id(Role: Manager, Member)
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <param name="account_id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("account/{account_id}/mobile")]
+        public async Task<IActionResult> GetListTradingPostByAccountIdMb([FromQuery] PagingParameters paging, int account_id)
+        {
+            var current_account_id = _userAccessor.getAccountId();
+
+            var result = await _repositoryManager.TradingPost
+                    .GetTradingPostOfAccount(current_account_id, paging, trackChanges: false, account_id);
+
+            if (result == null)
+            {
+                throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts of this account");
+            }
+
+            result = await _repositoryManager.Image.GetImageForListTradingPost(result, trackChanges: false);
+
+            result = await _repositoryManager.Comment.GetNumOfCommentForTradingPostList(result, trackChanges: false);
+
+            return Ok(result);
+        }
+        #endregion
+
         #region Create trading post
         /// <summary>
         /// Create new trading post (Role: Manager, Member)
