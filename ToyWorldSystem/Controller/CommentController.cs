@@ -46,7 +46,7 @@ namespace ToyWorldSystem.Controller
             var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), false);
             var noti = new CreateNotificationModel
             {
-                TradingPostId = param.PostId,
+                PostId = param.PostId,
                 Content = account.Name + " has commented on your post",
                 AccountId = await _repositoryManager.Post.GetOwnerByPostId(param.PostId),
             };

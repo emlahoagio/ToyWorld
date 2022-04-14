@@ -243,7 +243,7 @@ namespace Repository
                 .Skip((paging.PageNumber - 1) * paging.PageSize)
                 .Take(paging.PageSize)
                 .Include(x => x.Account)
-                .Include(x => x.ReactPosts)
+                //.Include(x => x.ReactPosts)
                 .ToListAsync();
 
             var count = listPost.Count();
@@ -256,13 +256,13 @@ namespace Repository
             var result = listPost.Select(x => new PostInList
             {
                 Id = x.Id,
-                NumOfReact = x.ReactPosts.Count,
+                //NumOfReact = x.ReactPosts.Count,
                 Content = x.Content,
                 OwnerId = x.AccountId,
                 OwnerAvatar = x.Account.Avatar,
                 OwnerName = x.Account.Name,
                 PublicDate = x.PublicDate,
-                IsLikedPost = x.ReactPosts.Where(y => y.AccountId == accountId).Count() == 0 ? false : true,
+                //IsLikedPost = x.ReactPosts.Where(y => y.AccountId == accountId).Count() == 0 ? false : true,
             }).ToList();
 
             var pagingNation = new Pagination<PostInList>

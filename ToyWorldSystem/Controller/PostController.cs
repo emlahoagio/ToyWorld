@@ -163,12 +163,16 @@ namespace ToyWorldSystem.Controller
         [Route("account/{account_id}")]
         public async Task<IActionResult> GetListPostByAccount(int account_id, [FromQuery] PagingParameters paging)
         {
+            var current_acc_id = _userAccessor.getAccountId();
+
             var result = await _repositoryManager.Post.GetPostByAccountId(account_id, trackChanges: false, paging);
 
             if (result == null)
             {
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "This account has no post yet");
             }
+
+            result = await _repositoryManager.ReactPost.GetReactForPost(result, current_acc_id, trackChanges: false);
 
             return Ok(result);
         }
@@ -185,12 +189,16 @@ namespace ToyWorldSystem.Controller
         [Route("account/{account_id}/mobile")]
         public async Task<IActionResult> GetListPostByAccountMb(int account_id, [FromQuery] PagingParameters paging)
         {
+            var current_acc_id = _userAccessor.getAccountId();
+
             var result = await _repositoryManager.Post.GetPostByAccountId(account_id, trackChanges: false, paging);
 
             if (result == null)
             {
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "This account has no post yet");
             }
+
+            result = await _repositoryManager.ReactPost.GetReactForPost(result, current_acc_id, trackChanges: false);
 
             result = await _repositoryManager.Image.GetImageForListPost(result, trackChanges: false);
 
