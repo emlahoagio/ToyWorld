@@ -29,7 +29,7 @@ namespace Repository.Repository
         public async Task<List<PrizeReturn>> GetPrizeForContestDetail(int contest_id, bool trackChanges)
         {
             var prize_list = await FindByCondition(x => x.ContestId == contest_id, trackChanges)
-                .Include(x => x.Prize).ThenInclude(x => x.Images)
+                .Include(x => x.Prize)
                 .ToListAsync();
 
             var result = prize_list.Select(x => new PrizeReturn
@@ -38,7 +38,6 @@ namespace Repository.Repository
                 Name = x.Prize.Name,
                 Id = x.Prize.Id,
                 Value = x.Prize.Value,
-                Images = x.Prize.Images.Select(y => new ImageReturn { Id = y.Id, Url = y.Url}).ToList()
             }).ToList();
 
             return result;
