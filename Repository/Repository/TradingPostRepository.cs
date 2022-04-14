@@ -157,6 +157,8 @@ namespace Repository.Repository
                 .Include(x => x.Type)
                 .FirstOrDefaultAsync();
 
+            if (trading_post == null) return null;
+
             var result = new TradingPostDetail
             {
                 Id = trading_post.Id,

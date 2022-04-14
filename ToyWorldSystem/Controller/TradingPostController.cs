@@ -330,7 +330,7 @@ namespace ToyWorldSystem.Controller
             var trading_post_detail =
                 await _repositoryManager.TradingPost.GetDetail(trading_post_id, current_account_id, trackChanges: false);
 
-            if (trading_post_detail == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "Invalid trading post Id");
+            if (trading_post_detail == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "This post is disabled");
 
             trading_post_detail = await 
                 _repositoryManager.Image.GetImageForTradingDetail(trading_post_detail, trackChanges: false);
