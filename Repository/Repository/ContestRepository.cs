@@ -334,5 +334,45 @@ namespace Repository
             var contest = await FindByCondition(x => x.Id == contest_id, trackChanges).FirstOrDefaultAsync();
             Delete(contest);
         }
+
+        public async Task<Pagination<ContestInGroup>> GetContestHighlightMb(int account_id, bool trackChanges, PagingParameters paging)
+        {
+            var contest_in_group = await FindByCondition(c => c.Status == 1 || c.Status == 3, trackChanges)
+                .ToListAsync();
+
+            if (contest_in_group == null) return null;
+
+            var count = contest_in_group.Count();
+
+            var paging_contest = contest_in_group
+                .Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize);
+
+            var contestInGroup = paging_contest.Select(x => new ContestInGroup
+            {
+                CoverImage = x.CoverImage,
+                Description = x.Description,
+                EndDate = x.EndDate,
+                EndRegistration = x.EndRegistration,
+                Id = x.Id,
+                Slogan = x.Slogan,
+                MaxRegistration = x.MaxRegistration,
+                MinRegistration = x.MinRegistration,
+                StartDate = x.StartDate,
+                StartRegistration = x.StartRegistration,
+                Title = x.Title,
+                Status = x.Status.Value
+            }).ToList();
+
+            var result = new Pagination<ContestInGroup>
+            {
+                Count = count,
+                Data = contestInGroup,
+                PageNumber = paging.PageNumber,
+                PageSize = paging.PageSize
+            };
+
+            return result;
+        }
     }
 }
