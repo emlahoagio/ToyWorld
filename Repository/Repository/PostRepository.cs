@@ -21,7 +21,7 @@ namespace Repository
         {
             post.IsPublic = true;
             post.IsWaiting = false;
-            post.PublicDate = DateTime.Now;
+            post.PublicDate = DateTime.UtcNow;
             Update(post);
         }
 
