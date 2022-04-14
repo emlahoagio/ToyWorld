@@ -45,6 +45,28 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
+        #region Get bill detail mobile
+        /// <summary>
+        /// Get bill detail in the chat (Role: Manager, Member)
+        /// </summary>
+        /// <param name="bill_id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{bill_id}/details/mobile")]
+        public async Task<IActionResult> GetBillDetailMb(int bill_id)
+        {
+            var detail = await _repository.Bill.GetBillDetail(bill_id, trackChanges: false);
+
+            if (detail == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No bill matches with id send");
+
+            detail.Images = await _repository.Image.GetImageForBill(bill_id, trackChanges: false);
+
+            detail.IsRated = await _repository.RateSeller.IsRated(detail.SellerId, detail.BuyerId, trackChanges: false);
+
+            return Ok(detail);
+        }
+        #endregion
+
         #region Get bill by trading post id
         /// <summary>
         /// Get bill by trading post id (Role: Manager)
@@ -99,6 +121,25 @@ namespace ToyWorldSystem.Controller
             var bills = await _repository.Bill.GetBillByStatus(status, paging, trackChanges: false);
             if (bills.Data.Count() == 0) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No bill with the status: " + status);
 
+            return Ok(bills);
+        }
+        #endregion
+
+        #region Get bill by status mobile
+        /// <summary>
+        /// Get bill by status mobile
+        /// </summary>
+        /// <param name="status">0.Draft; 1. Delivery; 2. Closed; 3.Cancel</param>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("status/{status}/mobile")]
+        public async Task<IActionResult> GetBillByStatusMb(int status, [FromQuery] PagingParameters paging)
+        {
+            var bills = await _repository.Bill.GetBillByStatus(status, paging, trackChanges: false);
+            if (bills.Data.Count() == 0) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No bill with the status: " + status);
+
+            bills = await _repository.Image.GetImageForBill(bills, trackChanges: false);
             return Ok(bills);
         }
         #endregion

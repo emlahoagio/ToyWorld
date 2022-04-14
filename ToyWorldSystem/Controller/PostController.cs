@@ -42,6 +42,34 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
+        #region Post in group for mobile
+        /// <summary>
+        /// Get list post by group id for mobile(Role: Members, Manager)
+        /// </summary>
+        /// <param name="group_id">Id return in get list</param>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("group/{group_id}/mobile")]
+        public async Task<IActionResult> GetListPostByGroupMobile(int group_id, [FromQuery] PagingParameters paging)
+        {
+            var account_id = _userAccessor.getAccountId();
+
+            var result = await _repositoryManager.Post.GetPostByGroupId(group_id, trackChanges: false, paging, account_id);
+
+            if (result == null)
+            {
+                throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
+            }
+
+            result = await _repositoryManager.Image.GetImageForListPost(result, trackChanges: false);
+
+            result = await _repositoryManager.Comment.GetNumOfCommentForPostList(result, trackChanges: false);
+
+            return Ok(result);
+        }
+        #endregion
+
         #region Get image of post
         /// <summary>
         /// Get Image for post
@@ -98,6 +126,32 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
+        #region Get popular post Mobile
+        /// <summary>
+        /// Get post list for home page mobile
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("popular/mobile")]
+        public async Task<IActionResult> GetPopularPostForMb([FromQuery] PagingParameters paging)
+        {
+            var account_id = _userAccessor.getAccountId();
+
+            var posts = await _repositoryManager.Post.GetPostByFavorite(paging, account_id, trackChanges: false);
+            if (posts == null)
+            {
+                throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
+            }
+
+            posts = await _repositoryManager.Image.GetImageForListPost(posts, trackChanges: false);
+
+            posts = await _repositoryManager.Comment.GetNumOfCommentForPostList(posts, trackChanges: false);
+
+            return Ok(posts);
+        }
+        #endregion
+
         #region Get post of account
         /// <summary>
         /// Get post by account Id (Role: Manager, Member)
@@ -115,6 +169,32 @@ namespace ToyWorldSystem.Controller
             {
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "This account has no post yet");
             }
+
+            return Ok(result);
+        }
+        #endregion
+
+        #region Get post of account mobile
+        /// <summary>
+        /// Get post by account Id mobile(Role: Manager, Member)
+        /// </summary>
+        /// <param name="account_id">Id of account return in login function</param>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("account/{account_id}/mobile")]
+        public async Task<IActionResult> GetListPostByAccountMb(int account_id, [FromQuery] PagingParameters paging)
+        {
+            var result = await _repositoryManager.Post.GetPostByAccountId(account_id, trackChanges: false, paging);
+
+            if (result == null)
+            {
+                throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "This account has no post yet");
+            }
+
+            result = await _repositoryManager.Image.GetImageForListPost(result, trackChanges: false);
+
+            result = await _repositoryManager.Comment.GetNumOfCommentForPostList(result, trackChanges: false);
 
             return Ok(result);
         }
@@ -147,6 +227,35 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
+        #region Get waiting post
+        /// <summary>
+        /// Get Waiting post (Role: Manager, Member)
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("waiting/mobile")]
+        public async Task<IActionResult> GetWaitingPostMb([FromQuery] PagingParameters paging)
+        {
+            var accountId = _userAccessor.getAccountId();
+            var account = await _repositoryManager.Account.GetAccountById(accountId, trackChanges: false);
+            Pagination<WaitingPost> result;
+            if (account.Role == 1)
+            {
+                result = await _repositoryManager.Post.GetWaitingPost(trackChanges: false, paging);
+            }
+            else
+            {
+                result = await _repositoryManager.Post.GetWaitingPost(trackChanges: false, paging, accountId);
+            }
+            if (result == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No waiting post was found");
+
+            result = await _repositoryManager.Image.GetImageForWaitingPostDetail(result, trackChanges: false);
+
+            return Ok(result);
+        }
+        #endregion
+
         #region Get post detail
         /// <summary>
         /// Get post detail (Role: Member, Manager)
@@ -163,6 +272,30 @@ namespace ToyWorldSystem.Controller
 
             if (result == null)
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No post matches with the id: " + post_id);
+
+            return Ok(result);
+        }
+        #endregion
+
+        #region Get post detail mobile
+        /// <summary>
+        /// Get post detail (Role: Member, Manager)
+        /// </summary>
+        /// <param name="post_id">Id of post return in get list post</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("details/{post_id}/mobile")]
+        public async Task<IActionResult> GetPostDetailMb(int post_id)
+        {
+            var account_id = _userAccessor.getAccountId();
+
+            var result = await _repositoryManager.Post.GetPostDetail(post_id, trackChanges: false, account_id);
+
+            if (result == null)
+                throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No post matches with the id: " + post_id);
+
+            result = await _repositoryManager.Comment.GetPostComment(result, trackChanges: false, account_id);
+            result = await _repositoryManager.Image.GetImageForPostDetail(result, trackChanges: false);
 
             return Ok(result);
         }

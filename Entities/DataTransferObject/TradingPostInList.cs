@@ -22,5 +22,7 @@ namespace Entities.DataTransferObject
         public string Title { get; set; }
         public string Phone { get; set; }
         public int Status { get; set; }
+        public List<ImageReturn> Images { get; set; }
+        public int NoOfComment { get; set; }
     }
 }

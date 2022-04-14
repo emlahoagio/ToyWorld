@@ -12,5 +12,6 @@ namespace Entities.DataTransferObject
         public string OwnerName { get; set; }
         public string Content { get; set; }
         public DateTime? PostDate { get; set; }
+        public List<ImageReturn> Images { get; set; }
     }
 }

@@ -48,6 +48,35 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
+        #region Get trading by group id mobile
+        /// <summary>
+        /// Get list trading post (Role: Manager, Member)
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <param name="group_id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("group/{group_id}/mobile")]
+        public async Task<IActionResult> GetListTradingPostMb([FromQuery] PagingParameters paging, int group_id)
+        {
+            var account_id = _userAccessor.getAccountId();
+
+            var result = await _repositoryManager.TradingPost
+                    .GetTradingPostInGroupMember(group_id, paging, trackChanges: false, account_id);
+
+            if (result == null)
+            {
+                throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
+            }
+
+            result = await _repositoryManager.Image.GetImageForListTradingPost(result, trackChanges: false);
+
+            result = await _repositoryManager.Comment.GetNumOfCommentForTradingPostList(result, trackChanges: false);
+
+            return Ok(result);
+        }
+        #endregion
+
         #region Get images of trading post
         [HttpGet]
         [Route("{trading_id}/images")]
@@ -85,7 +114,7 @@ namespace ToyWorldSystem.Controller
         /// <returns></returns>
         [HttpGet]
         [Route("favorite")]
-        public async Task<IActionResult> GetFavoriteTradingPost([FromQuery]PagingParameters paging)
+        public async Task<IActionResult> GetFavoriteTradingPost([FromQuery] PagingParameters paging)
         {
             var account_id = _userAccessor.getAccountId();
 
@@ -95,11 +124,43 @@ namespace ToyWorldSystem.Controller
             var brands = await _repositoryManager.FavoriteBrand.GetFavoriteBrand(account_id, trackChanges: false);
             //Get contest by type and brand
             var trading = await _repositoryManager.TradingPost.GetTradingByBrandAndType(account_id, types, brands, paging, trackChanges: false);
-            
+
             if (trading == null)
             {
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
             }
+
+            return Ok(trading);
+        }
+        #endregion
+
+        #region Get favorite trading post
+        /// <summary>
+        /// Get favorite trading post for home page
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("favorite/mobile")]
+        public async Task<IActionResult> GetFavoriteTradingPostMb([FromQuery] PagingParameters paging)
+        {
+            var account_id = _userAccessor.getAccountId();
+
+            //Get favorite type
+            var types = await _repositoryManager.FavoriteType.GetFavoriteType(account_id, trackChanges: false);
+            //Get favorite brand
+            var brands = await _repositoryManager.FavoriteBrand.GetFavoriteBrand(account_id, trackChanges: false);
+            //Get contest by type and brand
+            var trading = await _repositoryManager.TradingPost.GetTradingByBrandAndType(account_id, types, brands, paging, trackChanges: false);
+
+            if (trading == null)
+            {
+                throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
+            }
+
+            trading = await _repositoryManager.Image.GetImageForListTradingPost(trading, trackChanges: false);
+
+            trading = await _repositoryManager.Comment.GetNumOfCommentForTradingPostList(trading, trackChanges: false);
 
             return Ok(trading);
         }
@@ -132,6 +193,42 @@ namespace ToyWorldSystem.Controller
             }
 
             result = await _repositoryManager.ReactTradingPost.GetIsReactedReactTrading(result, accountId, trackChanges: false);
+
+            return Ok(result);
+        }
+        #endregion
+
+        #region Get trading by isdisable mobile
+        /// <summary>
+        /// Get trading post by disable status (Role: Manager)
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <param name="status">0: All, 1: disabled, 2: enable</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("Status/{status}/mobile")]
+        public async Task<IActionResult> GetTradingByStatusMb([FromQuery] PagingParameters paging, int status)
+        {
+            if (status < 0 && status > 2) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Invalid status");
+
+            var accountId = _userAccessor.getAccountId();
+            var account = await _repositoryManager.Account.GetAccountById(accountId, trackChanges: false);
+
+            if (account.Role != 1) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to get");
+
+            var result = await _repositoryManager.TradingPost
+                .GetTradingPostForManager(status, paging, trackChanges: false, accountId);
+
+            if (result == null)
+            {
+                throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
+            }
+
+            result = await _repositoryManager.ReactTradingPost.GetIsReactedReactTrading(result, accountId, trackChanges: false);
+
+            result = await _repositoryManager.Image.GetImageForListTradingPost(result, trackChanges: false);
+
+            result = await _repositoryManager.Comment.GetNumOfCommentForTradingPostList(result, trackChanges: false);
 
             return Ok(result);
         }
@@ -210,6 +307,32 @@ namespace ToyWorldSystem.Controller
                 await _repositoryManager.TradingPost.GetDetail(trading_post_id, current_account_id, trackChanges: false);
 
             if (trading_post_detail == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "Invalid trading post Id");
+
+            return Ok(trading_post_detail);
+        }
+        #endregion
+
+        #region Get trading post detail mobile
+        /// <summary>
+        /// Get trading post detail (Role: Manager, Member)
+        /// </summary>
+        /// <param name="trading_post_id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{trading_post_id}/detail/mobile")]
+        public async Task<IActionResult> GetTradingPostDetailMb(int trading_post_id)
+        {
+            var current_account_id = _userAccessor.getAccountId();
+
+            var trading_post_detail =
+                await _repositoryManager.TradingPost.GetDetail(trading_post_id, current_account_id, trackChanges: false);
+
+            if (trading_post_detail == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "Invalid trading post Id");
+
+            trading_post_detail = await 
+                _repositoryManager.Image.GetImageForTradingDetail(trading_post_detail, trackChanges: false);
+
+            trading_post_detail = await _repositoryManager.Comment.GetTradingComment(trading_post_detail, current_account_id, trackChanges: false);
 
             return Ok(trading_post_detail);
         }

@@ -162,5 +162,118 @@ namespace Repository
             if (images.Count == 0) return null;
             return images.Select(x => new ImageReturn { Id = x.Id, Url = x.Url }).ToList();
         }
+
+        public async Task<Pagination<PostInList>> GetImageForListPost(Pagination<PostInList> result_no_image, bool trackChanges)
+        {
+            var data = new List<PostInList>();
+
+            foreach (var post in result_no_image.Data)
+            {
+                var images = await FindByCondition(x => x.PostId == post.Id, trackChanges).ToListAsync();
+
+                if (images != null) post.Images = images.Select(x => new ImageReturn { Id = x.Id, Url = x.Url }).ToList();
+
+                data.Add(post);
+            }
+
+            result_no_image.Data = data;
+            return result_no_image;
+        }
+
+        public async Task<Pagination<WaitingPost>> GetImageForWaitingPostDetail(Pagination<WaitingPost> result_no_image, bool trackChanges)
+        {
+            var data = new List<WaitingPost>();
+
+            foreach (var post in result_no_image.Data)
+            {
+                var images = await FindByCondition(x => x.PostId == post.Id, trackChanges).ToListAsync();
+
+                if (images != null) post.Images = images.Select(x => new ImageReturn { Id = x.Id, Url = x.Url }).ToList();
+
+                data.Add(post);
+            }
+
+            result_no_image.Data = data;
+            return result_no_image;
+        }
+
+        public async Task<PostDetail> GetImageForPostDetail(PostDetail result_no_image, bool trackChanges)
+        {
+            var images = await FindByCondition(x => x.PostId == result_no_image.Id, trackChanges).ToListAsync();
+
+            result_no_image.Images = images.Select(x => new ImageReturn { Id = x.Id, Url = x.Url }).ToList();
+
+            return result_no_image;
+        }
+
+        public async Task<TradingPostDetail> GetImageForTradingDetail(TradingPostDetail trading_post_detail_no_image, bool trackChanges)
+        {
+            trading_post_detail_no_image.Images = await FindByCondition(x => x.TradingPostId == trading_post_detail_no_image.Id, trackChanges)
+                .Select(x => new ImageReturn { Id = x.Id, Url = x.Url }).ToListAsync();
+
+            return trading_post_detail_no_image;
+        }
+
+        public async Task<Pagination<TradingPostInList>> GetImageForListTradingPost(Pagination<TradingPostInList> result_no_image, bool trackChanges)
+        {
+            var data = new List<TradingPostInList>();
+
+            foreach (var post in result_no_image.Data)
+            {
+                var images = await FindByCondition(x => x.TradingPostId == post.Id, trackChanges).ToListAsync();
+
+                if (images != null) post.Images = images.Select(x => new ImageReturn { Id = x.Id, Url = x.Url }).ToList();
+
+                data.Add(post);
+            }
+
+            result_no_image.Data = data;
+            return result_no_image;
+        }
+
+        public async Task<Pagination<TradingManaged>> GetImageForListTradingPost(Pagination<TradingManaged> result_no_image, bool trackChanges)
+        {
+            var data = new List<TradingManaged>();
+
+            foreach (var post in result_no_image.Data)
+            {
+                var images = await FindByCondition(x => x.TradingPostId == post.Id, trackChanges).ToListAsync();
+
+                if (images != null) post.Images = images.Select(x => new ImageReturn { Id = x.Id, Url = x.Url }).ToList();
+
+                data.Add(post);
+            }
+
+            result_no_image.Data = data;
+            return result_no_image;
+        }
+
+        public async Task<List<ImageReturn>> GetImageForBill(int bill_id, bool trackChanges)
+        {
+            var images = await FindByCondition(x => x.BillId == bill_id, trackChanges)
+                .Select(x => new ImageReturn { Id = x.Id, Url = x.Url })
+                .ToListAsync();
+
+            return images;
+        }
+
+        public async Task<Pagination<BillByStatus>> GetImageForBill(Pagination<BillByStatus> bills, bool trackChanges)
+        {
+            var data_result = new List<BillByStatus>();
+
+            foreach (var bill in bills.Data)
+            {
+                var images = await FindByCondition(x => x.BillId == bill.Id, trackChanges)
+                    .Select(y => new ImageReturn { Id = y.Id, Url = y.Url })
+                    .ToListAsync();
+
+                bill.Images = images;
+                data_result.Add(bill);
+            }
+            bills.Data = data_result;
+
+            return bills;
+        }
+
     }
 }

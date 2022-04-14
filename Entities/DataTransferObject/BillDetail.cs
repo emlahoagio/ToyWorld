@@ -18,5 +18,6 @@ namespace Entities.DataTransferObject
         public int Status { get; set; }
         public DateTime UpdateTime { get; set; }
         public bool IsRated { get; set; }
+        public List<ImageReturn> Images { get; set; }
     }
 }

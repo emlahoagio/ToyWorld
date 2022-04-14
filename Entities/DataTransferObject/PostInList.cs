@@ -14,5 +14,7 @@ namespace Entities.DataTransferObject
         public string Content { get; set; }
         public DateTime? PublicDate { get; set; }
         public int NumOfReact { get; set; }
+        public List<ImageReturn> Images { get; set; }
+        public int NumOfComment { get; set; }
     }
 }

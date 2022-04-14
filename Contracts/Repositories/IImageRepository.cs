@@ -24,5 +24,13 @@ namespace Contracts
         Task DeleteByPostOfContestId(int id, bool trackChanges);
         Task<List<ImageReturn>> GetImageByTradingPostId(int trading_id, bool trackChanges);
         Task<List<ImageReturn>> GetImageByBillId(int bill_id, bool trackChanges);
+        Task<Pagination<PostInList>> GetImageForListPost(Pagination<PostInList> result_no_image, bool trackChanges);
+        Task<Pagination<WaitingPost>> GetImageForWaitingPostDetail(Pagination<WaitingPost> result_no_image, bool trackChanges);
+        Task<PostDetail> GetImageForPostDetail(PostDetail result_no_image, bool trackChanges);
+        Task<TradingPostDetail> GetImageForTradingDetail(TradingPostDetail trading_post_detail_no_image, bool trackChanges);
+        Task<Pagination<TradingPostInList>> GetImageForListTradingPost(Pagination<TradingPostInList> result_no_image, bool trackChanges);
+        Task<Pagination<TradingManaged>> GetImageForListTradingPost(Pagination<TradingManaged> result_no_image, bool trackChanges);
+        Task<List<ImageReturn>> GetImageForBill(int bill_id, bool trackChanges);
+        Task<Pagination<BillByStatus>> GetImageForBill(Pagination<BillByStatus> bills, bool trackChanges);
     }
 }

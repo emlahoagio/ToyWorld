@@ -379,5 +379,23 @@ namespace Repository.Repository
 
             return id;
         }
+
+        public async Task<DataForMess> GetDataForTradingMess(int tradingpostId)
+        {
+            var tradingPost = await FindByCondition(x => x.Id == tradingpostId, false)
+                .FirstOrDefaultAsync();
+            if (tradingPost == null)
+            {
+                return null;
+            }
+            DataForMess result = new DataForMess
+            {
+                Title = tradingPost.Title,
+                ToyName = tradingPost.ToyName
+            };
+
+            return result;
+        }
+
     }
 }
