@@ -500,6 +500,19 @@ namespace ToyWorldSystem.Controller
             await _repositoryManager.SaveAsync();
 
             //Send notification
+            var listFollower = await _repositoryManager.FollowAccount.GetAccountFollower((int)post.AccountId, false);
+            if (listFollower != null)
+            {
+                foreach (var item in listFollower)
+                {
+                    CreateNotificationModel notiToFollower = new CreateNotificationModel
+                    {
+                        Content = await _repositoryManager.Account.GetAccountById((int)post.AccountId, false) + " have a new post!",
+                        AccountId = item.Id,
+                        PostId = post.Id,
+                    };
+                }
+            }
 
             return Ok("Save changes success");
         }
