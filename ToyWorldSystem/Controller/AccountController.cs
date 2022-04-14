@@ -37,8 +37,6 @@ namespace ToyWorldSystem.Controller
         [HttpGet]
         public async Task<IActionResult> GetListAccount([FromQuery] PagingParameters paging)
         {
-            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
-
             var result = await _repository.Account.GetListAccount(paging, trackChanges: false);
 
             if (result == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No more records in this page");
@@ -304,7 +302,13 @@ namespace ToyWorldSystem.Controller
             {
                 Name = param.Name,
                 Email = param.Email,
-                Password = _hasingServices.encriptSHA256(param.Password)
+                Password = _hasingServices.encriptSHA256(param.Password),
+                Avatar = "https://firebasestorage.googleapis.com/v0/b/toy-world-system.appspot.com/o/Avatar%2FdefaultAvatar.png?alt=media&token=b5fbfe09-9045-4838-bca5-649ff5667cad",
+                Phone = "",
+                Biography = "Not updated",
+                Gender = "",
+                Role = 2,
+                Status = true
             };
 
             _repository.Account.Create(account);
