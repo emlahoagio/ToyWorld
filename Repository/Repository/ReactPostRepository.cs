@@ -37,5 +37,24 @@ namespace Repository.Repository
             
             return result;
         }
+
+        public async Task<Pagination<PostInList>> GetReactForPost(Pagination<PostInList> result, int account_id, bool trackChanges)
+        {
+            var data = new List<PostInList>();
+
+            foreach(var post in result.Data)
+            {
+                var reacts = await FindByCondition(x => x.PostId == post.Id, trackChanges).ToListAsync();
+
+                post.NumOfReact = reacts.Count();
+                post.IsLikedPost = reacts.Where(x => x.AccountId == account_id) != null;
+
+                data.Add(post);
+            }
+
+            result.Data = data;
+
+            return result;
+        }
     }
 }

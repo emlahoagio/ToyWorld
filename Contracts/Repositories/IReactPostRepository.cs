@@ -12,5 +12,6 @@ namespace Contracts.Repositories
         void CreateReact(ReactPost reactPost);
         void DeleteReact(ReactPost reactPost);
         Task<List<AccountReact>> GetAccountReactPost(int post_id, bool trackChanges);
+        Task<Pagination<PostInList>> GetReactForPost(Pagination<PostInList> result, int account_id, bool trackChanges);
     }
 }
