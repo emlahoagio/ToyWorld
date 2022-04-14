@@ -282,27 +282,37 @@ namespace Repository
         public async Task<Pagination<ContestInGroup>> GetContestByStatus(int status, PagingParameters paging, bool trackChanges)
         {
             var contests = new List<Contest>();
+            int count = 0;
 
             if (status == 0)
             {
                 contests = await FindAll(trackChanges)
-                    .OrderBy(x => x.GroupId)
+                    .OrderByDescending(x => x.Id)
+                    .Skip((paging.PageNumber - 1) * paging.PageSize)
+                    .Take(paging.PageSize)
                     .ToListAsync();
-            }else if(status == 1)
+                count = await FindAll(trackChanges).CountAsync();
+            }
+            else if(status == 1)
             {
                 contests = await FindByCondition(x => x.Status == 4, trackChanges)
-                    .OrderBy(x => x.GroupId)
+                    .OrderByDescending(x => x.Id)
+                    .Skip((paging.PageNumber - 1) * paging.PageSize)
+                    .Take(paging.PageSize)
                     .ToListAsync();
-            }else
+                count = await FindByCondition(x => x.Status == 4, trackChanges).CountAsync();
+            }
+            else
             {
                 contests = await FindByCondition(x => x.Status != 4 && x.Status != 0, trackChanges)
-                    .OrderBy(x => x.GroupId)
+                    .OrderByDescending(x => x.Id)
+                    .Skip((paging.PageNumber - 1) * paging.PageSize)
+                    .Take(paging.PageSize)
                     .ToListAsync();
+                count = await FindByCondition(x => x.Status != 4 && x.Status != 0, trackChanges).CountAsync();
             }
 
-            var paging_contest = contests.Skip((paging.PageNumber - 1) * paging.PageSize).Take(paging.PageSize);
-
-            var result_data = paging_contest.Select(x => new ContestInGroup
+            var result_data = contests.Select(x => new ContestInGroup
             {
                 CoverImage = x.CoverImage,
                 Description = x.Description,
@@ -320,7 +330,7 @@ namespace Repository
 
             var result = new Pagination<ContestInGroup>
             {
-                Count = contests.Count,
+                Count = count,
                 Data = result_data,
                 PageNumber = paging.PageNumber,
                 PageSize = paging.PageSize
