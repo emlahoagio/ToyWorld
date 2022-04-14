@@ -22,8 +22,9 @@ namespace Entities.DataTransferObject
         public int? ToyId { get; set; }
         public string TypeName { get; set; }
         public string BrandName { get; set; }
+        public bool IsReact { get; set; }
+        public int NumOfReact { get; set; }
         public List<ImageReturn> Images { get; set; }
         public List<CommentReturn> Comment { get; set; }
-        public bool IsReact { get; set; }
     }
 }

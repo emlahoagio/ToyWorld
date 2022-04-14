@@ -20,6 +20,7 @@ namespace ToyWorldSystem.Controller
             _userAccessor = userAccessor;
         }
 
+        #region Create new comment for post
         /// <summary>
         /// Create new comment in post
         /// </summary>
@@ -37,7 +38,7 @@ namespace ToyWorldSystem.Controller
                 Content = param.Content,
                 PostId = param.PostId,
                 TradingPostId = null,
-                CommentDate = DateTime.UtcNow
+                CommentDate = DateTime.UtcNow.AddHours(7)
             };
 
             _repositoryManager.Comment.CreateComment(comment);
@@ -45,7 +46,7 @@ namespace ToyWorldSystem.Controller
             var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), false);
             var noti = new CreateNotificationModel
             {
-                PostId = param.PostId,
+                TradingPostId = param.PostId,
                 Content = account.Name + " has commented on your post",
                 AccountId = await _repositoryManager.Post.GetOwnerByPostId(param.PostId),
             };
@@ -55,7 +56,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Create new comment for trading
         /// <summary>
         /// Create new comment in trading post
         /// </summary>
@@ -73,7 +76,7 @@ namespace ToyWorldSystem.Controller
                 Content = param.Content,
                 PostId = null,
                 TradingPostId = param.PostId,
-                CommentDate = DateTime.UtcNow
+                CommentDate = DateTime.UtcNow.AddHours(7)
             };
 
             _repositoryManager.Comment.CreateComment(comment);
@@ -81,7 +84,7 @@ namespace ToyWorldSystem.Controller
             var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), false);
             var noti = new CreateNotificationModel
             {
-                PostId = param.PostId,
+                TradingPostId = param.PostId,
                 Content = account.Name + " has commented on your post",
                 AccountId = await _repositoryManager.TradingPost.GetOwnerById(param.PostId),
             };
@@ -91,7 +94,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region React comment
         /// <summary>
         /// React Comment
         /// </summary>
@@ -141,7 +146,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(new { message = "Save changes success" });
         }
+        #endregion
 
+        #region Update comment
         /// <summary>
         /// Update comment (Role: Member, Manager)
         /// </summary>
@@ -162,7 +169,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Delete comment
         /// <summary>
         /// Delete comment by id
         /// </summary>
@@ -186,5 +195,6 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
     }
 }

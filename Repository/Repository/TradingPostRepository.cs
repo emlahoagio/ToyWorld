@@ -16,7 +16,7 @@ namespace Repository.Repository
         {
         }
 
-        public void CreateTradingPost(NewTradingPostParameters tradingPost, int group_id, int account_id, int toy_id, int brand_id, int type_id)
+        public void CreateTradingPost(NewTradingPostParameters tradingPost, int group_id, int account_id, int toy_id, int brand_id, int type_id, DateTime createTime)
         {
             var newTradingPost = new TradingPost
             {
@@ -35,7 +35,7 @@ namespace Repository.Repository
                 TypeId = type_id,
                 GroupId = group_id,
                 Images = tradingPost.ImagesLink.Select(x => new Image { Url = x }).ToList(),
-                PostDate = DateTime.UtcNow.AddHours(7)
+                PostDate = createTime
             };
 
             Create(newTradingPost);
@@ -59,25 +59,24 @@ namespace Repository.Repository
         public async Task<Pagination<TradingPostInList>> GetTradingPostInGroupMember(int group_id, PagingParameters paging, bool trackChanges, int account_id)
         {
             var tradingPosts = await FindByCondition(x => x.IsDeleted == false && x.GroupId == group_id, trackChanges)
+                .OrderByDescending(x => x.PostDate)
+                .Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize)
                 .Include(x => x.Toy)
                 .Include(x => x.Brand)
                 .Include(x => x.Type)
                 .Include(x => x.ReactTradingPosts)
                 .Include(x => x.Account)
-                .OrderByDescending(x => x.PostDate)
                 .ToListAsync();
 
-            var count = tradingPosts.Count;
-
-            var pagingList = tradingPosts.Skip((paging.PageNumber - 1) * paging.PageSize)
-                .Take(paging.PageSize);
+            var count = await FindByCondition(x => x.IsDeleted == false && x.GroupId == group_id, trackChanges).CountAsync();
 
             var result = new Pagination<TradingPostInList>
             {
                 PageSize = paging.PageSize,
                 PageNumber = paging.PageNumber,
                 Count = count,
-                Data = pagingList.Select(x => new TradingPostInList
+                Data = tradingPosts.Select(x => new TradingPostInList
                 {
                     Address = x.Address,
                     Brand = x.Brand == null ? "Unknow" : x.Brand.Name,
@@ -169,6 +168,7 @@ namespace Repository.Repository
                 Content = trading_post.Content,
                 GroupId = trading_post.GroupId,
                 IsReact = trading_post.ReactTradingPosts.Where(y => y.AccountId == current_account_id).Count() == 0 ? false : true,
+                NumOfReact = trading_post.ReactTradingPosts.Count(),
                 OwnerAvatar = trading_post.Account.Avatar,
                 Phone = trading_post.Phone,
                 PostDate = trading_post.PostDate,
@@ -190,23 +190,6 @@ namespace Repository.Repository
             return result.AccountId.Value;
         }
 
-        public async Task<DataForMess> GetDataForTradingMess(int tradingpostId)
-        {
-            var tradingPost = await FindByCondition(x => x.Id == tradingpostId, false)
-                .FirstOrDefaultAsync();
-            if (tradingPost == null)
-            {
-                return null;
-            }
-            DataForMess result = new DataForMess
-            {
-                Title = tradingPost.Title,
-                ToyName = tradingPost.ToyName
-            };
-
-            return result;
-        }
-
         public async Task<Pagination<TradingManaged>> GetTradingPostForManager(int status, PagingParameters paging, bool trackChanges, int account_id)
         {
             var tradingPosts = new List<TradingPost>();
@@ -214,36 +197,36 @@ namespace Repository.Repository
             if (status == 0)
             {
                 tradingPosts = await FindAll(trackChanges)
-                    .Include(x => x.Brand)
-                    .Include(x => x.Type)
-                    .Include(x => x.Account)
                     .OrderByDescending(x => x.PostDate)
                     .Skip((paging.PageNumber - 1) * paging.PageSize)
                     .Take(paging.PageSize)
+                    .Include(x => x.Brand)
+                    .Include(x => x.Type)
+                    .Include(x => x.Account)
                     .ToListAsync();
                 count = FindAll(trackChanges).Count();
             }
             else if (status == 1)
             {
                 tradingPosts = await FindByCondition(x => x.IsDeleted == true, trackChanges)
-                    .Include(x => x.Brand)
-                    .Include(x => x.Type)
-                    .Include(x => x.Account)
                     .OrderByDescending(x => x.PostDate)
                     .Skip((paging.PageNumber - 1) * paging.PageSize)
                     .Take(paging.PageSize)
+                    .Include(x => x.Brand)
+                    .Include(x => x.Type)
+                    .Include(x => x.Account)
                     .ToListAsync();
                 count = FindByCondition(x => x.IsDeleted == true, trackChanges).Count();
             }
             else
             {
                 tradingPosts = await FindByCondition(x => x.IsDeleted == false, trackChanges)
-                    .Include(x => x.Brand)
-                    .Include(x => x.Type)
-                    .Include(x => x.Account)
                     .OrderByDescending(x => x.PostDate)
                     .Skip((paging.PageNumber - 1) * paging.PageSize)
                     .Take(paging.PageSize)
+                    .Include(x => x.Brand)
+                    .Include(x => x.Type)
+                    .Include(x => x.Account)
                     .ToListAsync();
                 count = FindByCondition(x => x.IsDeleted == false, trackChanges).Count();
             }
@@ -389,5 +372,30 @@ namespace Repository.Repository
                 PageSize = paging.PageSize
             };
         }
+
+        public async Task<int> GetIdOfCreatedTrading(DateTime createTime, bool trackChanges)
+        {
+            var id = await FindByCondition(x => x.PostDate == createTime, trackChanges).Select(x => x.Id).FirstOrDefaultAsync();
+
+            return id;
+        }
+
+        public async Task<DataForMess> GetDataForTradingMess(int tradingpostId)
+        {
+            var tradingPost = await FindByCondition(x => x.Id == tradingpostId, false)
+                .FirstOrDefaultAsync();
+            if (tradingPost == null)
+            {
+                return null;
+            }
+            DataForMess result = new DataForMess
+            {
+                Title = tradingPost.Title,
+                ToyName = tradingPost.ToyName
+            };
+
+            return result;
+        }
+
     }
 }

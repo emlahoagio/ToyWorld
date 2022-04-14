@@ -42,6 +42,26 @@ namespace ToyWorldSystem.Controller
             var contests = await _repositoryManager.Contest.GetContestByStatus(status, paging, trackChanges: false);
             if (contests == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No contest matches with input status");
 
+            return Ok(contests);
+        }
+        #endregion
+
+        #region Get contest by status mobile
+        /// <summary>
+        /// Get contest by status
+        /// </summary>
+        /// <param name="status">0: all, 1: closed, 2: order contest status</param>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("status/{status}/mobile")]
+        public async Task<IActionResult> GetAllContestMb(int status, [FromQuery] PagingParameters paging)
+        {
+            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+
+            var contests = await _repositoryManager.Contest.GetContestByStatus(status, paging, trackChanges: false);
+            if (contests == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No contest matches with input status");
+
             contests = await _repositoryManager.PrizeContest.GetPrizeForContest(contests);
 
             return Ok(contests);
@@ -77,6 +97,29 @@ namespace ToyWorldSystem.Controller
         [HttpGet]
         [Route("favorite")]
         public async Task<IActionResult> GetFavoriteContest([FromQuery]PagingParameters paging)
+        {
+            var account_id = _userAccessor.getAccountId();
+
+            //Get favorite type
+            var types = await _repositoryManager.FavoriteType.GetFavoriteType(account_id, trackChanges: false);
+            //Get favorite brand
+            var brands = await _repositoryManager.FavoriteBrand.GetFavoriteBrand(account_id, trackChanges: false);
+            //Get contest by type and brand
+            var favorite_contests = await _repositoryManager.Contest.GetContestByBrandAndType(account_id, types, brands, paging, trackChanges: false);
+
+            return Ok(favorite_contests);
+        }
+        #endregion
+
+        #region Get favorite cotnest mobile
+        /// <summary>
+        /// Get favorite contest
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("favorite/mobile")]
+        public async Task<IActionResult> GetFavoriteContestMb([FromQuery] PagingParameters paging)
         {
             var account_id = _userAccessor.getAccountId();
 
@@ -123,14 +166,39 @@ namespace ToyWorldSystem.Controller
         {
             var account_id = _userAccessor.getAccountId();
 
-            var contest_have_not_prize = await _repositoryManager.Contest.GetContestInGroup(group_id, account_id, trackChanges: false, paging);
-
-            var result = await _repositoryManager.PrizeContest.GetPrizeForContest(contest_have_not_prize);
+            var result = await _repositoryManager.Contest.GetContestInGroup(group_id, account_id, trackChanges: false, paging);
 
             if (result == null)
             {
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No contest is available");
             }
+
+            return Ok(result);
+        }
+        #endregion
+
+        #region Get contest by group id
+        /// <summary>
+        /// Get contest by group id (Role: Manager, Member)
+        /// </summary>
+        /// <param name="group_id"></param>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("group/{group_id}/mobile")]
+        public async Task<IActionResult> GetContestByGroupMb(int group_id, [FromQuery] PagingParameters paging)
+        {
+            var account_id = _userAccessor.getAccountId();
+
+            var contest_have_not_prize = await _repositoryManager.Contest.GetContestInGroup(group_id, account_id, trackChanges: false, paging);
+
+            if (contest_have_not_prize == null)
+            {
+                throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No contest is available");
+            }
+
+
+            var result = await _repositoryManager.PrizeContest.GetPrizeForContest(contest_have_not_prize);
 
             return Ok(result);
         }
@@ -313,12 +381,12 @@ namespace ToyWorldSystem.Controller
             var joinContest = await _repositoryManager.JoinContest.GetSubsCriberToDelete(contest_id, account_id, trackChanges: false);
 
             _repositoryManager.JoinContest.BandSubscribers(joinContest);
-            await _repositoryManager.Reward.Delete(account_id, contest_id, trackChanges: false);
+
             var posts = await _repositoryManager.PostOfContest.GetPostToDelete(contest_id, account_id, trackChanges: false);
-            await _repositoryManager.Rate.Delete(posts.Select(x => x.Id).ToList(), trackChanges: false);
+            
             foreach(var post in posts)
             {
-                _repositoryManager.PostOfContest.Delete(post);
+                await DeletePostOfContest(post.Id);
             }
 
             await _repositoryManager.SaveAsync();

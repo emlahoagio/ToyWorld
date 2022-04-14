@@ -23,6 +23,7 @@ namespace ToyWorldSystem.Controller
             _userAccessor = userAccessor;
         }
 
+        #region Get not response feedback
         /// <summary>
         /// Get feedback hasn't response yet
         /// </summary>
@@ -41,7 +42,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(feedbacks);
         }
+        #endregion
 
+        #region Get replied feedback
         /// <summary>
         /// Get feedback replied (Role: Manager)
         /// </summary>
@@ -60,7 +63,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(feedbacks);
         }
+        #endregion
 
+        #region Reply feedback
         /// <summary>
         /// Reply feedback, Update reply of feedback (Role: Manager)
         /// </summary>
@@ -84,5 +89,6 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
     }
 }

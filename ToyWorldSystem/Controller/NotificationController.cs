@@ -19,7 +19,12 @@ namespace ToyWorldSystem.Controller
             _repositoryManager = repositoryManager;
         }
 
-        [Route("create")]
+        #region Create notification
+        /// <summary>
+        /// Create notification
+        /// </summary>
+        /// <param name="notificationModel"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> Create(CreateNotificationModel notificationModel)
         {
@@ -27,17 +32,31 @@ namespace ToyWorldSystem.Controller
             await _repositoryManager.SaveAsync();
             return Ok("Success");
         }
+        #endregion
 
-        [Route("changestatus")]
+        #region Readed notification
+        /// <summary>
+        /// Change status to readed
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPut]
+        [Route("readed")]
         public async Task<IActionResult> Update(int id)
         {
             await _repositoryManager.Notification.ChangeNotificationStatus(id);
             await _repositoryManager.SaveAsync();
             return Ok("Success");
         }
+        #endregion
 
-        [Route("getnotification")]
+        #region Get notification
+        /// <summary>
+        /// Get list
+        /// </summary>
+        /// <param name="ownerId"></param>
+        /// <param name="paging"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetNotificationByOwnerId(int ownerId, [FromQuery] PagingParameters paging)
         {
@@ -45,7 +64,7 @@ namespace ToyWorldSystem.Controller
             var result = await _repositoryManager.Notification.GetByAccountId(ownerId, paging);
             //Thread.Sleep(5000);
             return Ok(result);
-
         }
+        #endregion
     }
 }

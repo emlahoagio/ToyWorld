@@ -5,6 +5,7 @@ using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace ToyWorldSystem.Controller
@@ -22,6 +23,7 @@ namespace ToyWorldSystem.Controller
             _userAccessor = userAccessor;
         }
 
+        #region Get trading by group id
         /// <summary>
         /// Get list trading post (Role: Manager, Member)
         /// </summary>
@@ -34,21 +36,77 @@ namespace ToyWorldSystem.Controller
         {
             var account_id = _userAccessor.getAccountId();
 
-            var result_no_image_no_comment = await _repositoryManager.TradingPost
+            var result = await _repositoryManager.TradingPost
                     .GetTradingPostInGroupMember(group_id, paging, trackChanges: false, account_id);
 
-            if (result_no_image_no_comment == null)
+            if (result == null)
             {
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
             }
 
-            var result_no_comment = await _repositoryManager.Image.GetImageForListTradingPost(result_no_image_no_comment, trackChanges: false);
+            return Ok(result);
+        }
+        #endregion
 
-            var result = await _repositoryManager.Comment.GetNumOfCommentForTradingPostList(result_no_comment, trackChanges: false);
+        #region Get trading by group id mobile
+        /// <summary>
+        /// Get list trading post (Role: Manager, Member)
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <param name="group_id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("group/{group_id}/mobile")]
+        public async Task<IActionResult> GetListTradingPostMb([FromQuery] PagingParameters paging, int group_id)
+        {
+            var account_id = _userAccessor.getAccountId();
+
+            var result = await _repositoryManager.TradingPost
+                    .GetTradingPostInGroupMember(group_id, paging, trackChanges: false, account_id);
+
+            if (result == null)
+            {
+                throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
+            }
+
+            result = await _repositoryManager.Image.GetImageForListTradingPost(result, trackChanges: false);
+
+            result = await _repositoryManager.Comment.GetNumOfCommentForTradingPostList(result, trackChanges: false);
 
             return Ok(result);
         }
+        #endregion
 
+        #region Get images of trading post
+        [HttpGet]
+        [Route("{trading_id}/images")]
+        public async Task<IActionResult> GetImagesByPostId(int trading_id)
+        {
+            var images = await _repositoryManager.Image.GetImageByTradingPostId(trading_id, trackChanges: false);
+
+            if (images == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No image in post");
+
+            return Ok(images);
+        }
+        #endregion
+
+        #region Get num of comment for trading post
+        /// <summary>
+        /// Get num of comment for post
+        /// </summary>
+        /// <param name="post_id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{post_id}/num_of_comment")]
+        public async Task<IActionResult> GetNumOfComment(int post_id)
+        {
+            var numOfComment = await _repositoryManager.Comment.GetNumOfCommentByTradingId(post_id, trackChanges: false);
+
+            return Ok(numOfComment);
+        }
+        #endregion
+
+        #region Get favorite trading post
         /// <summary>
         /// Get favorite trading post for home page
         /// </summary>
@@ -56,7 +114,7 @@ namespace ToyWorldSystem.Controller
         /// <returns></returns>
         [HttpGet]
         [Route("favorite")]
-        public async Task<IActionResult> GetFavoriteTradingPost([FromQuery]PagingParameters paging)
+        public async Task<IActionResult> GetFavoriteTradingPost([FromQuery] PagingParameters paging)
         {
             var account_id = _userAccessor.getAccountId();
 
@@ -66,7 +124,35 @@ namespace ToyWorldSystem.Controller
             var brands = await _repositoryManager.FavoriteBrand.GetFavoriteBrand(account_id, trackChanges: false);
             //Get contest by type and brand
             var trading = await _repositoryManager.TradingPost.GetTradingByBrandAndType(account_id, types, brands, paging, trackChanges: false);
-            
+
+            if (trading == null)
+            {
+                throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
+            }
+
+            return Ok(trading);
+        }
+        #endregion
+
+        #region Get favorite trading post
+        /// <summary>
+        /// Get favorite trading post for home page
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("favorite/mobile")]
+        public async Task<IActionResult> GetFavoriteTradingPostMb([FromQuery] PagingParameters paging)
+        {
+            var account_id = _userAccessor.getAccountId();
+
+            //Get favorite type
+            var types = await _repositoryManager.FavoriteType.GetFavoriteType(account_id, trackChanges: false);
+            //Get favorite brand
+            var brands = await _repositoryManager.FavoriteBrand.GetFavoriteBrand(account_id, trackChanges: false);
+            //Get contest by type and brand
+            var trading = await _repositoryManager.TradingPost.GetTradingByBrandAndType(account_id, types, brands, paging, trackChanges: false);
+
             if (trading == null)
             {
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
@@ -76,10 +162,11 @@ namespace ToyWorldSystem.Controller
 
             trading = await _repositoryManager.Comment.GetNumOfCommentForTradingPostList(trading, trackChanges: false);
 
-
             return Ok(trading);
         }
+        #endregion
 
+        #region Get trading by isdisable
         /// <summary>
         /// Get trading post by disable status (Role: Manager)
         /// </summary>
@@ -97,23 +184,57 @@ namespace ToyWorldSystem.Controller
 
             if (account.Role != 1) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to get");
 
-            var result_no_image_no_comment = await _repositoryManager.TradingPost
+            var result = await _repositoryManager.TradingPost
                 .GetTradingPostForManager(status, paging, trackChanges: false, accountId);
 
-            if (result_no_image_no_comment == null)
+            if (result == null)
             {
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
             }
-
-            var result_no_comment = await _repositoryManager.Image.GetImageForListTradingPost(result_no_image_no_comment, trackChanges: false);
-
-            var result = await _repositoryManager.Comment.GetNumOfCommentForTradingPostList(result_no_comment, trackChanges: false);
 
             result = await _repositoryManager.ReactTradingPost.GetIsReactedReactTrading(result, accountId, trackChanges: false);
 
             return Ok(result);
         }
+        #endregion
 
+        #region Get trading by isdisable mobile
+        /// <summary>
+        /// Get trading post by disable status (Role: Manager)
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <param name="status">0: All, 1: disabled, 2: enable</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("Status/{status}/mobile")]
+        public async Task<IActionResult> GetTradingByStatusMb([FromQuery] PagingParameters paging, int status)
+        {
+            if (status < 0 && status > 2) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Invalid status");
+
+            var accountId = _userAccessor.getAccountId();
+            var account = await _repositoryManager.Account.GetAccountById(accountId, trackChanges: false);
+
+            if (account.Role != 1) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to get");
+
+            var result = await _repositoryManager.TradingPost
+                .GetTradingPostForManager(status, paging, trackChanges: false, accountId);
+
+            if (result == null)
+            {
+                throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
+            }
+
+            result = await _repositoryManager.ReactTradingPost.GetIsReactedReactTrading(result, accountId, trackChanges: false);
+
+            result = await _repositoryManager.Image.GetImageForListTradingPost(result, trackChanges: false);
+
+            result = await _repositoryManager.Comment.GetNumOfCommentForTradingPostList(result, trackChanges: false);
+
+            return Ok(result);
+        }
+        #endregion
+
+        #region Get update information trading
         /// <summary>
         /// Get detail of trading post to update (Role: Manager, Member)
         /// </summary>
@@ -145,7 +266,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(result);
         }
+        #endregion
 
+        #region Get account information to create trading post
         /// <summary>
         /// Get information to create new trading post page (Role: Manager, Member)
         /// </summary>
@@ -166,7 +289,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(result);
         }
+        #endregion
 
+        #region Get trading post detail
         /// <summary>
         /// Get trading post detail (Role: Manager, Member)
         /// </summary>
@@ -178,19 +303,58 @@ namespace ToyWorldSystem.Controller
         {
             var current_account_id = _userAccessor.getAccountId();
 
-            var trading_post_detail_no_image_no_comment =
+            var trading_post_detail =
                 await _repositoryManager.TradingPost.GetDetail(trading_post_id, current_account_id, trackChanges: false);
-
-            var trading_post_detail_no_comment =
-                await _repositoryManager.Image.GetImageForTradingDetail(trading_post_detail_no_image_no_comment, trackChanges: false);
-
-            var trading_post_detail = await _repositoryManager.Comment.GetTradingComment(trading_post_detail_no_comment, current_account_id, trackChanges: false);
 
             if (trading_post_detail == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "Invalid trading post Id");
 
             return Ok(trading_post_detail);
         }
+        #endregion
 
+        #region Get trading post detail mobile
+        /// <summary>
+        /// Get trading post detail (Role: Manager, Member)
+        /// </summary>
+        /// <param name="trading_post_id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{trading_post_id}/detail/mobile")]
+        public async Task<IActionResult> GetTradingPostDetailMb(int trading_post_id)
+        {
+            var current_account_id = _userAccessor.getAccountId();
+
+            var trading_post_detail =
+                await _repositoryManager.TradingPost.GetDetail(trading_post_id, current_account_id, trackChanges: false);
+
+            if (trading_post_detail == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "Invalid trading post Id");
+
+            trading_post_detail = await 
+                _repositoryManager.Image.GetImageForTradingDetail(trading_post_detail, trackChanges: false);
+
+            trading_post_detail = await _repositoryManager.Comment.GetTradingComment(trading_post_detail, current_account_id, trackChanges: false);
+
+            return Ok(trading_post_detail);
+        }
+        #endregion
+
+        #region Get comment for trading detail
+        /// <summary>
+        /// Get comment for trading post detail page
+        /// </summary>
+        /// <param name="post_id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{post_id}/comment_detail")]
+        public async Task<IActionResult> GetDetailComment(int post_id)
+        {
+            var result = await _repositoryManager.Comment.GetCommentDetailOfTradingPost(_userAccessor.getAccountId(), post_id, trackChanges: false);
+
+            return Ok(result);
+        }
+        #endregion
+
+        #region Create trading post
         /// <summary>
         /// Create new trading post (Role: Manager, Member)
         /// </summary>
@@ -201,6 +365,7 @@ namespace ToyWorldSystem.Controller
         [Route("group/{group_id}")]
         public async Task<IActionResult> CreateTradingPost([FromBody] NewTradingPostParameters tradingPost, int group_id)
         {
+            var createTime = DateTime.UtcNow.AddHours(7);
             var account_id = _userAccessor.getAccountId();
 
             var toy = await _repositoryManager.Toy.GetToyByName(tradingPost.ToyName, trackChanges: false);
@@ -225,32 +390,34 @@ namespace ToyWorldSystem.Controller
 
             if (toy != null)
             {
-                _repositoryManager.TradingPost.CreateTradingPost(tradingPost, group_id, account_id, toy.Id, brand.Id, type.Id);
+                _repositoryManager.TradingPost.CreateTradingPost(tradingPost, group_id, account_id, toy.Id, brand.Id, type.Id, createTime);
             }
             else
             {
-                _repositoryManager.TradingPost.CreateTradingPost(tradingPost, group_id, account_id, 3, brand.Id, type.Id);
+                _repositoryManager.TradingPost.CreateTradingPost(tradingPost, group_id, account_id, 3, brand.Id, type.Id, createTime);
             }
             await _repositoryManager.SaveAsync();
 
             //Create Notifications
             var users = await _repositoryManager.FollowGroup.GetUserFollowGroup(group_id);
             var account = await _repositoryManager.Account.GetAccountById(account_id, false);
-            // var createdTradingPost = _repositoryManager.TradingPost
+            var createdTradingPostId = await _repositoryManager.TradingPost.GetIdOfCreatedTrading(createTime, trackChanges: false);
             foreach (var user in users)
             {
                 CreateNotificationModel noti = new CreateNotificationModel
                 {
                     Content = account.Name + " post a trading post in group",
                     AccountId = user.AccountId,
-                    //TradingPostId = ,
+                    TradingPostId = createdTradingPostId,
                 };
                 _repositoryManager.Notification.CreateNotification(noti);
             }
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Create feedback trading post
         /// <summary>
         /// Feedback trading post (Role: Member)
         /// </summary>
@@ -276,7 +443,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region React trading post
         /// <summary>
         /// React trading post (Role: Manager, Member)
         /// </summary>
@@ -316,7 +485,9 @@ namespace ToyWorldSystem.Controller
                 IsLiked = isLiked
             });
         }
+        #endregion
 
+        #region Update trading post to exchanged
         /// <summary>
         /// Update trading post to is exchanged (Role: Manager, Member)
         /// </summary>
@@ -339,7 +510,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Update information of trading
         /// <summary>
         /// Update all information of trading post
         /// </summary>
@@ -376,7 +549,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Disable trading post
         /// <summary>
         /// Disable trading post
         /// </summary>
@@ -403,13 +578,6 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
-
-        [HttpGet]
-        [Route("getdatafortradingmessage")]
-        public async Task<IActionResult> GetDataForTradingMessage(int tradingPostId)
-        {
-            var result = await _repositoryManager.TradingPost.GetDataForTradingMess(tradingPostId);
-            return Ok(result);
-        }
+        #endregion
     }
 }

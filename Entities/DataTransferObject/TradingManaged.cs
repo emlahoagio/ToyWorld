@@ -18,13 +18,13 @@ namespace Entities.DataTransferObject
         public string Exchange { get; set; }
         public string Content { get; set; }
         public decimal? Value { get; set; }
-        public List<ImageReturn> Images { get; set; }
         public int NoOfReact { get; set; }
-        public int NoOfComment { get; set; }
         public bool IsLikedPost { get; set; }
         public string Title { get; set; }
         public string Phone { get; set; }
         public int Status { get; set; }
         public bool IsDisabled { get; set; }
+        public List<ImageReturn> Images { get; set; }
+        public int NoOfComment { get; set; }
     }
 }

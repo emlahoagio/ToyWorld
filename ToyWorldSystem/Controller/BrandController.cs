@@ -23,6 +23,7 @@ namespace ToyWorldSystem.Controller
             _userAccessor = userAccessor;
         }
 
+        #region Get type for home page
         /// <summary>
         /// Get type to add favorite type (All role)
         /// </summary>
@@ -36,7 +37,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(brands);
         }
+        #endregion
 
+        #region Add/Remove favorite
         /// <summary>
         /// Add/remove favorite type (All role)
         /// </summary>
@@ -64,5 +67,6 @@ namespace ToyWorldSystem.Controller
             await _repository.SaveAsync();
             return Ok("Save changes success");
         }
+        #endregion
     }
 }

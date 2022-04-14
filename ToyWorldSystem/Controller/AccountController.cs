@@ -28,6 +28,7 @@ namespace ToyWorldSystem.Controller
             _hasingServices = hasingServices;
         }
 
+        #region Get list account
         /// <summary>
         /// Get list account (Role: Admin, Manager)
         /// </summary>
@@ -36,15 +37,15 @@ namespace ToyWorldSystem.Controller
         [HttpGet]
         public async Task<IActionResult> GetListAccount([FromQuery] PagingParameters paging)
         {
-            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
-
             var result = await _repository.Account.GetListAccount(paging, trackChanges: false);
 
             if (result == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No more records in this page");
 
             return Ok(result);
         }
+        #endregion
 
+        #region Get account detail information
         /// <summary>
         /// Get account detail, not include post of account (Role: Manager, Member)
         /// </summary>
@@ -62,7 +63,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(account);
         }
+        #endregion
 
+        #region Get list account react post
         /// <summary>
         /// Get account react post
         /// </summary>
@@ -78,7 +81,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(result);
         }
+        #endregion
 
+        #region Get list account react comment
         /// <summary>
         /// Get account react comment
         /// </summary>
@@ -94,7 +99,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(result);
         }
+        #endregion
 
+        #region Get following account
         /// <summary>
         /// Get following account
         /// </summary>
@@ -110,7 +117,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(account);
         }
+        #endregion
 
+        #region Get follower account
         /// <summary>
         /// Get follower account
         /// </summary>
@@ -126,7 +135,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(account);
         }
+        #endregion
 
+        #region Get profile information
         /// <summary>
         /// Get profile (Role: Manager, Member, Admin)
         /// </summary>
@@ -142,7 +153,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(profile);
         }
+        #endregion
 
+        #region Get rate of account
         /// <summary>
         /// Get rate of account (Role: All role)
         /// </summary>
@@ -159,7 +172,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(rateOfAccount);
         }
+        #endregion
 
+        #region Login by gg mail
         /// <summary>
         /// Login by google mail (Role: ALL)
         /// </summary>
@@ -203,7 +218,9 @@ namespace ToyWorldSystem.Controller
             }
             return Ok(account);
         }
+        #endregion
 
+        #region Login by account system
         /// <summary>
         /// Login by email and password
         /// </summary>
@@ -222,7 +239,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(account);
         }
+        #endregion
 
+        #region Follow/ Unfollow account
         /// <summary>
         /// Follow or unfollow the current visit account
         /// </summary>
@@ -262,12 +281,15 @@ namespace ToyWorldSystem.Controller
             await _repository.SaveAsync();
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Create account system
         /// <summary>
         /// Create account system (Role: Unauthorize user)
         /// </summary>
         /// <param name="param"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpPost]
         [Route("AccountSystem")]
         public async Task<IActionResult> CreateNewAccountSystem(NewAccountParameters param)
@@ -280,7 +302,13 @@ namespace ToyWorldSystem.Controller
             {
                 Name = param.Name,
                 Email = param.Email,
-                Password = _hasingServices.encriptSHA256(param.Password)
+                Password = _hasingServices.encriptSHA256(param.Password),
+                Avatar = "https://firebasestorage.googleapis.com/v0/b/toy-world-system.appspot.com/o/Avatar%2FdefaultAvatar.png?alt=media&token=b5fbfe09-9045-4838-bca5-649ff5667cad",
+                Phone = "",
+                Biography = "Not updated",
+                Gender = "",
+                Role = 2,
+                Status = true
             };
 
             _repository.Account.Create(account);
@@ -290,7 +318,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(created_account);
         }
+        #endregion
 
+        #region Rate seller
         /// <summary>
         /// Rate the seller (Role: ALL => buyer in the bill send this request)
         /// </summary>
@@ -321,7 +351,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Feedback account
         /// <summary>
         /// Feedback Account (Role: Member)
         /// </summary>
@@ -356,7 +388,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Disable/ Enable account
         /// <summary>
         /// Disable or Enable account (Role: Admin)
         /// </summary>
@@ -384,7 +418,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Update role to manager
         /// <summary>
         /// Update account role from member to manager (Role: Admin)
         /// </summary>
@@ -418,7 +454,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Update role to member
         /// <summary>
         /// Update account role from manager to member (Role: Admin)
         /// </summary>
@@ -452,7 +490,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Update profile
         /// <summary>
         /// Update profile (Role: Member, Manager)
         /// </summary>
@@ -479,7 +519,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region new pw of account
         /// <summary>
         /// Use for account doesn't has password (All role)
         /// </summary>
@@ -496,7 +538,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes async");
         }
+        #endregion
 
+        #region update account password
         /// <summary>
         /// Use for change the password of account (All role)
         /// </summary>
@@ -518,5 +562,6 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
     }
 }

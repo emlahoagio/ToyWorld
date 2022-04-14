@@ -24,6 +24,7 @@ namespace ToyWorldSystem.Controller
             _userAccessor = userAccessor;
         }
 
+        #region Get list group
         /// <summary>
         /// Get list name of group for the tool bar on the top (Role: Manager, Member)
         /// </summary>
@@ -31,13 +32,15 @@ namespace ToyWorldSystem.Controller
         [HttpGet]
         public async Task<IActionResult> GetListGroup()
         {
-            var result = await _repository.Group.getListGroup(trackChanges: false);
+            var result = await _repository.Group.GetListGroup(trackChanges: false);
 
             if (result == null) return NotFound();
 
             return Ok(result);
         }
+        #endregion
 
+        #region Create new group
         /// <summary>
         /// Create new group (Role: Admin)
         /// </summary>
@@ -61,7 +64,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Update group information
         /// <summary>
         /// Update information of group (Role: Admin)
         /// </summary>
@@ -82,7 +87,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Disable or enable group
         /// <summary>
         /// Disable or enable group (Role: Admin)
         /// </summary>
@@ -105,5 +112,6 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
     }
 }

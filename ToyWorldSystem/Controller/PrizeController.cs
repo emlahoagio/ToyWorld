@@ -25,6 +25,7 @@ namespace ToyWorldSystem.Controller
             _userAccessor = userAccessor;
         }
 
+        #region Get list prize
         /// <summary>
         /// Get list prize for add to contest and proposal
         /// </summary>
@@ -39,7 +40,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(pagignationPrize);
         }
+        #endregion
 
+        #region Get infor to update prize
         /// <summary>
         /// Get prize for update, call before update prize (Role: Manager)
         /// </summary>
@@ -57,7 +60,9 @@ namespace ToyWorldSystem.Controller
 
             return Ok(prize);
         }
+        #endregion
 
+        #region Create new prize
         /// <summary>
         /// Create new prize
         /// </summary>
@@ -79,7 +84,9 @@ namespace ToyWorldSystem.Controller
 
             return (Ok("Save changes success"));
         }
+        #endregion
 
+        #region Update prize
         /// <summary>
         /// Update prize (not contain image, Role: Manager)
         /// </summary>
@@ -94,7 +101,9 @@ namespace ToyWorldSystem.Controller
             await _repository.SaveAsync();
             return Ok("Save changes success");
         }
+        #endregion
 
+        #region Disable prize
         /// <summary>
         /// Disable prize (Role: Manager)
         /// </summary>
@@ -112,5 +121,6 @@ namespace ToyWorldSystem.Controller
 
             return Ok("Save changes success");
         }
+        #endregion
     }
 }
