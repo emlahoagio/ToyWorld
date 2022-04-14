@@ -23,5 +23,13 @@ namespace Repository.Repository
                 Delete(evaluate);
             }
         }
+
+        public async Task<bool> IsEvaluated(int current_accountId, int contest_id, bool trackChanges)
+        {
+            var result = await FindByCondition(x => x.AccountId == current_accountId && x.ContestId == contest_id, trackChanges)
+                .FirstOrDefaultAsync() != null;
+
+            return result;
+        }
     }
 }

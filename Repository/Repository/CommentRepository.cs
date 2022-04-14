@@ -229,6 +229,7 @@ namespace Repository.Repository
                     OwnerName = x.Account.Name,
                     IsReacted = x.ReactComments.Where(x => x.AccountId == account_id).Count() != 0
                 }).ToList();
+                trading_post_detail_no_comment.NumOfComment = comments.Count();
             }
 
             return trading_post_detail_no_comment;

@@ -408,8 +408,9 @@ namespace ToyWorldSystem.Controller
         [Route("{contest_id}/subscribers/{account_id}")]
         public async Task<IActionResult> RemoveSubscribers(int contest_id, int account_id)
         {
-            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
-            if (account.Role != 1) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to remove");
+            var current_login_account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            if (current_login_account.Role != 1) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to remove");
+            if (current_login_account.Id == account_id) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Can't remove yourself");
 
             var joinContest = await _repositoryManager.JoinContest.GetSubsCriberToDelete(contest_id, account_id, trackChanges: false);
 
@@ -675,6 +676,10 @@ namespace ToyWorldSystem.Controller
             var isJoinContest = contest.AccountJoined.Where(x => x.AccountId == current_accountId).ToList().Count() > 0;
             if (!isJoinContest)
                 throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Only people joined to contest can evaluate");
+
+            var isEvaluated = await _repositoryManager.EvaluateContest.IsEvaluated(current_accountId, contest_id, trackChanges: false);
+
+            if (isEvaluated) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Already evaluated");
 
             var evaluate = new Evaluate
             {
