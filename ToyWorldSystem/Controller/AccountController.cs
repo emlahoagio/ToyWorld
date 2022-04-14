@@ -543,20 +543,19 @@ namespace ToyWorldSystem.Controller
         /// <summary>
         /// Use for change the password of account (All role)
         /// </summary>
-        /// <param name="old_password"></param>
-        /// <param name="new_password"></param>
+        /// <param name="param"></param>
         /// <returns></returns>
         [HttpPut]
         [Route("change_password")]
-        public async Task<IActionResult> ChangePassword(string old_password, string new_password)
+        public async Task<IActionResult> ChangePassword(ChangePwParameters param)
         {
             var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
 
-            var hash_old_pw = _hasingServices.encriptSHA256(old_password);
+            var hash_old_pw = _hasingServices.encriptSHA256(param.old_password);
 
             if (current_account.Password != hash_old_pw) throw new ErrorDetails(HttpStatusCode.BadRequest, "Old password is not true");
 
-            _repository.Account.UpdateNewPassword(current_account, new_password);
+            _repository.Account.UpdateNewPassword(current_account, param.new_password);
             await _repository.SaveAsync();
 
             return Ok("Save changes success");
