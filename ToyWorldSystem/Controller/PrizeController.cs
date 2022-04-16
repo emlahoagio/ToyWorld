@@ -2,12 +2,8 @@
 using Entities.ErrorModel;
 using Entities.Models;
 using Entities.RequestFeatures;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Repository;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ToyWorldSystem.Controller
@@ -32,7 +28,7 @@ namespace ToyWorldSystem.Controller
         /// <param name="paging"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> getPrizeList([FromQuery] PagingParameters paging)
+        public async Task<IActionResult> GetPrizeList([FromQuery] PagingParameters paging)
         {
             var pagignationPrize_no_image = await _repository.Prize.GetPrize(paging, trackChanges: false);
 
@@ -76,7 +72,7 @@ namespace ToyWorldSystem.Controller
                 Description = newPrize.Description,
                 Name = newPrize.Name,
                 Value = newPrize.Value,
-                Images = new List<Image>{new Image { Url = newPrize.Image }}
+                Images = new List<Image> { new Image { Url = newPrize.Image } }
             };
 
             _repository.Prize.CreatePrize(prize);

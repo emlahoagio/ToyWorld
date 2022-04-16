@@ -46,6 +46,7 @@ namespace Repository
         private IFavoriteBrandRepository _favoriteBrandRepository;
 
         private IFollowGroupRepository _followGroupRepository;
+        private IProposalRepository _proposalRepository;
 
         public RepositoryManager(DataContext context)
         {
@@ -396,6 +397,17 @@ namespace Repository
                 return _favoriteBrandRepository;
             }
         }
+
+        public IProposalRepository Proposal
+        {
+            get
+            {
+                if (_proposalRepository == null)
+                    _proposalRepository = new ProposalRepository(_context);
+                return _proposalRepository;
+            }
+        }
+
 
         public Task SaveAsync() => _context.SaveChangesAsync();
     }

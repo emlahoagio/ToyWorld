@@ -35,6 +35,9 @@ namespace Contracts
         IFavoriteTypeRepository FavoriteType { get; }
         IFavoriteBrandRepository FavoriteBrand { get; }
         IFollowGroupRepository FollowGroup { get; }
+
+        IProposalRepository Proposal { get; }
+
         Task SaveAsync();
     }
 }
