@@ -1,6 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 
 #nullable disable
 
@@ -47,6 +45,8 @@ namespace Entities.Models
         public virtual DbSet<RateSeller> RateSeller { get; set; }
         public virtual DbSet<FavoriteType> FavoriteType { get; set; }
 
+        public virtual DbSet<Proposal> Proposal { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -58,6 +58,15 @@ namespace Entities.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
+
+            modelBuilder.Entity<Proposal>(entity =>
+                {
+                    entity.HasOne(d => d.Account)
+                    .WithMany(p => p.Proposals)
+                    .HasForeignKey(d => d.AccountId)
+                    .HasConstraintName("FK_Proposal_Account_AccountId");
+                }
+            );
 
             modelBuilder.Entity<Account>(entity =>
             {
@@ -174,7 +183,7 @@ namespace Entities.Models
                     .WithMany(p => p.FeedbackSenders)
                     .HasForeignKey(d => d.SenderId)
                     .HasConstraintName("FK_Feedback_Account1");
-                
+
                 entity.HasOne(d => d.TradingPost)
                     .WithMany(p => p.Feedbacks)
                     .HasForeignKey(d => d.TradingPostId)
@@ -204,7 +213,7 @@ namespace Entities.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_FollowAccount_Account");
             });
-            
+
             modelBuilder.Entity<FavoriteType>(entity =>
             {
                 entity.HasKey(e => new { e.AccountId, e.TypeId });
@@ -222,8 +231,8 @@ namespace Entities.Models
                     .HasForeignKey(d => d.TypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Type_Account_FavoriteTypeType");
-            }); 
-            
+            });
+
             modelBuilder.Entity<FavoriteBrand>(entity =>
             {
                 entity.HasKey(e => new { e.AccountId, e.BrandId });
@@ -590,7 +599,7 @@ namespace Entities.Models
                     .HasForeignKey(d => d.TradingPostId)
                     .HasConstraintName("FK_Bill_TradingPost");
             });
-            
+
             modelBuilder.Entity<RateSeller>(entity =>
             {
                 entity.HasOne(d => d.Seller)
