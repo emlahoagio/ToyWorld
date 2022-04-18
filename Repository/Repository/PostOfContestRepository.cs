@@ -37,7 +37,7 @@ namespace Repository.Repository
 
         public async Task<Pagination<PostOfContestInList>> GetPostOfContest(int contest_id, PagingParameters paging, int current_account_id, bool trackChanges)
         {
-            var posts = await FindByCondition(x => x.ContestId == contest_id, trackChanges)
+            var posts = await FindByCondition(x => x.ContestId == contest_id && x.Status == 1, trackChanges)
                 .Include(x => x.Account)
                 .OrderByDescending(x => x.DateCreate)
                 .ToListAsync();
@@ -135,6 +135,55 @@ namespace Repository.Repository
             var numOfPost = await FindByCondition(x => x.AccountId == accountId && x.ContestId == contest_id, trackChanges).CountAsync();
 
             return numOfPost >= 3;
+        }
+
+        public async Task<Pagination<PostOfContestManaged>> GetPostByContestId(int contest_id, PagingParameters paging, bool trackChanges)
+        {
+            var post = await FindByCondition(x => x.ContestId == contest_id, trackChanges)
+                .OrderByDescending(x => x.DateCreate)
+                .Skip((paging.PageNumber-1)*paging.PageSize)
+                .Take(paging.PageSize)
+                .Include(x => x.Account)
+                .ToListAsync();
+
+            var result = new Pagination<PostOfContestManaged>
+            {
+                Count = await FindByCondition(x => x.ContestId == contest_id, trackChanges).CountAsync(),
+                Data = post.Select(x => new PostOfContestManaged
+                {
+                    Content = x.Content,
+                    ContestId = x.ContestId,
+                    DateCreate = x.DateCreate,
+                    Id = x.Id,
+                    OwnerAvatar = x.Account.Avatar,
+                    OwnerId = x.AccountId,
+                    OwnerName = x.Account.Name,
+                    Status = x.Status
+                }).ToList(),
+                PageNumber = paging.PageNumber,
+                PageSize = paging.PageSize
+            };
+
+            return result;
+        }
+
+        public async Task<PostOfContest> GetById(int post_of_contest_id, bool trackChanges)
+        {
+            var post = await FindByCondition(x => x.Id == post_of_contest_id, trackChanges).FirstOrDefaultAsync();
+
+            return post;
+        }
+
+        public void Approve(PostOfContest post)
+        {
+            post.Status = 1;
+            Update(post);
+        }
+
+        public void Deny(PostOfContest post)
+        {
+            post.Status = 2;
+            Update(post);
         }
     }
 }

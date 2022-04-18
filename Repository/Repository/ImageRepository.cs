@@ -290,5 +290,21 @@ namespace Repository
                 }
             }
         }
+
+        public async Task<Pagination<PostOfContestManaged>> GetImageForPostOfContest(Pagination<PostOfContestManaged> posts, bool trackChanges)
+        {
+            var data = new List<PostOfContestManaged>();
+
+            foreach(var post in posts.Data)
+            {
+                var images = await FindByCondition(x => x.PostOfContestId == post.Id, trackChanges).ToListAsync();
+
+                post.Images = images.Select(x => new ImageReturn { Id = x.Id, Url = x.Url }).ToList();
+                data.Add(post);
+            }
+
+            posts.Data = data;
+            return posts;
+        }
     }
 }

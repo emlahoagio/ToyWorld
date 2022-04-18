@@ -194,6 +194,7 @@ namespace Repository
         public async Task<Pagination<ContestInGroup>> GetContestByGroups(int account_id, List<int> groups, PagingParameters paging, bool trackChanges)
         {
             var contests = await FindByCondition(x => x.StartRegistration >= DateTime.UtcNow.AddMonths(-6) && groups.Contains(x.GroupId.Value), trackChanges)
+                .OrderByDescending(x => x.Id)
                 .Skip((paging.PageNumber - 1) * paging.PageSize)
                 .Take(paging.PageSize)
                 .ToListAsync();

@@ -563,7 +563,8 @@ namespace ToyWorldSystem.Controller
                 Content = param.Content,
                 ContestId = contest_id,
                 Images = param.ImagesUrl.Select(x => new Image { Url = x }).ToList(),
-                DateCreate = DateTime.UtcNow
+                DateCreate = DateTime.UtcNow,
+                Status = 0
             };
 
             _repositoryManager.PostOfContest.Create(postOfContest);

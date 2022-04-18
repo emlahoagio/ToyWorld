@@ -19,6 +19,8 @@ namespace Entities.Models
         public int AccountId { get; set; }
         public string Content { get; set; }
         public DateTime? DateCreate { get; set; }
+        public int Status { get; set; }
+
         public virtual Contest Contest { get; set; } 
         public virtual Account Account { get; set; }
         public virtual ICollection<Rate> Rates { get; set; }
