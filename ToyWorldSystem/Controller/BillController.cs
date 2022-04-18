@@ -77,7 +77,7 @@ namespace ToyWorldSystem.Controller
         [Route("trading/{trading_id}")]
         public async Task<IActionResult> GetBillByTradingPost(int trading_id)
         {
-            var account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var account = await _repository.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
 
             if (account.Role != 1) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to get");
 
@@ -153,7 +153,7 @@ namespace ToyWorldSystem.Controller
         [HttpPost]
         public async Task<IActionResult> CreateBill(NewBillParameters newBill)
         {
-            var current_userId = _userAccessor.getAccountId();
+            var current_userId = _userAccessor.GetAccountId();
 
             var findTime = DateTime.UtcNow.AddHours(-7);
 
@@ -191,7 +191,7 @@ namespace ToyWorldSystem.Controller
         [Route("{bill_id}/accept_or_deny")]
         public async Task<IActionResult> AcceptOrDenyBill(int bill_id, int accept_or_deny)
         {
-            var current_user_id = _userAccessor.getAccountId();
+            var current_user_id = _userAccessor.GetAccountId();
 
             var bill = await _repository.Bill.GetBillById(bill_id, trackChanges: false);
 
@@ -232,7 +232,7 @@ namespace ToyWorldSystem.Controller
         {
             var bill = await _repository.Bill.GetBillById(bill_id, trackChanges: false);
 
-            if(bill.SellerId != _userAccessor.getAccountId())
+            if(bill.SellerId != _userAccessor.GetAccountId())
             {
                 throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to change");
             }

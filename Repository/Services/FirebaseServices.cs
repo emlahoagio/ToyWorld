@@ -19,7 +19,7 @@ namespace Repository.Services
         {
             this.configuration = configuration;
         }
-        public async Task<FirebaseProfile> getEmailFromToken(string firebaseToken)
+        public async Task<FirebaseProfile> GetEmailFromToken(string firebaseToken)
         {
             try
             {

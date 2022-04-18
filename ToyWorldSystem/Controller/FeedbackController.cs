@@ -33,7 +33,7 @@ namespace ToyWorldSystem.Controller
         [Route("no_response_yet")]
         public async Task<IActionResult> GetNotReplyFeedback([FromQuery] PagingParameters paging)
         {
-            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
 
             if (current_account.Role != 1) 
                 throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to get");
@@ -54,7 +54,7 @@ namespace ToyWorldSystem.Controller
         [Route("replied")]
         public async Task<IActionResult> GetRepliedFeedback([FromQuery] PagingParameters paging)
         {
-            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
 
             if (current_account.Role != 1)
                 throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to get");
@@ -76,7 +76,7 @@ namespace ToyWorldSystem.Controller
         [Route("{feedback_id}/reply")]
         public async Task<IActionResult> ReplyFeedback(int feedback_id, string replyContent)
         {
-            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
 
             if (current_account.Role != 1)
                 throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to reply");

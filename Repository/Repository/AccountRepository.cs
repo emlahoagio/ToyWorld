@@ -33,7 +33,7 @@ namespace Repository
             Update(account);
         }
 
-        public async Task<AccountReturnAfterLogin> getAccountByEmail(string email, bool trackChanges)
+        public async Task<AccountReturnAfterLogin> GetAccountByEmail(string email, bool trackChanges)
         {
             var account = await FindByCondition(account => account.Email == email, trackChanges).SingleOrDefaultAsync();
 
@@ -57,7 +57,7 @@ namespace Repository
             return result;
         }
 
-        public async Task<AccountReturnAfterLogin> getAccountByEmail(string email, string password, bool trackChanges)
+        public async Task<AccountReturnAfterLogin> GetAccountByEmail(string email, string password, bool trackChanges)
         {
             var hasing_pw = _hasing.encriptSHA256(password);
 

@@ -37,7 +37,7 @@ namespace ToyWorldSystem.Controller
         [HttpPost]
         public async Task<IActionResult> CreateProposal(CreateProposalModel model)
         {
-            _repository.Proposal.CreateProposal(model, _userAccessor.getAccountId());
+            _repository.Proposal.CreateProposal(model, _userAccessor.GetAccountId());
             await _repository.SaveAsync();
             return Ok("Create Success!");
         }

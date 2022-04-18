@@ -273,103 +273,41 @@ namespace Repository.Repository
             return trading.ReactTradingPosts.Count();
         }
 
-        public async Task<Pagination<TradingPostInList>> GetTradingByBrandAndType(int account_id, List<Entities.Models.Type> types, List<Brand> brands, PagingParameters paging, bool trackChanges)
+        public async Task<Pagination<TradingPostInList>> GetTradingByGroup(int account_id, List<int> groups, PagingParameters paging, bool trackChanges)
         {
-            var tradings = await FindByCondition(x => x.PostDate >= DateTime.UtcNow.AddMonths(-2) && x.IsDeleted == false, trackChanges)
+            var tradings = await FindByCondition(x => x.PostDate >= DateTime.UtcNow.AddMonths(-1) && groups.Contains(x.GroupId) && x.IsDeleted == false, trackChanges)
+                .OrderByDescending(x => x.PostDate)
+                .Skip((paging.PageNumber-1)*paging.PageSize)
+                .Take(paging.PageSize)
                 .Include(x => x.Brand)
                 .Include(x => x.Type)
                 .Include(x => x.Account)
+                .Include(x => x.ReactTradingPosts)
                 .ToListAsync();
 
-            //Account have no favorite
-            if (types == null && brands == null)
-            {
-                return new Pagination<TradingPostInList>
-                {
-                    Count = tradings.Count,
-                    Data = tradings.Skip((paging.PageNumber - 1) * paging.PageSize).Take(paging.PageSize).Select(x => new TradingPostInList
-                    {
-                        Address = x.Address,
-                        Brand = x.Brand == null ? "Unknow" : x.Brand.Name,
-                        Exchange = x.Trading,
-                        Id = x.Id,
-                        NoOfReact = x.ReactTradingPosts.Count,
-                        OwnerId = x.AccountId,
-                        OwnerAvatar = x.Account.Avatar,
-                        OwnerName = x.Account.Name,
-                        PostDate = x.PostDate,
-                        ToyName = x.ToyName,
-                        Type = x.Type == null ? "Unknow" : x.Type.Name,
-                        IsLikedPost = x.ReactTradingPosts.Where(y => y.AccountId == account_id).Count() == 0 ? false : true,
-                        Value = x.Value,
-                        Content = x.Content,
-                        Title = x.Title,
-                        Phone = x.Phone,
-                        Status = x.Status
-                    }).ToList(),
-                    PageSize = paging.PageSize,
-                    PageNumber = paging.PageNumber
-                };
-            }
-
-            var result = new List<TradingPost>();
-            //select by brand
-            if (brands != null)
-            {
-                foreach (var brand in brands)
-                {
-                    foreach (var trading in tradings)
-                    {
-                        if (trading.BrandId == brand.Id)
-                        {
-                            result.Add(trading);
-                            tradings.Remove(trading);
-                        }
-                    }
-                }
-            }
-            //select by type
-            if (types != null)
-            {
-                foreach (var type in types)
-                {
-                    foreach (var trading in tradings)
-                    {
-                        if (trading.TypeId == type.Id)
-                        {
-                            result.Add(trading);
-                            tradings.Remove(trading);
-                        }
-                    }
-                }
-            }
-            var count = result.Count;
-            //paging result
-            var paging_result = result.Skip((paging.PageNumber - 1) * paging.PageSize).Take(paging.PageSize)
-                .Select(x => new TradingPostInList
-                {
-                    Address = x.Address,
-                    Brand = x.Brand == null ? "Unknow" : x.Brand.Name,
-                    Exchange = x.Trading,
-                    Id = x.Id,
-                    NoOfReact = x.ReactTradingPosts.Count,
-                    OwnerId = x.AccountId,
-                    OwnerAvatar = x.Account.Avatar,
-                    OwnerName = x.Account.Name,
-                    PostDate = x.PostDate,
-                    ToyName = x.ToyName,
-                    Type = x.Type == null ? "Unknow" : x.Type.Name,
-                    IsLikedPost = x.ReactTradingPosts.Where(y => y.AccountId == account_id).Count() == 0 ? false : true,
-                    Value = x.Value,
-                    Content = x.Content,
-                    Title = x.Title,
-                    Phone = x.Phone,
-                    Status = x.Status
-                }).ToList();
             return new Pagination<TradingPostInList>
             {
-                Count = count,
-                Data = paging_result,
+                Count = await FindByCondition(x => x.PostDate >= DateTime.UtcNow.AddMonths(-1) && groups.Contains(x.GroupId) && x.IsDeleted == false, trackChanges).CountAsync(),
+                Data = tradings.Select(x => new TradingPostInList
+                {
+                    Address = x.Address,
+                    Brand = x.Brand.Name,
+                    Content = x.Content,
+                    Exchange = x.Trading,
+                    Id = x.Id,
+                    OwnerAvatar = x.Account.Avatar,
+                    OwnerId = x.AccountId,
+                    OwnerName = x.Account.Name,
+                    IsLikedPost = x.ReactTradingPosts.Where(x => x.AccountId == account_id) != null,
+                    NoOfReact = x.ReactTradingPosts.Count(),
+                    Phone = x.Phone,
+                    PostDate = x.PostDate,
+                    Status = x.Status,
+                    Title = x.Title,
+                    ToyName = x.ToyName,
+                    Type = x.Type.Name,
+                    Value = x.Value
+                }),
                 PageNumber = paging.PageNumber,
                 PageSize = paging.PageSize
             };

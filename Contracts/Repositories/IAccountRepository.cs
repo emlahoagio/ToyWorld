@@ -8,8 +8,8 @@ namespace Contracts
 {
     public interface IAccountRepository
     {
-        Task<AccountReturnAfterLogin> getAccountByEmail(string email, bool trackChanges);
-        Task<AccountReturnAfterLogin> getAccountByEmail(string email, string password, bool trackChanges);
+        Task<AccountReturnAfterLogin> GetAccountByEmail(string email, bool trackChanges);
+        Task<AccountReturnAfterLogin> GetAccountByEmail(string email, string password, bool trackChanges);
         Task<Pagination<AccountInList>> GetListAccount(PagingParameters paging, bool trackChanges);
         Task<Account> GetAccountById(int account_id, bool trackChanges);
         Task<AccountDetail> GetAccountDetail(int account_id, int current_acc_id, bool trackChanges);

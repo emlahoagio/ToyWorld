@@ -2,6 +2,7 @@
 using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Repository.Repository
@@ -12,10 +13,25 @@ namespace Repository.Repository
         {
 
         }
+
+        public async Task<List<int>> GetFollowedGroup(int accountId, bool trackChanges)
+        {
+            var result = await FindByCondition(x => x.AccountId == accountId, trackChanges).Select(x => x.GroupId).ToListAsync();
+
+            return result;
+        }
+
         public async Task<IEnumerable<FollowGroup>> GetUserFollowGroup(int groupId)
         {
             var users = await FindByCondition(x => x.GroupId == groupId, false).ToListAsync();
             return users;
+        }
+
+        public async Task<bool> IsHasWishlist(int accountId, bool trackChanges)
+        {
+            var wishList = await FindByCondition(x => x.AccountId == accountId, trackChanges).FirstOrDefaultAsync();
+
+            return wishList != null;
         }
     }
 }
