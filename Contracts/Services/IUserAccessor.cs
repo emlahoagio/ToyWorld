@@ -6,6 +6,6 @@ namespace Contracts
 {
     public interface IUserAccessor
     {
-        int getAccountId();
+        int GetAccountId();
     }
 }

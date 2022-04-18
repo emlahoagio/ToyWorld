@@ -25,6 +25,6 @@ namespace Contracts.Repositories
         void DenyPost(Post post);
         void Delete(Post post);
         Task<int> GetOwnerByPostId(int postId);
-        Task<Pagination<PostInList>> GetPostByFavorite(PagingParameters paging, int account_id, bool trackChanges);
+        Task<Pagination<PostInList>> GetPostFollowedGroup(List<int> groupids, PagingParameters paging, int account_id, bool trackChanges);
     }
 }

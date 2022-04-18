@@ -37,7 +37,7 @@ namespace ToyWorldSystem.Controller
         [Route("status/{status}")]
         public async Task<IActionResult> GetAllContest(int status, [FromQuery] PagingParameters paging)
         {
-            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
 
             var contests = await _repositoryManager.Contest.GetContestByStatus(status, paging, trackChanges: false);
             if (contests == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No contest matches with input status");
@@ -57,7 +57,7 @@ namespace ToyWorldSystem.Controller
         [Route("status/{status}/mobile")]
         public async Task<IActionResult> GetAllContestMb(int status, [FromQuery] PagingParameters paging)
         {
-            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
 
             var contests = await _repositoryManager.Contest.GetContestByStatus(status, paging, trackChanges: false);
             if (contests == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No contest matches with input status");
@@ -88,24 +88,22 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
-        #region Get favorite cotnest
+        #region Get wishlist contest
         /// <summary>
         /// Get favorite contest
         /// </summary>
         /// <param name="paging"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("favorite")]
+        [Route("wishlist")]
         public async Task<IActionResult> GetFavoriteContest([FromQuery]PagingParameters paging)
         {
-            var account_id = _userAccessor.getAccountId();
+            var account_id = _userAccessor.GetAccountId();
 
-            //Get favorite type
-            var types = await _repositoryManager.FavoriteType.GetFavoriteType(account_id, trackChanges: false);
-            //Get favorite brand
-            var brands = await _repositoryManager.FavoriteBrand.GetFavoriteBrand(account_id, trackChanges: false);
+            var groupids = await _repositoryManager.FollowGroup.GetFollowedGroup(account_id, trackChanges: false);
+
             //Get contest by type and brand
-            var favorite_contests = await _repositoryManager.Contest.GetContestByBrandAndType(account_id, types, brands, paging, trackChanges: false);
+            var favorite_contests = await _repositoryManager.Contest.GetContestByGroups(account_id, groupids, paging, trackChanges: false);
 
             return Ok(favorite_contests);
         }
@@ -118,18 +116,17 @@ namespace ToyWorldSystem.Controller
         /// <param name="paging"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("favorite/mobile")]
+        [Route("wishlist/mobile")]
         public async Task<IActionResult> GetFavoriteContestMb([FromQuery] PagingParameters paging)
         {
-            var account_id = _userAccessor.getAccountId();
+            var account_id = _userAccessor.GetAccountId();
 
-            //Get favorite type
-            var types = await _repositoryManager.FavoriteType.GetFavoriteType(account_id, trackChanges: false);
-            //Get favorite brand
-            var brands = await _repositoryManager.FavoriteBrand.GetFavoriteBrand(account_id, trackChanges: false);
+            var groupids = await _repositoryManager.FollowGroup.GetFollowedGroup(account_id, trackChanges: false);
+
             //Get contest by type and brand
-            var contest_no_prize = await _repositoryManager.Contest.GetContestByBrandAndType(account_id, types, brands, paging, trackChanges: false);
-            var favorite_contests = await _repositoryManager.PrizeContest.GetPrizeForContest(contest_no_prize);
+            var favorite_contests = await _repositoryManager.Contest.GetContestByGroups(account_id, groupids, paging, trackChanges: false);
+            
+            favorite_contests = await _repositoryManager.PrizeContest.GetPrizeForContest(favorite_contests);
 
             return Ok(favorite_contests);
         }
@@ -145,7 +142,7 @@ namespace ToyWorldSystem.Controller
         [Route("{contest_id}/attended")]
         public async Task<IActionResult> CheckAccountInTheContest(int contest_id)
         {
-            var account_id = _userAccessor.getAccountId();
+            var account_id = _userAccessor.GetAccountId();
 
             var isInContest = await _repositoryManager.JoinContest.IsJoinedToContest(contest_id, account_id, trackChanges: false);
 
@@ -164,7 +161,7 @@ namespace ToyWorldSystem.Controller
         [Route("group/{group_id}")]
         public async Task<IActionResult> GetContestByGroup(int group_id, [FromQuery] PagingParameters paging)
         {
-            var account_id = _userAccessor.getAccountId();
+            var account_id = _userAccessor.GetAccountId();
 
             var result = await _repositoryManager.Contest.GetContestInGroup(group_id, account_id, trackChanges: false, paging);
 
@@ -187,7 +184,7 @@ namespace ToyWorldSystem.Controller
         [Route("highlight/mobile")]
         public async Task<IActionResult> GetContestHighlightMb([FromQuery] PagingParameters paging)
         {
-            var account_id = _userAccessor.getAccountId();
+            var account_id = _userAccessor.GetAccountId();
 
             var contest_have_not_prize = await _repositoryManager.Contest.GetContestHighlightMb(account_id, trackChanges: false, paging);
 
@@ -214,7 +211,7 @@ namespace ToyWorldSystem.Controller
         [Route("group/{group_id}/mobile")]
         public async Task<IActionResult> GetContestByGroupMb(int group_id, [FromQuery] PagingParameters paging)
         {
-            var account_id = _userAccessor.getAccountId();
+            var account_id = _userAccessor.GetAccountId();
 
             var contest_have_not_prize = await _repositoryManager.Contest.GetContestInGroup(group_id, account_id, trackChanges: false, paging);
 
@@ -259,7 +256,7 @@ namespace ToyWorldSystem.Controller
         [Route("{contest_id}/posts")]
         public async Task<IActionResult> GetPostsOfContest(int contest_id, [FromQuery] PagingParameters paging)
         {
-            var account_id = _userAccessor.getAccountId();
+            var account_id = _userAccessor.GetAccountId();
 
             var posts_no_rate_no_image = await _repositoryManager.PostOfContest.GetPostOfContest(contest_id, paging, account_id, trackChanges: false);
 
@@ -408,7 +405,7 @@ namespace ToyWorldSystem.Controller
         [Route("{contest_id}/subscribers/{account_id}")]
         public async Task<IActionResult> RemoveSubscribers(int contest_id, int account_id)
         {
-            var current_login_account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var current_login_account = await _repositoryManager.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
             if (current_login_account.Role != 1) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to remove");
             if (current_login_account.Id == account_id) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Can't remove yourself");
 
@@ -434,7 +431,7 @@ namespace ToyWorldSystem.Controller
         [Route("postofcontest/{post_of_contest_id}")]
         public async Task<IActionResult> DeletePostOfContest(int post_of_contest_id)
         {
-            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
 
             var post = await _repositoryManager.PostOfContest.GetPostOfContestById(post_of_contest_id, trackchanges: false);
             if (account.Role != 1 && post.AccountId != post.AccountId)
@@ -469,7 +466,7 @@ namespace ToyWorldSystem.Controller
         [Route("{contest_id}")]
         public async Task<IActionResult> DeleteContest(int contest_id)
         {
-            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
             if (account.Role != 1) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to remove");
 
             //Remove prize contest
@@ -552,7 +549,7 @@ namespace ToyWorldSystem.Controller
         [Route("{contest_id}/post")]
         public async Task<IActionResult> CreatePostOfContest(NewPostOfContestParameters param, int contest_id)
         {
-            var accountId = _userAccessor.getAccountId();
+            var accountId = _userAccessor.GetAccountId();
 
             var isOpenContest = await _repositoryManager.Contest.IsOpenContest(contest_id, trackChanges: false);
             if (!isOpenContest) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "This contest is not open for post");
@@ -672,7 +669,7 @@ namespace ToyWorldSystem.Controller
         {
             var contest = await _repositoryManager.Contest.GetEvaluateContest(contest_id, trackChanges: false);
 
-            var current_accountId = _userAccessor.getAccountId();
+            var current_accountId = _userAccessor.GetAccountId();
 
             var isJoinContest = contest.AccountJoined.Where(x => x.AccountId == current_accountId).ToList().Count() > 0;
             if (!isJoinContest)
@@ -707,7 +704,7 @@ namespace ToyWorldSystem.Controller
         [Route("post_of_contest/{post_of_contest_id}/feedback")]
         public async Task<IActionResult> FeedbackPost(int post_of_contest_id, NewFeedback newFeedback)
         {
-            var sender_id = _userAccessor.getAccountId();
+            var sender_id = _userAccessor.GetAccountId();
 
             var feedback = new Feedback
             {
@@ -770,7 +767,7 @@ namespace ToyWorldSystem.Controller
         [Route("{contest_id}/join")]
         public async Task<IActionResult> JoinToContest(int contest_id)
         {
-            var account_id = _userAccessor.getAccountId();
+            var account_id = _userAccessor.GetAccountId();
 
             bool is_start_regis = await _repositoryManager.Contest.IsStartRegis(contest_id, trackChanges: false);
 
@@ -808,7 +805,7 @@ namespace ToyWorldSystem.Controller
         [Route("{contest_id}/rate/{post_of_contest_id}")]
         public async Task<IActionResult> RateTheContest(int post_of_contest_id, int contest_id, RateSubmissionParameters parameters)
         {
-            var account_id = _userAccessor.getAccountId();
+            var account_id = _userAccessor.GetAccountId();
 
             var isRated = await _repositoryManager.Rate.IsRated(post_of_contest_id, account_id, trackChanges: false);
 
@@ -829,7 +826,7 @@ namespace ToyWorldSystem.Controller
             _repositoryManager.Rate.Create(rate);
 
             //Create notification
-            var user = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), false);
+            var user = await _repositoryManager.Account.GetAccountById(_userAccessor.GetAccountId(), false);
             CreateNotificationModel noti = new CreateNotificationModel
             {
                 Content = user.Name + " has react your post!",

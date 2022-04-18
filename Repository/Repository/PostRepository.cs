@@ -294,19 +294,21 @@ namespace Repository
             return (int)post.AccountId;
         }
 
-        public async Task<Pagination<PostInList>> GetPostByFavorite(PagingParameters paging, int account_id, bool trackChanges)
+        public async Task<Pagination<PostInList>> GetPostFollowedGroup(List<int> groupids, PagingParameters paging, int account_id, bool trackChanges)
         {
-            var posts = await FindByCondition(x => x.PostDate >= DateTime.UtcNow.AddMonths(-1) && x.IsPublic == true, trackChanges)
+
+
+            var posts = await FindByCondition(x => x.PostDate >= DateTime.UtcNow.AddMonths(-1) && groupids.Contains(x.GroupId.Value) && x.IsPublic == true, trackChanges)
                 .OrderByDescending(x => x.PostDate)
-                //.Skip((paging.PageNumber - 1) * paging.PageSize)
-                //.Take(paging.PageSize)
+                .Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize)
                 .Include(x => x.Account)
                 .Include(x => x.ReactPosts)
                 .ToListAsync();
 
             return new Pagination<PostInList>
             {
-                Count = await FindByCondition(x => x.PostDate >= DateTime.UtcNow.AddMonths(-1) && x.IsPublic == true, trackChanges).CountAsync(),
+                Count = await FindByCondition(x => x.PostDate >= DateTime.UtcNow.AddMonths(-1) && groupids.Contains(x.GroupId.Value) && x.IsPublic == true, trackChanges).CountAsync(),
                 Data = posts.Select(x => new PostInList
                 {
                     Id = x.Id,

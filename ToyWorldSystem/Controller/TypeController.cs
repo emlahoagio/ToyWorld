@@ -47,7 +47,7 @@ namespace ToyWorldSystem.Controller
         [Route("to_add_favorite")]
         public async Task<IActionResult> GetTypeForFavorite()
         {
-            var account_id = _userAccessor.getAccountId();
+            var account_id = _userAccessor.GetAccountId();
 
             var brands = await _repository.Type.GetTypeToAddFavorite(account_id, trackChanges: false);
 
@@ -65,7 +65,7 @@ namespace ToyWorldSystem.Controller
         [Route("favorite/unfavorite")]
         public async Task<IActionResult> AddFavoriteType(List<int> types_id)
         {
-            var account_id = _userAccessor.getAccountId();
+            var account_id = _userAccessor.GetAccountId();
 
             var favorite_type = await _repository.FavoriteType.GetFavoriteType(account_id, trackChanges: false);
             foreach(var type_id in types_id)

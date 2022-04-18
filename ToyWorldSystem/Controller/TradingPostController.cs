@@ -35,7 +35,7 @@ namespace ToyWorldSystem.Controller
         [Route("group/{group_id}")]
         public async Task<IActionResult> GetListTradingPost([FromQuery] PagingParameters paging, int group_id)
         {
-            var account_id = _userAccessor.getAccountId();
+            var account_id = _userAccessor.GetAccountId();
 
             var result = await _repositoryManager.TradingPost
                     .GetTradingPostInGroupMember(group_id, paging, trackChanges: false, account_id);
@@ -62,7 +62,7 @@ namespace ToyWorldSystem.Controller
         [Route("group/{group_id}/mobile")]
         public async Task<IActionResult> GetListTradingPostMb([FromQuery] PagingParameters paging, int group_id)
         {
-            var account_id = _userAccessor.getAccountId();
+            var account_id = _userAccessor.GetAccountId();
 
             var result = await _repositoryManager.TradingPost
                     .GetTradingPostInGroupMember(group_id, paging, trackChanges: false, account_id);
@@ -109,24 +109,22 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
-        #region Get favorite trading post
+        #region Get wishlist trading post
         /// <summary>
         /// Get favorite trading post for home page
         /// </summary>
         /// <param name="paging"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("favorite")]
-        public async Task<IActionResult> GetFavoriteTradingPost([FromQuery] PagingParameters paging)
+        [Route("wishlist")]
+        public async Task<IActionResult> GetWishlistTradingPost([FromQuery] PagingParameters paging)
         {
-            var account_id = _userAccessor.getAccountId();
+            var account_id = _userAccessor.GetAccountId();
 
-            //Get favorite type
-            var types = await _repositoryManager.FavoriteType.GetFavoriteType(account_id, trackChanges: false);
-            //Get favorite brand
-            var brands = await _repositoryManager.FavoriteBrand.GetFavoriteBrand(account_id, trackChanges: false);
-            //Get contest by type and brand
-            var trading = await _repositoryManager.TradingPost.GetTradingByBrandAndType(account_id, types, brands, paging, trackChanges: false);
+            var groupids = await _repositoryManager.FollowGroup.GetFollowedGroup(account_id, trackChanges: false);
+
+            //Get trading by groups
+            var trading = await _repositoryManager.TradingPost.GetTradingByGroup(account_id, groupids, paging, trackChanges: false);
 
             if (trading == null)
             {
@@ -137,24 +135,21 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
-        #region Get favorite trading post
+        #region Get wishlist trading post mobile
         /// <summary>
         /// Get favorite trading post for home page
         /// </summary>
         /// <param name="paging"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("favorite/mobile")]
+        [Route("wishlist/mobile")]
         public async Task<IActionResult> GetFavoriteTradingPostMb([FromQuery] PagingParameters paging)
         {
-            var account_id = _userAccessor.getAccountId();
+            var account_id = _userAccessor.GetAccountId();
 
-            //Get favorite type
-            var types = await _repositoryManager.FavoriteType.GetFavoriteType(account_id, trackChanges: false);
-            //Get favorite brand
-            var brands = await _repositoryManager.FavoriteBrand.GetFavoriteBrand(account_id, trackChanges: false);
-            //Get contest by type and brand
-            var trading = await _repositoryManager.TradingPost.GetTradingByBrandAndType(account_id, types, brands, paging, trackChanges: false);
+            var groupids = await _repositoryManager.FollowGroup.GetFollowedGroup(account_id, trackChanges: false);
+            //Get trading by group
+            var trading = await _repositoryManager.TradingPost.GetTradingByGroup(account_id, groupids, paging, trackChanges: false);
 
             if (trading == null)
             {
@@ -182,7 +177,7 @@ namespace ToyWorldSystem.Controller
         {
             if (status < 0 && status > 2) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Invalid status");
 
-            var accountId = _userAccessor.getAccountId();
+            var accountId = _userAccessor.GetAccountId();
             var account = await _repositoryManager.Account.GetAccountById(accountId, trackChanges: false);
 
             if (account.Role != 1) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to get");
@@ -214,7 +209,7 @@ namespace ToyWorldSystem.Controller
         {
             if (status < 0 && status > 2) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Invalid status");
 
-            var accountId = _userAccessor.getAccountId();
+            var accountId = _userAccessor.GetAccountId();
             var account = await _repositoryManager.Account.GetAccountById(accountId, trackChanges: false);
 
             if (account.Role != 1) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to get");
@@ -247,7 +242,7 @@ namespace ToyWorldSystem.Controller
         [Route("update/{tradingpost_id}")]
         public async Task<IActionResult> GetTradingPostToUpdateInformation(int tradingpost_id)
         {
-            var current_login_account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var current_login_account = await _repositoryManager.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
 
             var update_tradingpost = await _repositoryManager.TradingPost.GetTradingPostById(tradingpost_id, trackChanges: false);
 
@@ -282,7 +277,7 @@ namespace ToyWorldSystem.Controller
         {
             var toyNames = await _repositoryManager.Toy.GetNameOfToy(trackChanges: false);
 
-            var currentAccount = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var currentAccount = await _repositoryManager.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
 
             var result = new InitNewTradingPost
             {
@@ -304,7 +299,7 @@ namespace ToyWorldSystem.Controller
         [Route("{trading_post_id}/detail")]
         public async Task<IActionResult> GetTradingPostDetail(int trading_post_id)
         {
-            var current_account_id = _userAccessor.getAccountId();
+            var current_account_id = _userAccessor.GetAccountId();
 
             var trading_post_detail =
                 await _repositoryManager.TradingPost.GetDetail(trading_post_id, current_account_id, trackChanges: false);
@@ -325,7 +320,7 @@ namespace ToyWorldSystem.Controller
         [Route("{trading_post_id}/detail/mobile")]
         public async Task<IActionResult> GetTradingPostDetailMb(int trading_post_id)
         {
-            var current_account_id = _userAccessor.getAccountId();
+            var current_account_id = _userAccessor.GetAccountId();
 
             var trading_post_detail =
                 await _repositoryManager.TradingPost.GetDetail(trading_post_id, current_account_id, trackChanges: false);
@@ -351,7 +346,7 @@ namespace ToyWorldSystem.Controller
         [Route("{post_id}/comment_detail")]
         public async Task<IActionResult> GetDetailComment(int post_id)
         {
-            var result = await _repositoryManager.Comment.GetCommentDetailOfTradingPost(_userAccessor.getAccountId(), post_id, trackChanges: false);
+            var result = await _repositoryManager.Comment.GetCommentDetailOfTradingPost(_userAccessor.GetAccountId(), post_id, trackChanges: false);
 
             return Ok(result);
         }
@@ -368,7 +363,7 @@ namespace ToyWorldSystem.Controller
         [Route("account/{account_id}")]
         public async Task<IActionResult> GetListTradingPostByAccountId([FromQuery] PagingParameters paging, int account_id)
         {
-            var current_account_id = _userAccessor.getAccountId();
+            var current_account_id = _userAccessor.GetAccountId();
 
             var result = await _repositoryManager.TradingPost
                     .GetTradingPostOfAccount(current_account_id, paging, trackChanges: false, account_id);
@@ -395,7 +390,7 @@ namespace ToyWorldSystem.Controller
         [Route("account/{account_id}/mobile")]
         public async Task<IActionResult> GetListTradingPostByAccountIdMb([FromQuery] PagingParameters paging, int account_id)
         {
-            var current_account_id = _userAccessor.getAccountId();
+            var current_account_id = _userAccessor.GetAccountId();
 
             var result = await _repositoryManager.TradingPost
                     .GetTradingPostOfAccount(current_account_id, paging, trackChanges: false, account_id);
@@ -425,7 +420,7 @@ namespace ToyWorldSystem.Controller
         public async Task<IActionResult> CreateTradingPost([FromBody] NewTradingPostParameters tradingPost, int group_id)
         {
             var createTime = DateTime.UtcNow.AddHours(7);
-            var account_id = _userAccessor.getAccountId();
+            var account_id = _userAccessor.GetAccountId();
 
             var toy = await _repositoryManager.Toy.GetToyByName(tradingPost.ToyName, trackChanges: false);
 
@@ -487,7 +482,7 @@ namespace ToyWorldSystem.Controller
         [Route("{trading_post_id}/feedback")]
         public async Task<IActionResult> FeedbackPost(int trading_post_id, NewFeedback newFeedback)
         {
-            var sender_id = _userAccessor.getAccountId();
+            var sender_id = _userAccessor.GetAccountId();
 
             var feedback = new Feedback
             {
@@ -514,7 +509,7 @@ namespace ToyWorldSystem.Controller
         [Route("{trading_post_id}/react")]
         public async Task<IActionResult> ReactTradingPost(int trading_post_id)
         {
-            var account_id = _userAccessor.getAccountId();
+            var account_id = _userAccessor.GetAccountId();
 
             var reactTrading = await _repositoryManager.ReactTradingPost.FindReact(trading_post_id, account_id, trackChanges: false);
 
@@ -556,7 +551,7 @@ namespace ToyWorldSystem.Controller
         [Route("exchanged/{tradingpost_id}")]
         public async Task<IActionResult> UpdateExchangedTradingPost(int tradingpost_id)
         {
-            var current_login_account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var current_login_account = await _repositoryManager.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
 
             var update_tradingpost = await _repositoryManager.TradingPost.GetTradingPostById(tradingpost_id, trackChanges: false);
 
@@ -582,7 +577,7 @@ namespace ToyWorldSystem.Controller
         [Route("{tradingpost_id}")]
         public async Task<IActionResult> UpdateAllInformationTradingPost([FromBody] UpdateTradingPostParameters update_infor, int tradingpost_id)
         {
-            var current_login_account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var current_login_account = await _repositoryManager.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
 
             var update_tradingpost = await _repositoryManager.TradingPost.GetTradingPostById(tradingpost_id, trackChanges: false);
 
@@ -626,7 +621,7 @@ namespace ToyWorldSystem.Controller
             if (disable_or_enable != 0 && disable_or_enable != 1)
                 throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Invalid status change");
 
-            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
 
             if (delete_post.AccountId != account.Id && account.Role != 1)
                 throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to update");

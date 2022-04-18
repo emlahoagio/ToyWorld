@@ -109,7 +109,7 @@ namespace ToyWorldSystem.Controller
         [Route("{prize_id}")]
         public async Task<IActionResult> DisablePrize(int prize_id)
         {
-            var account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var account = await _repository.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
             if (account.Role != 1) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to update");
 
             await _repository.Prize.DisablePrize(prize_id, trackChanges: false);
