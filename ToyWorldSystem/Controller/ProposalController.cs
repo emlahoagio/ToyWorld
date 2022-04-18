@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using Entities.ErrorModel;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace ToyWorldSystem.Controller
         }
 
         [HttpGet]
-        [Route("getbymanager")]
+        [Route("proposals")]
         public async Task<IActionResult> GetListProposalByManager([FromQuery] PagingParameters paging)
         {
             var proposals = await _repository.Proposal.GetListByManager(paging);
@@ -26,10 +27,10 @@ namespace ToyWorldSystem.Controller
         }
 
         [HttpGet]
-        [Route("getbymember")]
-        public async Task<IActionResult> GetListProposalByMember()
+        [Route("{accountid}/proposals")]
+        public async Task<IActionResult> GetListProposalByMember(int account_id)
         {
-            var proposals = await _repository.Proposal.GetListProposal(_userAccessor.getAccountId());
+            var proposals = await _repository.Proposal.GetListProposal(account_id);
             return Ok(proposals);
         }
 
