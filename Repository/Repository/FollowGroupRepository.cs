@@ -17,5 +17,12 @@ namespace Repository.Repository
             var users = await FindByCondition(x => x.GroupId == groupId, false).ToListAsync();
             return users;
         }
+
+        public async Task<bool> IsHasWishlist(int accountId, bool trackChanges)
+        {
+            var wishList = await FindByCondition(x => x.AccountId == accountId, trackChanges).FirstOrDefaultAsync();
+
+            return wishList != null;
+        }
     }
 }

@@ -188,13 +188,13 @@ namespace ToyWorldSystem.Controller
             //init firebase
             _firebaseSupport.initFirebase();
             //get email
-            var firebaseProfile = await _firebaseSupport.getEmailFromToken(firebaseToken);
+            var firebaseProfile = await _firebaseSupport.GetEmailFromToken(firebaseToken);
             if (firebaseProfile.Email.Contains("Get email from token error: "))
             {
                 throw new ErrorDetails(HttpStatusCode.BadRequest, firebaseProfile.Email);
             }
 
-            var account = await _repository.Account.getAccountByEmail(firebaseProfile.Email, trackChanges: false);
+            var account = await _repository.Account.GetAccountByEmail(firebaseProfile.Email, trackChanges: false);
             if (account == null)
             {
                 //new account
@@ -210,12 +210,15 @@ namespace ToyWorldSystem.Controller
                 _repository.Account.Create(new_account);
                 await _repository.SaveAsync();
                 //get account return
-                account = await _repository.Account.getAccountByEmail(firebaseProfile.Email, trackChanges: false);
+                account = await _repository.Account.GetAccountByEmail(firebaseProfile.Email, trackChanges: false);
             }
             if (!account.Status)
             {
                 throw new ErrorDetails(HttpStatusCode.Unauthorized, "This account is disable");
             }
+
+            account.IsHasWishlist = await _repository.FollowGroup.IsHasWishlist(account.AccountId, trackChanges: false);
+
             return Ok(account);
         }
         #endregion
@@ -231,11 +234,13 @@ namespace ToyWorldSystem.Controller
         [Route("login_by_system_account")]
         public async Task<IActionResult> LoginByAccountSystem(AccountSystemParameters unverify_account)
         {
-            var account = await _repository.Account.getAccountByEmail(unverify_account.Email, unverify_account.Password, trackChanges: false);
+            var account = await _repository.Account.GetAccountByEmail(unverify_account.Email, unverify_account.Password, trackChanges: false);
 
             if (account == null) throw new ErrorDetails(HttpStatusCode.Unauthorized, "Invalid username/password!");
 
             if (!account.Status) throw new ErrorDetails(HttpStatusCode.Unauthorized, "Account is disbled");
+
+            account.IsHasWishlist = await _repository.FollowGroup.IsHasWishlist(account.AccountId, trackChanges: false);
 
             return Ok(account);
         }
@@ -294,7 +299,7 @@ namespace ToyWorldSystem.Controller
         [Route("AccountSystem")]
         public async Task<IActionResult> CreateNewAccountSystem(NewAccountParameters param)
         {
-            var isExistEmail = await _repository.Account.getAccountByEmail(param.Email, trackChanges: false) != null;
+            var isExistEmail = await _repository.Account.GetAccountByEmail(param.Email, trackChanges: false) != null;
 
             if (isExistEmail) throw new ErrorDetails(HttpStatusCode.BadRequest, "Email existed in the system");
 
