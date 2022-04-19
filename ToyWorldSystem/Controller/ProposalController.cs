@@ -19,7 +19,6 @@ namespace ToyWorldSystem.Controller
         }
 
         [HttpGet]
-        [Route("proposals")]
         public async Task<IActionResult> GetListProposalByManager([FromQuery] PagingParameters paging)
         {
             var proposals = await _repository.Proposal.GetListByManager(paging);
@@ -27,7 +26,7 @@ namespace ToyWorldSystem.Controller
         }
 
         [HttpGet]
-        [Route("{account_id}/proposals")]
+        [Route("{account_id}")]
         public async Task<IActionResult> GetListProposalByMember(int account_id)
         {
             var proposals = await _repository.Proposal.GetListProposal(account_id);
