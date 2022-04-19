@@ -104,6 +104,7 @@ namespace Repository
 
             var result = new AccountDetail
             {
+                Id = account.Id,
                 Avatar = account.Avatar,
                 Biography = account.Biography,
                 Name = account.Name,

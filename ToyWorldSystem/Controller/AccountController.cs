@@ -59,6 +59,8 @@ namespace ToyWorldSystem.Controller
 
             var account = await _repository.Account.GetAccountDetail(account_id, current_account_id, trackChanges: false);
 
+            account = await _repository.FollowGroup.GetWishlist(account, trackChanges: false);
+
             if (account == null) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid account");
 
             return Ok(account);

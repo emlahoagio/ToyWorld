@@ -1,4 +1,5 @@
 ﻿using Contracts.Repositories;
+using Entities.DataTransferObject;
 using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -25,6 +26,17 @@ namespace Repository.Repository
         {
             var users = await FindByCondition(x => x.GroupId == groupId, false).ToListAsync();
             return users;
+        }
+
+        public async Task<AccountDetail> GetWishlist(AccountDetail account, bool trackChanges)
+        {
+            var followedGroup = await FindByCondition(x => x.AccountId == account.Id, trackChanges)
+                .Include(x => x.Group)
+                .ToListAsync();
+
+            account.WishLists = followedGroup.Select(x => new WishList { Id = x.Group.Id, Name = x.Group.Name }).ToList();
+
+            return account;
         }
 
         public async Task<bool> IsHasWishlist(int accountId, bool trackChanges)

@@ -1,4 +1,5 @@
-﻿using Entities.Models;
+﻿using Entities.DataTransferObject;
+using Entities.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -10,5 +11,6 @@ namespace Contracts.Repositories
         Task<bool> IsHasWishlist(int accountId, bool trackChanges);
         void Create(FollowGroup followGroup);
         Task<List<int>> GetFollowedGroup(int accountId, bool trackChanges);
+        Task<AccountDetail> GetWishlist(AccountDetail account, bool trackChanges);
     }
 }
