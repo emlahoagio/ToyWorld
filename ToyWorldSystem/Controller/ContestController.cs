@@ -506,36 +506,7 @@ namespace ToyWorldSystem.Controller
         [Route("{contest_id}/end")]
         public async Task<IActionResult> EndContest(int contest_id)
         {
-            //get list prize descending by value sort des prize
-            var prizesList = await _repositoryManager.PrizeContest.GetPrizeForEndContest(contest_id, trackChanges: false);
-
-            //Get list post of contest count star sort des prize
-            var postsOfContestList = await _repositoryManager.PostOfContest.GetPostOfContestForEndContest(contest_id, trackChanges: false);
-
-            //For prize get highest star contest
-            foreach (var prize in prizesList)
-            {
-                var post = postsOfContestList.First();
-                if (post != null)
-                {
-                    _repositoryManager.Reward.Create(new Reward
-                    {
-                        AccountId = post.AccountId,
-                        ContestId = contest_id,
-                        PostOfContestId = post.Id,
-                        PrizeId = prize.Id
-                    });
-                }
-                else
-                {
-                    break;
-                }
-                //Bỏ highest ra for prize tiếp
-                postsOfContestList.Remove(post);
-            }
-
             await _repositoryManager.Contest.EndContest(contest_id, trackChanges: false);
-
             await _repositoryManager.SaveAsync();
             return Ok("Save changes success");
         }

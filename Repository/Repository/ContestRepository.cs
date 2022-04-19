@@ -21,7 +21,7 @@ namespace Repository
         {
             var contest = await FindByCondition(x => x.Id == contestId, trackChanges).FirstOrDefaultAsync();
 
-            contest.EndDate = DateTime.Now;
+            contest.EndDate = DateTime.UtcNow;
             contest.Status = 4;
 
             Update(contest);
