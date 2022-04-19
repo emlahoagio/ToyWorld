@@ -49,7 +49,7 @@ namespace ToyWorldSystem.Controller
         [HttpPost]
         public async Task<IActionResult> CreateGroup(NewGroupParameters param)
         {
-            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
 
             if (current_account.Role != 0) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "don't have permission to update");
 
@@ -78,7 +78,7 @@ namespace ToyWorldSystem.Controller
         [Route("{group_id}")]
         public async Task<IActionResult> UpdateGroup(int group_id, string name, string description)
         {
-            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
 
             if (current_account.Role != 0) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "don't have permission to update");
 
@@ -103,7 +103,7 @@ namespace ToyWorldSystem.Controller
             if (disable_or_enable != 1 && disable_or_enable != 0)
                 throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Invalid update status");
 
-            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
 
             if (current_account.Role != 0) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "don't have permission to update");
 

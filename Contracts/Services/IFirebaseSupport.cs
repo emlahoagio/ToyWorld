@@ -9,6 +9,6 @@ namespace Contracts
     public interface IFirebaseSupport
     {
         void initFirebase();
-        Task<FirebaseProfile> getEmailFromToken(string firebaseToken);
+        Task<FirebaseProfile> GetEmailFromToken(string firebaseToken);
     }
 }

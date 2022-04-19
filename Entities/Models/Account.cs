@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 #nullable disable
 
@@ -35,6 +34,8 @@ namespace Entities.Models
             RateSellersSeller = new HashSet<RateSeller>();
             FavoriteTypes = new HashSet<FavoriteType>();
             FavoriteBrands = new HashSet<FavoriteBrand>();
+
+            Proposals = new HashSet<Proposal>();
         }
 
         public int Id { get; set; }
@@ -75,5 +76,7 @@ namespace Entities.Models
         public virtual ICollection<RateSeller> RateSellersSeller { get; set; }
         public virtual ICollection<FavoriteType> FavoriteTypes { get; set; }
         public virtual ICollection<FavoriteBrand> FavoriteBrands { get; set; }
+
+        public virtual ICollection<Proposal> Proposals { get; set; }
     }
 }

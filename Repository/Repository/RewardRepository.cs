@@ -16,6 +16,21 @@ namespace Repository.Repository
         {
         }
 
+        public async Task<Pagination<ContestManaged>> CheckRewardOfContest(Pagination<ContestManaged> contests, bool trackChanges)
+        {
+            var data = new List<ContestManaged>();
+
+            foreach(var contest in contests.Data)
+            {
+                contest.IsHasReward = await FindByCondition(x => x.ContestId == contest.Id, trackChanges).CountAsync() > 0;
+
+                data.Add(contest);
+            }
+            contests.Data = data;
+
+            return contests;
+        }
+
         public async Task Delete(int contestId, bool trackChanges)
         {
 
@@ -68,6 +83,15 @@ namespace Repository.Repository
                     Value = x.Prize.Value
                 }
             }).ToList();
+
+            return result;
+        }
+
+        public async Task<List<int>> GetIdOfPostHasReward(int contest_id, bool trackChanges)
+        {
+            var result = await FindByCondition(x => x.ContestId == contest_id, trackChanges)
+                .Select(x => x.PostOfContestId)
+                .ToListAsync();
 
             return result;
         }

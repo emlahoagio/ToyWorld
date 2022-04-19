@@ -14,5 +14,6 @@ namespace Contracts.Repositories
         void Create(PrizeContest prizeContest);
         Task Delete(int contest_id, bool trackChanges);
         Task<Pagination<ContestInGroup>> GetPrizeForContest(Pagination<ContestInGroup> param);
+        Task<Pagination<ContestManaged>> GetPrizeForContest(Pagination<ContestManaged> contests);
     }
 }

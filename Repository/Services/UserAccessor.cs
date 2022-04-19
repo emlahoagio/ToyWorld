@@ -16,7 +16,7 @@ namespace Repository
             this.httpContextAccessor = httpContextAccessor;
         }
 
-        public int getAccountId()
+        public int GetAccountId()
         {
             return int.Parse(httpContextAccessor.HttpContext.User.Claims.SingleOrDefault(p => p.Type == "AccountId").Value);
         }

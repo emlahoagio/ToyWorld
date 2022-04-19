@@ -34,7 +34,7 @@ namespace ToyWorldSystem.Controller
         [Route("group/{group_id}")]
         public async Task<IActionResult> GetListPostByGroup(int group_id, [FromQuery] PagingParameters paging)
         {
-            var account_id = _userAccessor.getAccountId();
+            var account_id = _userAccessor.GetAccountId();
 
             var result = await _repositoryManager.Post.GetPostByGroupId(group_id, trackChanges: false, paging, account_id);
 
@@ -53,7 +53,7 @@ namespace ToyWorldSystem.Controller
         [Route("group/{group_id}/mobile")]
         public async Task<IActionResult> GetListPostByGroupMobile(int group_id, [FromQuery] PagingParameters paging)
         {
-            var account_id = _userAccessor.getAccountId();
+            var account_id = _userAccessor.GetAccountId();
 
             var result = await _repositoryManager.Post.GetPostByGroupId(group_id, trackChanges: false, paging, account_id);
 
@@ -104,19 +104,21 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
-        #region Get popular post
+        #region Get wishlist post
         /// <summary>
         /// Get post list for home page
         /// </summary>
         /// <param name="paging"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("popular")]
+        [Route("wishlist")]
         public async Task<IActionResult> GetPopularPost([FromQuery] PagingParameters paging)
         {
-            var account_id = _userAccessor.getAccountId();
+            var account_id = _userAccessor.GetAccountId();
 
-            var posts = await _repositoryManager.Post.GetPostByFavorite(paging, account_id, trackChanges: false);
+            var groupids = await _repositoryManager.FollowGroup.GetFollowedGroup(account_id, trackChanges: false);
+
+            var posts = await _repositoryManager.Post.GetPostFollowedGroup(groupids, paging, account_id, trackChanges: false);
             if (posts == null)
             {
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
@@ -126,19 +128,21 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
-        #region Get popular post Mobile
+        #region Get wishlist post Mobile
         /// <summary>
         /// Get post list for home page mobile
         /// </summary>
         /// <param name="paging"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("popular/mobile")]
+        [Route("wishlist/mobile")]
         public async Task<IActionResult> GetPopularPostForMb([FromQuery] PagingParameters paging)
         {
-            var account_id = _userAccessor.getAccountId();
+            var account_id = _userAccessor.GetAccountId();
 
-            var posts = await _repositoryManager.Post.GetPostByFavorite(paging, account_id, trackChanges: false);
+            var groupids = await _repositoryManager.FollowGroup.GetFollowedGroup(account_id, trackChanges: false);
+
+            var posts = await _repositoryManager.Post.GetPostFollowedGroup(groupids, paging, account_id, trackChanges: false);
             if (posts == null)
             {
                 throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No more posts in this group");
@@ -163,7 +167,7 @@ namespace ToyWorldSystem.Controller
         [Route("account/{account_id}")]
         public async Task<IActionResult> GetListPostByAccount(int account_id, [FromQuery] PagingParameters paging)
         {
-            var current_acc_id = _userAccessor.getAccountId();
+            var current_acc_id = _userAccessor.GetAccountId();
 
             var result = await _repositoryManager.Post.GetPostByAccountId(account_id, trackChanges: false, paging);
 
@@ -189,7 +193,7 @@ namespace ToyWorldSystem.Controller
         [Route("account/{account_id}/mobile")]
         public async Task<IActionResult> GetListPostByAccountMb(int account_id, [FromQuery] PagingParameters paging)
         {
-            var current_acc_id = _userAccessor.getAccountId();
+            var current_acc_id = _userAccessor.GetAccountId();
 
             var result = await _repositoryManager.Post.GetPostByAccountId(account_id, trackChanges: false, paging);
 
@@ -208,62 +212,6 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
-        #region Get waiting post
-        /// <summary>
-        /// Get Waiting post (Role: Manager, Member)
-        /// </summary>
-        /// <param name="paging"></param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("waiting")]
-        public async Task<IActionResult> GetWaitingPost([FromQuery] PagingParameters paging)
-        {
-            var accountId = _userAccessor.getAccountId();
-            var account = await _repositoryManager.Account.GetAccountById(accountId, trackChanges: false);
-            Pagination<WaitingPost> result;
-            if (account.Role == 1)
-            {
-                result = await _repositoryManager.Post.GetWaitingPost(trackChanges: false, paging);
-            }
-            else
-            {
-                result = await _repositoryManager.Post.GetWaitingPost(trackChanges: false, paging, accountId);
-            }
-            if (result == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No waiting post was found");
-
-            return Ok(result);
-        }
-        #endregion
-
-        #region Get waiting post
-        /// <summary>
-        /// Get Waiting post (Role: Manager, Member)
-        /// </summary>
-        /// <param name="paging"></param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("waiting/mobile")]
-        public async Task<IActionResult> GetWaitingPostMb([FromQuery] PagingParameters paging)
-        {
-            var accountId = _userAccessor.getAccountId();
-            var account = await _repositoryManager.Account.GetAccountById(accountId, trackChanges: false);
-            Pagination<WaitingPost> result;
-            if (account.Role == 1)
-            {
-                result = await _repositoryManager.Post.GetWaitingPost(trackChanges: false, paging);
-            }
-            else
-            {
-                result = await _repositoryManager.Post.GetWaitingPost(trackChanges: false, paging, accountId);
-            }
-            if (result == null) throw new ErrorDetails(HttpStatusCode.NotFound, "No waiting post was found");
-
-            result = await _repositoryManager.Image.GetImageForWaitingPostDetail(result, trackChanges: false);
-
-            return Ok(result);
-        }
-        #endregion
-
         #region Get post detail
         /// <summary>
         /// Get post detail (Role: Member, Manager)
@@ -274,7 +222,7 @@ namespace ToyWorldSystem.Controller
         [Route("details/{post_id}")]
         public async Task<IActionResult> GetPostDetail(int post_id)
         {
-            var account_id = _userAccessor.getAccountId();
+            var account_id = _userAccessor.GetAccountId();
 
             var result = await _repositoryManager.Post.GetPostDetail(post_id, trackChanges: false, account_id);
 
@@ -295,7 +243,7 @@ namespace ToyWorldSystem.Controller
         [Route("details/{post_id}/mobile")]
         public async Task<IActionResult> GetPostDetailMb(int post_id)
         {
-            var account_id = _userAccessor.getAccountId();
+            var account_id = _userAccessor.GetAccountId();
 
             var result = await _repositoryManager.Post.GetPostDetail(post_id, trackChanges: false, account_id);
 
@@ -319,7 +267,7 @@ namespace ToyWorldSystem.Controller
         [Route("{post_id}/comment_detail")]
         public async Task<IActionResult> GetDetailComment(int post_id)
         {
-            var result = await _repositoryManager.Comment.GetCommentDetailOfPost(_userAccessor.getAccountId(), post_id, trackChanges: false);
+            var result = await _repositoryManager.Comment.GetCommentDetailOfPost(_userAccessor.GetAccountId(), post_id, trackChanges: false);
 
             return Ok(result);
         }
@@ -335,7 +283,7 @@ namespace ToyWorldSystem.Controller
         [Route("new")]
         public async Task<IActionResult> CreatePost(NewPostParameter param)
         {
-            var accountId = _userAccessor.getAccountId();
+            var accountId = _userAccessor.GetAccountId();
 
             _repositoryManager.Post.CreatePost(param, accountId);
 
@@ -356,7 +304,7 @@ namespace ToyWorldSystem.Controller
         [Route("{post_id}/feedback")]
         public async Task<IActionResult> FeedbackPost(int post_id, NewFeedback newFeedback)
         {
-            var sender_id = _userAccessor.getAccountId();
+            var sender_id = _userAccessor.GetAccountId();
 
             var feedback = new Feedback
             {
@@ -387,7 +335,7 @@ namespace ToyWorldSystem.Controller
 
             var post = await _repositoryManager.Post.GetPostReactById(post_id, trackChanges: false);
 
-            var accountId = _userAccessor.getAccountId();
+            var accountId = _userAccessor.GetAccountId();
 
             if (post == null)
                 throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "No post matches with post id");
@@ -413,7 +361,7 @@ namespace ToyWorldSystem.Controller
                 _repositoryManager.ReactPost.CreateReact(
                     new Entities.Models.ReactPost { AccountId = accountId, PostId = post_id });
                 //Create Notification
-                var user = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), false);
+                var user = await _repositoryManager.Account.GetAccountById(_userAccessor.GetAccountId(), false);
                 var owner = await _repositoryManager.Post.GetOwnerByPostId(post_id);
                 CreateNotificationModel noti = new CreateNotificationModel
                 {
@@ -437,95 +385,6 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
-        #region Approve post
-        /// <summary>
-        /// Approve post (Role: Manager)
-        /// </summary>
-        /// <param name="post_id">Id of post return in get list post</param>
-        /// <returns></returns>
-        [HttpPut]
-        [Route("approve/{post_id}")]
-        public async Task<IActionResult> ApprovePost(int post_id)
-        {
-            var accountId = _userAccessor.getAccountId();
-            var account = await _repositoryManager.Account.GetAccountById(accountId, trackChanges: false);
-
-            if (account.Role != 1) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid request");
-
-            var post = await _repositoryManager.Post.GetPostApproveOrDenyById(post_id, trackChanges: false);
-            if (post == null) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid post id");
-
-            _repositoryManager.Post.ApprovePost(post);
-            //CREATE COMMENT
-            CreateNotificationModel noti = new CreateNotificationModel
-            {
-                Content = "Your post is approved",
-                AccountId = post.AccountId,
-                PostId = post.Id,
-            };
-            //push notification to list follower
-            var listFollower = await _repositoryManager.FollowAccount.GetAccountFollower((int)post.AccountId, false);
-            if (listFollower != null)
-            {
-                foreach (var item in listFollower)
-                {
-                    CreateNotificationModel notiToFollower = new CreateNotificationModel
-                    {
-                        Content = await _repositoryManager.Account.GetAccountById((int)post.AccountId, false) + " have a new post!",
-                        AccountId = item.Id,
-                        PostId = post.Id,
-                    };
-                }
-            }
-            //END
-            await _repositoryManager.SaveAsync();
-
-            //Send notification
-
-            return Ok("Save changes success");
-        }
-        #endregion
-
-        #region Deny post
-        /// <summary>
-        /// Deny post (Role: Manager)
-        /// </summary>
-        /// <param name="post_id">Id of post return in get list post</param>
-        /// <returns></returns>
-        [HttpPut]
-        [Route("deny/{post_id}")]
-        public async Task<IActionResult> DenyPost(int post_id)
-        {
-            var accountId = _userAccessor.getAccountId();
-            var account = await _repositoryManager.Account.GetAccountById(accountId, trackChanges: false);
-
-            if (account.Role != 1) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid request");
-
-            var post = await _repositoryManager.Post.GetPostApproveOrDenyById(post_id, trackChanges: false);
-            if (post == null) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid post id");
-
-            _repositoryManager.Post.DenyPost(post);
-            await _repositoryManager.SaveAsync();
-
-            //Send notification
-            var listFollower = await _repositoryManager.FollowAccount.GetAccountFollower((int)post.AccountId, false);
-            if (listFollower != null)
-            {
-                foreach (var item in listFollower)
-                {
-                    CreateNotificationModel notiToFollower = new CreateNotificationModel
-                    {
-                        Content = await _repositoryManager.Account.GetAccountById((int)post.AccountId, false) + " have a new post!",
-                        AccountId = item.Id,
-                        PostId = post.Id,
-                    };
-                }
-            }
-
-            return Ok("Save changes success");
-        }
-        #endregion
-
         #region Delete post
         /// <summary>
         /// Delete post (Role: Manager, Member)
@@ -536,7 +395,7 @@ namespace ToyWorldSystem.Controller
         [Route("{post_id}")]
         public async Task<IActionResult> Delete(int post_id)
         {
-            var current_account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var current_account = await _repositoryManager.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
 
             //Get all id to delete
             var post = await _repositoryManager.Post.GetDeletePost(post_id, trackChanges: false);

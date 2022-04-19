@@ -2,12 +2,8 @@
 using Entities.ErrorModel;
 using Entities.Models;
 using Entities.RequestFeatures;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Repository;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ToyWorldSystem.Controller
@@ -32,7 +28,7 @@ namespace ToyWorldSystem.Controller
         /// <param name="paging"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IActionResult> getPrizeList([FromQuery] PagingParameters paging)
+        public async Task<IActionResult> GetPrizeList([FromQuery] PagingParameters paging)
         {
             var pagignationPrize_no_image = await _repository.Prize.GetPrize(paging, trackChanges: false);
 
@@ -62,6 +58,24 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
+        #region Get prize for end contest
+        /// <summary>
+        /// Get list prize for add to contest and proposal
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("PrizeForEnd")]
+        public async Task<IActionResult> GetPrizeListForEndContest([FromQuery] PagingParameters paging)
+        {
+            var pagignationPrize_no_image = await _repository.Prize.GetPrizeForEnd(paging, trackChanges: false);
+
+            var pagignationPrize = await _repository.Image.GetImageForPrizeList(pagignationPrize_no_image, trackChanges: false);
+
+            return Ok(pagignationPrize);
+        }
+        #endregion
+
         #region Create new prize
         /// <summary>
         /// Create new prize
@@ -76,7 +90,7 @@ namespace ToyWorldSystem.Controller
                 Description = newPrize.Description,
                 Name = newPrize.Name,
                 Value = newPrize.Value,
-                Images = new List<Image>{new Image { Url = newPrize.Image }}
+                Images = new List<Image> { new Image { Url = newPrize.Image } }
             };
 
             _repository.Prize.CreatePrize(prize);
@@ -113,7 +127,7 @@ namespace ToyWorldSystem.Controller
         [Route("{prize_id}")]
         public async Task<IActionResult> DisablePrize(int prize_id)
         {
-            var account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var account = await _repository.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
             if (account.Role != 1) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to update");
 
             await _repository.Prize.DisablePrize(prize_id, trackChanges: false);

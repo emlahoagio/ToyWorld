@@ -30,7 +30,7 @@ namespace ToyWorldSystem.Controller
         [Route("news/post")]
         public async Task<IActionResult> CreateCommentInPost(NewCommentParameter param)
         {
-            var accountId = _userAccessor.getAccountId();
+            var accountId = _userAccessor.GetAccountId();
 
             var comment = new Entities.Models.Comment
             {
@@ -43,7 +43,7 @@ namespace ToyWorldSystem.Controller
 
             _repositoryManager.Comment.CreateComment(comment);
             //CREATE COMMENT
-            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), false);
+            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.GetAccountId(), false);
             var noti = new CreateNotificationModel
             {
                 PostId = param.PostId,
@@ -68,7 +68,7 @@ namespace ToyWorldSystem.Controller
         [Route("news/trading_post")]
         public async Task<IActionResult> CreateCommentInTradingPost(NewCommentParameter param)
         {
-            var accountId = _userAccessor.getAccountId();
+            var accountId = _userAccessor.GetAccountId();
 
             var comment = new Entities.Models.Comment
             {
@@ -81,7 +81,7 @@ namespace ToyWorldSystem.Controller
 
             _repositoryManager.Comment.CreateComment(comment);
             //CREATE COMMENT
-            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), false);
+            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.GetAccountId(), false);
             var noti = new CreateNotificationModel
             {
                 TradingPostId = param.PostId,
@@ -108,7 +108,7 @@ namespace ToyWorldSystem.Controller
         {
             var comment = await _repositoryManager.Comment.GetCommentReactById(comment_id, trackChanges: false);
 
-            var accountId = _userAccessor.getAccountId();
+            var accountId = _userAccessor.GetAccountId();
 
             if (comment == null)
                 throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "No comment matches with post id");
@@ -157,7 +157,7 @@ namespace ToyWorldSystem.Controller
         [HttpPut]
         public async Task<IActionResult> UpdateComment(UpdateCommentParameters request_comment)
         {
-            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var account = await _repositoryManager.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
 
             var comment = await _repositoryManager.Comment.GetUpdateCommentById(request_comment.Id, trackChanges: false);
 
@@ -181,7 +181,7 @@ namespace ToyWorldSystem.Controller
         [Route("{comment_id}")]
         public async Task<IActionResult> DeleteComment(int comment_id)
         {
-            var account_id = _userAccessor.getAccountId();
+            var account_id = _userAccessor.GetAccountId();
 
             var comment = await _repositoryManager.Comment.GetUpdateCommentById(comment_id, trackChanges: false);
 

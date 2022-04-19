@@ -17,5 +17,6 @@ namespace Entities.DataTransferObject
         public bool Status { get; set; }
         public string Token { get; set; }
         public bool IsHasPassword { get; set; }
+        public bool IsHasWishlist { get; set; }
     }
 }

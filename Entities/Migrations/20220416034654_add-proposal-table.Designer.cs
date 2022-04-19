@@ -4,14 +4,16 @@ using Entities.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Entities.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class TWSContextModelSnapshot : ModelSnapshot
+    [Migration("20220416034654_add-proposal-table")]
+    partial class addproposaltable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -579,7 +581,19 @@ namespace Entities.Migrations
                     b.Property<int?>("GroupId")
                         .HasColumnType("int");
 
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsPublic")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsWaiting")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("PostDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("PublicDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("ToyId")
@@ -614,9 +628,6 @@ namespace Entities.Migrations
 
                     b.Property<DateTime?>("DateCreate")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -1370,7 +1381,6 @@ namespace Entities.Migrations
                     b.HasOne("Entities.Models.Account", "Account")
                         .WithMany("Proposals")
                         .HasForeignKey("AccountId")
-                        .HasConstraintName("FK_Proposal_Account_AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

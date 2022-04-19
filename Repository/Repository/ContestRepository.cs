@@ -21,7 +21,7 @@ namespace Repository
         {
             var contest = await FindByCondition(x => x.Id == contestId, trackChanges).FirstOrDefaultAsync();
 
-            contest.EndDate = DateTime.Now;
+            contest.EndDate = DateTime.UtcNow;
             contest.Status = 4;
 
             Update(contest);
@@ -191,71 +191,18 @@ namespace Repository
             return contest;
         }
 
-        public async Task<Pagination<ContestInGroup>> GetContestByBrandAndType(int account_id, List<Entities.Models.Type> types, List<Brand> brands, PagingParameters paging, bool trackChanges)
+        public async Task<Pagination<ContestInGroup>> GetContestByGroups(int account_id, List<int> groups, PagingParameters paging, bool trackChanges)
         {
-            var contests = await FindByCondition(x => x.StartRegistration >= DateTime.UtcNow.AddMonths(-6), trackChanges).ToListAsync();
+            var contests = await FindByCondition(x => x.StartRegistration >= DateTime.UtcNow.AddMonths(-6) && groups.Contains(x.GroupId.Value), trackChanges)
+                .OrderByDescending(x => x.Id)
+                .Skip((paging.PageNumber - 1) * paging.PageSize)
+                .Take(paging.PageSize)
+                .ToListAsync();
 
-            //Account have no favorite
-            if (types == null && brands == null)
+            return new Pagination<ContestInGroup>
             {
-                return new Pagination<ContestInGroup>
-                {
-                    Count = contests.Count,
-                    Data = contests.Skip((paging.PageNumber - 1) * paging.PageSize).Take(paging.PageSize).Select(x => new ContestInGroup
-                    {
-                        CoverImage = x.CoverImage,
-                        Description = x.Description,
-                        EndDate = x.EndDate,
-                        EndRegistration = x.EndRegistration,
-                        Id = x.Id,
-                        Slogan = x.Slogan,
-                        MaxRegistration = x.MaxRegistration,
-                        MinRegistration = x.MinRegistration,
-                        StartDate = x.StartDate,
-                        StartRegistration = x.StartRegistration,
-                        Title = x.Title,
-                        Status = x.Status.Value
-                    }).ToList(),
-                    PageSize = paging.PageSize,
-                    PageNumber = paging.PageNumber
-                };
-            }
-
-            var result = new List<Contest>();
-            //select by brand
-            if (brands != null)
-            {
-                foreach (var brand in brands)
-                {
-                    foreach (var contest in contests)
-                    {
-                        if (contest.BrandId == brand.Id)
-                        {
-                            result.Add(contest);
-                            contests.Remove(contest);
-                        }
-                    }
-                }
-            }
-            //select by type
-            if (types != null)
-            {
-                foreach (var type in types)
-                {
-                    foreach (var contest in contests)
-                    {
-                        if (contest.TypeId == type.Id)
-                        {
-                            result.Add(contest);
-                            contests.Remove(contest);
-                        }
-                    }
-                }
-            }
-            var count = result.Count;
-            //paging result
-            var paging_result = result.Skip((paging.PageNumber - 1) * paging.PageSize).Take(paging.PageSize)
-                .Select(x => new ContestInGroup
+                Count = await FindByCondition(x => x.StartRegistration >= DateTime.UtcNow.AddMonths(-6) && groups.Contains(x.GroupId.Value), trackChanges).CountAsync(),
+                Data = contests.Select(x => new ContestInGroup
                 {
                     CoverImage = x.CoverImage,
                     Description = x.Description,
@@ -269,17 +216,13 @@ namespace Repository
                     StartRegistration = x.StartRegistration,
                     Title = x.Title,
                     Status = x.Status.Value
-                }).ToList();
-            return new Pagination<ContestInGroup>
-            {
-                Count = count,
-                Data = paging_result,
-                PageNumber = paging.PageNumber,
-                PageSize = paging.PageSize
+                }).ToList(),
+                PageSize = paging.PageSize,
+                PageNumber = paging.PageNumber
             };
         }
 
-        public async Task<Pagination<ContestInGroup>> GetContestByStatus(int status, PagingParameters paging, bool trackChanges)
+        public async Task<Pagination<ContestManaged>> GetContestByStatus(int status, PagingParameters paging, bool trackChanges)
         {
             var contests = new List<Contest>();
             int count = 0;
@@ -293,7 +236,7 @@ namespace Repository
                     .ToListAsync();
                 count = await FindAll(trackChanges).CountAsync();
             }
-            else if(status == 1)
+            else if (status == 1)
             {
                 contests = await FindByCondition(x => x.Status == 4, trackChanges)
                     .OrderByDescending(x => x.Id)
@@ -312,7 +255,7 @@ namespace Repository
                 count = await FindByCondition(x => x.Status != 4 && x.Status != 0, trackChanges).CountAsync();
             }
 
-            var result_data = contests.Select(x => new ContestInGroup
+            var result_data = contests.Select(x => new ContestManaged
             {
                 CoverImage = x.CoverImage,
                 Description = x.Description,
@@ -328,7 +271,7 @@ namespace Repository
                 Status = x.Status.Value
             }).ToList();
 
-            var result = new Pagination<ContestInGroup>
+            var result = new Pagination<ContestManaged>
             {
                 Count = count,
                 Data = result_data,

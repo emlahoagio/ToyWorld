@@ -55,9 +55,11 @@ namespace ToyWorldSystem.Controller
         [Route("detail/{account_id}")]
         public async Task<IActionResult> GetAccountDetail(int account_id)
         {
-            var current_account_id = _userAccessor.getAccountId();
+            var current_account_id = _userAccessor.GetAccountId();
 
             var account = await _repository.Account.GetAccountDetail(account_id, current_account_id, trackChanges: false);
+
+            account = await _repository.FollowGroup.GetWishlist(account, trackChanges: false);
 
             if (account == null) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid account");
 
@@ -174,6 +176,46 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
+        #region Add wishlist
+        /// <summary>
+        /// Add account wish list
+        /// </summary>
+        /// <param name="wishlists"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("wishlist")]
+        public async Task<IActionResult> AddWishList(AddWishlistParameters wishlists)
+        {
+            var accountId = _userAccessor.GetAccountId();
+            foreach (var id in wishlists.GroupIds)
+                _repository.FollowGroup.Create(new FollowGroup { AccountId = accountId, GroupId = id });
+
+            await _repository.SaveAsync();
+            return Ok("Save changes success");
+        }
+        #endregion
+
+        #region Remove wishlist
+        [HttpDelete]
+        [Route("Wishlist")]
+        public async Task<IActionResult> RemoveWishlist(AddWishlistParameters param)
+        {
+            var account_id = _userAccessor.GetAccountId();
+
+            var wishlist = await _repository.FollowGroup.GetFollowedGroup(account_id, trackChanges: false);
+
+            foreach(int groupid in param.GroupIds)
+            {
+                if (wishlist.Contains(groupid))
+                {
+                    _repository.FollowGroup.Delete(new FollowGroup { AccountId = account_id, GroupId = groupid });
+                }
+            }
+            await _repository.SaveAsync();
+            return Ok("Save changes success");
+        }
+        #endregion
+
         #region Login by gg mail
         /// <summary>
         /// Login by google mail (Role: ALL)
@@ -188,13 +230,13 @@ namespace ToyWorldSystem.Controller
             //init firebase
             _firebaseSupport.initFirebase();
             //get email
-            var firebaseProfile = await _firebaseSupport.getEmailFromToken(firebaseToken);
+            var firebaseProfile = await _firebaseSupport.GetEmailFromToken(firebaseToken);
             if (firebaseProfile.Email.Contains("Get email from token error: "))
             {
                 throw new ErrorDetails(HttpStatusCode.BadRequest, firebaseProfile.Email);
             }
 
-            var account = await _repository.Account.getAccountByEmail(firebaseProfile.Email, trackChanges: false);
+            var account = await _repository.Account.GetAccountByEmail(firebaseProfile.Email, trackChanges: false);
             if (account == null)
             {
                 //new account
@@ -210,12 +252,15 @@ namespace ToyWorldSystem.Controller
                 _repository.Account.Create(new_account);
                 await _repository.SaveAsync();
                 //get account return
-                account = await _repository.Account.getAccountByEmail(firebaseProfile.Email, trackChanges: false);
+                account = await _repository.Account.GetAccountByEmail(firebaseProfile.Email, trackChanges: false);
             }
             if (!account.Status)
             {
                 throw new ErrorDetails(HttpStatusCode.Unauthorized, "This account is disable");
             }
+
+            account.IsHasWishlist = await _repository.FollowGroup.IsHasWishlist(account.AccountId, trackChanges: false);
+
             return Ok(account);
         }
         #endregion
@@ -231,11 +276,13 @@ namespace ToyWorldSystem.Controller
         [Route("login_by_system_account")]
         public async Task<IActionResult> LoginByAccountSystem(AccountSystemParameters unverify_account)
         {
-            var account = await _repository.Account.getAccountByEmail(unverify_account.Email, unverify_account.Password, trackChanges: false);
+            var account = await _repository.Account.GetAccountByEmail(unverify_account.Email, unverify_account.Password, trackChanges: false);
 
             if (account == null) throw new ErrorDetails(HttpStatusCode.Unauthorized, "Invalid username/password!");
 
             if (!account.Status) throw new ErrorDetails(HttpStatusCode.Unauthorized, "Account is disbled");
+
+            account.IsHasWishlist = await _repository.FollowGroup.IsHasWishlist(account.AccountId, trackChanges: false);
 
             return Ok(account);
         }
@@ -251,7 +298,7 @@ namespace ToyWorldSystem.Controller
         [Route("follow_or_unfollow/{visit_account_id}")]
         public async Task<IActionResult> FollowOrUnfollowAccount(int visit_account_id)
         {
-            var current_login_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var current_login_account = await _repository.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
 
             if (current_login_account.Id == visit_account_id) throw new ErrorDetails(HttpStatusCode.BadRequest, "Can't follow yourself");
 
@@ -294,7 +341,7 @@ namespace ToyWorldSystem.Controller
         [Route("AccountSystem")]
         public async Task<IActionResult> CreateNewAccountSystem(NewAccountParameters param)
         {
-            var isExistEmail = await _repository.Account.getAccountByEmail(param.Email, trackChanges: false) != null;
+            var isExistEmail = await _repository.Account.GetAccountByEmail(param.Email, trackChanges: false) != null;
 
             if (isExistEmail) throw new ErrorDetails(HttpStatusCode.BadRequest, "Email existed in the system");
 
@@ -331,7 +378,7 @@ namespace ToyWorldSystem.Controller
         [Route("rate/bill/{bill_id}")]
         public async Task<IActionResult> RateSeller(int bill_id, NewRateSellerParameters param)
         {
-            var buyer_id = _userAccessor.getAccountId();
+            var buyer_id = _userAccessor.GetAccountId();
 
             var bill = await _repository.Bill.GetBillById(bill_id, trackChanges: false);
 
@@ -364,7 +411,7 @@ namespace ToyWorldSystem.Controller
         [Route("{account_id}/feedback")]
         public async Task<IActionResult> FeedbackPost(int account_id, NewFeedback newFeedback)
         {
-            var sender_id = _userAccessor.getAccountId();
+            var sender_id = _userAccessor.GetAccountId();
 
             var feedback = new Feedback
             {
@@ -400,7 +447,7 @@ namespace ToyWorldSystem.Controller
         [Route("enable_disable/{account_id}")]
         public async Task<IActionResult> DisableEnableAccount(int account_id)
         {
-            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
 
             if (current_account.Role != 0) throw new ErrorDetails(HttpStatusCode.BadRequest, "Not enough role to update");
 
@@ -430,7 +477,7 @@ namespace ToyWorldSystem.Controller
         [Route("{account_id}/role/manager")]
         public async Task<IActionResult> UpdateAccountToManager(int account_id)
         {
-            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
 
             if (current_account.Role != 0) throw new ErrorDetails(HttpStatusCode.BadRequest, "Not enough role to update");
 
@@ -466,7 +513,7 @@ namespace ToyWorldSystem.Controller
         [Route("{account_id}/role/member")]
         public async Task<IActionResult> UpdateAccountToMember(int account_id)
         {
-            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
 
             if (current_account.Role != 0) throw new ErrorDetails(HttpStatusCode.BadRequest, "Not enough role to update");
 
@@ -503,7 +550,7 @@ namespace ToyWorldSystem.Controller
         [Route("{account_id}/profile")]
         public async Task<IActionResult> UpdateProfile(int account_id, UpdateAccountParameters param)
         {
-            var curent_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var curent_account = await _repository.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
 
             if (account_id != curent_account.Id) throw new ErrorDetails(HttpStatusCode.BadRequest, "Can't update another user profile");
 
@@ -530,7 +577,7 @@ namespace ToyWorldSystem.Controller
         [Route("new_password")]
         public async Task<IActionResult> UpdateNewPassword(string new_password)
         {
-            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
 
             _repository.Account.UpdateNewPassword(current_account, new_password);
             await _repository.SaveAsync();
@@ -549,7 +596,7 @@ namespace ToyWorldSystem.Controller
         [Route("change_password")]
         public async Task<IActionResult> ChangePassword(ChangePwParameters param)
         {
-            var current_account = await _repository.Account.GetAccountById(_userAccessor.getAccountId(), trackChanges: false);
+            var current_account = await _repository.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
 
             var hash_old_pw = _hasingServices.encriptSHA256(param.old_password);
 

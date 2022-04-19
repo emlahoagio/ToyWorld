@@ -39,7 +39,23 @@ namespace Repository.Repository
             }
         }
 
-        public async Task<List<int>> GetIdOfPostInTop(List<int> submissionsId, bool trackChanges)
+        public async Task<List<int>> GetIdOfPostInTop10(List<int> submissionsId, List<int> idHasRewards, bool trackChanges)
+        {
+            var posts = new List<PostOnTop>();
+
+            foreach(var id in submissionsId)
+            {
+                var sumOfStar = await FindByCondition(x => x.PostOfContestId == id && !idHasRewards.Contains(x.PostOfContestId), trackChanges)
+                    .Select(x => x.NumOfStar).SumAsync();
+                posts.Add(new PostOnTop { Id = id, SumOfStar = sumOfStar });
+            }
+
+            posts.OrderByDescending(x => x.SumOfStar);
+
+            return posts.Select(x => x.Id).Take(10).ToList();
+        }
+
+        public async Task<List<int>> GetIdOfPostInTop3(List<int> submissionsId, bool trackChanges)
         {
             double top1 = 0, top2 = 0, top3 = 0;
             int idTop1 = 0, idTop2 = 0, idTop3 = 0;
@@ -124,9 +140,14 @@ namespace Repository.Repository
             {
                 post.AverageStar = await FindByCondition(x => x.PostOfContestId == post.Id, trackChanges)
                     .Select(x => x.NumOfStar).AverageAsync();
+                post.SumOfStar = await FindByCondition(x => x.PostOfContestId == post.Id, trackChanges)
+                    .Select(x => x.NumOfStar).SumAsync();
                 result.Add(post);
             }
-            return result;
+
+            var orderResult = result.OrderByDescending(x => x.SumOfStar).ToList();
+
+            return orderResult;
         }
 
         public async Task<bool> IsRated(int post_id, int account_id, bool trackChanges)
