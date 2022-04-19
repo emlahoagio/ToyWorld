@@ -42,6 +42,8 @@ namespace ToyWorldSystem.Controller
             var contests = await _repositoryManager.Contest.GetContestByStatus(status, paging, trackChanges: false);
             if (contests == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No contest matches with input status");
 
+            contests = await _repositoryManager.Reward.CheckRewardOfContest(contests, trackChanges: false);
+
             return Ok(contests);
         }
         #endregion
@@ -62,6 +64,7 @@ namespace ToyWorldSystem.Controller
             var contests = await _repositoryManager.Contest.GetContestByStatus(status, paging, trackChanges: false);
             if (contests == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No contest matches with input status");
 
+            contests = await _repositoryManager.Reward.CheckRewardOfContest(contests, trackChanges: false);
             contests = await _repositoryManager.PrizeContest.GetPrizeForContest(contests);
 
             return Ok(contests);
@@ -258,13 +261,13 @@ namespace ToyWorldSystem.Controller
         {
             var account_id = _userAccessor.GetAccountId();
 
-            var posts_no_rate_no_image = await _repositoryManager.PostOfContest.GetPostOfContest(contest_id, paging, account_id, trackChanges: false);
+            var posts = await _repositoryManager.PostOfContest.GetPostOfContest(contest_id, paging, trackChanges: false);
 
-            if (posts_no_rate_no_image == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No post in this contest");
+            if (posts == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No post in this contest");
 
-            var post_no_rate = await _repositoryManager.Image.GetImageForPostOfContest(posts_no_rate_no_image, trackChanges: false);
+            posts = await _repositoryManager.Image.GetImageForPostOfContest(posts, trackChanges: false);
 
-            var posts = await _repositoryManager.Rate.GetRateForPostOfContest(post_no_rate, account_id, trackChanges: false);
+            posts = await _repositoryManager.Rate.GetRateForPostOfContest(posts, account_id, trackChanges: false);
 
             return Ok(posts);
         }
@@ -384,7 +387,7 @@ namespace ToyWorldSystem.Controller
 
             if (submissionsId.Count == 0) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No post in this contest");
 
-            var idsPostInTop = await _repositoryManager.Rate.GetIdOfPostInTop(submissionsId, trackChanges: false);
+            var idsPostInTop = await _repositoryManager.Rate.GetIdOfPostInTop3(submissionsId, trackChanges: false);
 
             var posts = await _repositoryManager.PostOfContest.GetPostOfContestById(idsPostInTop, trackchanges: false);
             posts = await _repositoryManager.Rate.GetRateForPostOfContest(posts, trackChanges: false);

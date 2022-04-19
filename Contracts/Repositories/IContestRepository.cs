@@ -24,7 +24,7 @@ namespace Contracts
         Task<Contest> GetEvaluateContest(int contest_id, bool trackChanges);
         Task<Pagination<ContestInGroup>> GetContestByGroups
             (int account_id, List<int> groups, PagingParameters paging, bool trackChanges);
-        Task<Pagination<ContestInGroup>> GetContestByStatus(int status, PagingParameters paging, bool trackChanges);
+        Task<Pagination<ContestManaged>> GetContestByStatus(int status, PagingParameters paging, bool trackChanges);
         Task Delete(int contest_id, bool trackChanges);
         Task<Pagination<ContestInGroup>> GetContestHighlightMb(int account_id, bool trackChanges, PagingParameters paging);
     }

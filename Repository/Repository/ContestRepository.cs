@@ -222,7 +222,7 @@ namespace Repository
             };
         }
 
-        public async Task<Pagination<ContestInGroup>> GetContestByStatus(int status, PagingParameters paging, bool trackChanges)
+        public async Task<Pagination<ContestManaged>> GetContestByStatus(int status, PagingParameters paging, bool trackChanges)
         {
             var contests = new List<Contest>();
             int count = 0;
@@ -255,7 +255,7 @@ namespace Repository
                 count = await FindByCondition(x => x.Status != 4 && x.Status != 0, trackChanges).CountAsync();
             }
 
-            var result_data = contests.Select(x => new ContestInGroup
+            var result_data = contests.Select(x => new ContestManaged
             {
                 CoverImage = x.CoverImage,
                 Description = x.Description,
@@ -271,7 +271,7 @@ namespace Repository
                 Status = x.Status.Value
             }).ToList();
 
-            var result = new Pagination<ContestInGroup>
+            var result = new Pagination<ContestManaged>
             {
                 Count = count,
                 Data = result_data,

@@ -1,5 +1,6 @@
 ﻿using Contracts;
 using Entities.ErrorModel;
+using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -63,6 +64,27 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
+        #region Get top 10
+        [HttpGet]
+        [Route("{contest_id}/top10")]
+        public async Task<IActionResult> GetTop10Submission(int contest_id)
+        {
+            var submissionsId = await _repository.PostOfContest.GetIdOfPost(contest_id, trackChanges: false);
+
+            if (submissionsId.Count == 0) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No post in this contest");
+
+            var rewards = await _repository.Reward.GetIdOfPostHasReward(contest_id, trackChanges: false);
+
+            var idsPostInTop = await _repository.Rate.GetIdOfPostInTop10(submissionsId, rewards, trackChanges: false);
+
+            var posts = await _repository.PostOfContest.GetPostOfContestById(idsPostInTop, trackchanges: false);
+            posts = await _repository.Rate.GetRateForPostOfContest(posts, trackChanges: false);
+            posts = await _repository.Image.GetImageForPostOfContest(posts, trackChanges: false);
+
+            return Ok(posts);
+        }
+        #endregion
+
         #region Approve/deny submission
         /// <summary>
         /// Approve or deny submission
@@ -93,6 +115,37 @@ namespace ToyWorldSystem.Controller
             else throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Invalid status to change");
 
             await _repository.SaveAsync();
+            return Ok("Save changes success");
+        }
+        #endregion
+
+        #region Add reward for submission
+        /// <summary>
+        /// Add reward for contest
+        /// </summary>
+        /// <param name="reward"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("reward")]
+        public async Task<IActionResult> AddRewardForSubmission(NewReward reward)
+        {
+            var account = await _repository.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
+            if (account.Role != 1)
+                throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to update");
+
+            var post = await _repository.PostOfContest.GetById(reward.PostOfContestId, trackChanges: false);
+
+            var newReward = new Reward
+            {
+                PostOfContestId = post.Id,
+                ContestId = post.ContestId,
+                AccountId = post.AccountId,
+                PrizeId = reward.PrizeId
+            };
+
+            _repository.Reward.Create(newReward);
+            await _repository.SaveAsync();
+
             return Ok("Save changes success");
         }
         #endregion

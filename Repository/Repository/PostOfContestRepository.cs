@@ -35,7 +35,7 @@ namespace Repository.Repository
             return result;
         }
 
-        public async Task<Pagination<PostOfContestInList>> GetPostOfContest(int contest_id, PagingParameters paging, int current_account_id, bool trackChanges)
+        public async Task<Pagination<PostOfContestInList>> GetPostOfContest(int contest_id, PagingParameters paging, bool trackChanges)
         {
             var posts = await FindByCondition(x => x.ContestId == contest_id && x.Status == 1, trackChanges)
                 .Include(x => x.Account)

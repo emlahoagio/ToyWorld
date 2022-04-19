@@ -92,5 +92,40 @@ namespace Repository.Repository
 
             return result;
         }
+
+        public async Task<Pagination<ContestManaged>> GetPrizeForContest(Pagination<ContestManaged> param)
+        {
+            var contests = param.Data;
+
+            var dataResult = new List<ContestManaged>();
+
+            foreach (var contest in contests)
+            {
+                var prizes = await FindByCondition(x => x.ContestId == contest.Id, false).Include(x => x.Prize).ToListAsync();
+                contest.Prizes = prizes.Select(x => new PrizeOfContest
+                {
+                    Id = x.Prize.Id,
+                    Description = x.Prize.Description,
+                    Images = x.Prize.Images.Select(y => new ImageReturn
+                    {
+                        Id = y.Id,
+                        Url = y.Url
+                    }).ToList(),
+                    Name = x.Prize.Name,
+                    Value = x.Prize.Value
+                }).OrderByDescending(x => x.Value).ToList();
+                dataResult.Add(contest);
+            }
+
+            var result = new Pagination<ContestManaged>
+            {
+                Count = param.Count,
+                Data = dataResult,
+                PageNumber = param.PageNumber,
+                PageSize = param.PageSize
+            };
+
+            return result;
+        }
     }
 }

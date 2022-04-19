@@ -58,6 +58,24 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
+        #region Get prize for end contest
+        /// <summary>
+        /// Get list prize for add to contest and proposal
+        /// </summary>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("PrizeForEnd")]
+        public async Task<IActionResult> GetPrizeListForEndContest([FromQuery] PagingParameters paging)
+        {
+            var pagignationPrize_no_image = await _repository.Prize.GetPrizeForEnd(paging, trackChanges: false);
+
+            var pagignationPrize = await _repository.Image.GetImageForPrizeList(pagignationPrize_no_image, trackChanges: false);
+
+            return Ok(pagignationPrize);
+        }
+        #endregion
+
         #region Create new prize
         /// <summary>
         /// Create new prize

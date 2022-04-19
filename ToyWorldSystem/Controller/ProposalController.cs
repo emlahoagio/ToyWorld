@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ToyWorldSystem.Controller
 {
-    [Route("api/[controller]")]
+    [Route("api/proposals")]
     [ApiController]
     public class ProposalController : ControllerBase
     {
@@ -27,7 +27,7 @@ namespace ToyWorldSystem.Controller
         }
 
         [HttpGet]
-        [Route("{accountid}/proposals")]
+        [Route("{account_id}/proposals")]
         public async Task<IActionResult> GetListProposalByMember(int account_id)
         {
             var proposals = await _repository.Proposal.GetListProposal(account_id);
