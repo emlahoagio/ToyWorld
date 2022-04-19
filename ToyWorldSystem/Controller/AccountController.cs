@@ -197,8 +197,22 @@ namespace ToyWorldSystem.Controller
 
         #region Remove wishlist
         [HttpDelete]
-        [Route("Wishlist")]
-        public async Task<IActionResult> RemoveWishlist(AddWishlistParameters param)
+        [Route("wishlist")]
+        public async Task<IActionResult> RemoveWishlist(WishlistRemove remove)
+        {
+            var account_id = _userAccessor.GetAccountId();
+
+            _repository.FollowGroup.Delete(new FollowGroup { AccountId = account_id, GroupId = remove.Id });
+            await _repository.SaveAsync();
+
+            return Ok("Save changes success");
+        }
+        #endregion
+
+        #region Remove wishlist mobile
+        [HttpDelete]
+        [Route("wishlist/mobile")]
+        public async Task<IActionResult> RemoveWishlistMb(AddWishlistParameters param)
         {
             var account_id = _userAccessor.GetAccountId();
 
