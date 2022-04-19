@@ -195,6 +195,27 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
+        #region Remove wishlist
+        [HttpDelete]
+        [Route("Wishlist")]
+        public async Task<IActionResult> RemoveWishlist(AddWishlistParameters param)
+        {
+            var account_id = _userAccessor.GetAccountId();
+
+            var wishlist = await _repository.FollowGroup.GetFollowedGroup(account_id, trackChanges: false);
+
+            foreach(int groupid in param.GroupIds)
+            {
+                if (wishlist.Contains(groupid))
+                {
+                    _repository.FollowGroup.Delete(new FollowGroup { AccountId = account_id, GroupId = groupid });
+                }
+            }
+            await _repository.SaveAsync();
+            return Ok("Save changes success");
+        }
+        #endregion
+
         #region Login by gg mail
         /// <summary>
         /// Login by google mail (Role: ALL)

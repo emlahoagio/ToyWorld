@@ -12,5 +12,6 @@ namespace Contracts.Repositories
         void Create(FollowGroup followGroup);
         Task<List<int>> GetFollowedGroup(int accountId, bool trackChanges);
         Task<AccountDetail> GetWishlist(AccountDetail account, bool trackChanges);
+        void Delete(FollowGroup followGroup);
     }
 }
