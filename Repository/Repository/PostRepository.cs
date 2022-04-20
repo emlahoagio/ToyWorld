@@ -132,7 +132,7 @@ namespace Repository
             return post;
         }
 
-        public async Task<Pagination<PostInList>> GetPostByAccountId(int accountId, bool trackChanges, PagingParameters paging)
+        public async Task<Pagination<PostInList>> GetPostByAccountId(int accountId, int current_acc_id, bool trackChanges, PagingParameters paging)
         {
             var listPost = await FindByCondition(post => post.AccountId == accountId, trackChanges)
                 .OrderByDescending(x => x.PostDate)
@@ -151,7 +151,6 @@ namespace Repository
             var result = listPost.Select(x => new PostInList
             {
                 Id = x.Id,
-                //NumOfReact = x.ReactPosts.Count,
                 Content = x.Content,
                 OwnerId = x.AccountId,
                 OwnerAvatar = x.Account.Avatar,

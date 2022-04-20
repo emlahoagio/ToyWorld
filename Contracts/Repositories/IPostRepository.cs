@@ -11,7 +11,7 @@ namespace Contracts.Repositories
     public interface IPostRepository
     {
         Task<Pagination<PostInList>> GetPostByGroupId(int groupId, bool trackChanges, PagingParameters paging, int accountId);
-        Task<Pagination<PostInList>> GetPostByAccountId(int accountId, bool trackChanges, PagingParameters paging);
+        Task<Pagination<PostInList>> GetPostByAccountId(int accountId, int current_acc_id, bool trackChanges, PagingParameters paging);
         Task<PostDetail> GetPostDetail(int post_id, bool trackChanges, int account_id);
         Task<Post> GetPostReactById(int post_id, bool trackChanges);
         Task<Post> GetDeletePost(int post_id, bool trackChanges);

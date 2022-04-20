@@ -47,7 +47,7 @@ namespace Repository.Repository
                 var reacts = await FindByCondition(x => x.PostId == post.Id, trackChanges).ToListAsync();
 
                 post.NumOfReact = reacts.Count();
-                post.IsLikedPost = reacts.Where(x => x.AccountId == account_id) != null;
+                post.IsLikedPost = reacts.Where(x => x.AccountId == account_id).Count() != 0;
 
                 data.Add(post);
             }

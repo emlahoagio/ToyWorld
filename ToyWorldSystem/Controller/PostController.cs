@@ -169,7 +169,7 @@ namespace ToyWorldSystem.Controller
         {
             var current_acc_id = _userAccessor.GetAccountId();
 
-            var result = await _repositoryManager.Post.GetPostByAccountId(account_id, trackChanges: false, paging);
+            var result = await _repositoryManager.Post.GetPostByAccountId(account_id, current_acc_id, trackChanges: false, paging);
 
             if (result == null)
             {
@@ -195,7 +195,7 @@ namespace ToyWorldSystem.Controller
         {
             var current_acc_id = _userAccessor.GetAccountId();
 
-            var result = await _repositoryManager.Post.GetPostByAccountId(account_id, trackChanges: false, paging);
+            var result = await _repositoryManager.Post.GetPostByAccountId(account_id, current_acc_id, trackChanges: false, paging);
 
             if (result == null)
             {
