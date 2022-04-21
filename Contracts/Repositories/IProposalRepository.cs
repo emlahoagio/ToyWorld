@@ -8,8 +8,8 @@ namespace Contracts.Repositories
 {
     public interface IProposalRepository
     {
-        Task<Pagination<Proposal>> GetListByManager(PagingParameters paging);
-        Task<IEnumerable<Proposal>> GetListProposal(int accountId);
+        Task<Pagination<ProposalInList>> GetListByManager(PagingParameters paging);
+        Task<IEnumerable<ProposalInList>> GetListProposal(int accountId);
         void CreateProposal(CreateProposalModel model, int accountId);
         void DeleteProposal(int proposalId);
     }

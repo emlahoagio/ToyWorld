@@ -22,6 +22,7 @@ namespace ToyWorldSystem.Controller
         public async Task<IActionResult> GetListProposalByManager([FromQuery] PagingParameters paging)
         {
             var proposals = await _repository.Proposal.GetListByManager(paging);
+            if (proposals == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No proposal exist");
             return Ok(proposals);
         }
 

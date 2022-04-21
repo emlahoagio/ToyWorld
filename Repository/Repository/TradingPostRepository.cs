@@ -298,7 +298,7 @@ namespace Repository.Repository
                     OwnerAvatar = x.Account.Avatar,
                     OwnerId = x.AccountId,
                     OwnerName = x.Account.Name,
-                    IsLikedPost = x.ReactTradingPosts.Where(x => x.AccountId == account_id) != null,
+                    IsLikedPost = x.ReactTradingPosts.Where(x => x.AccountId == account_id).Count() != 0,
                     NoOfReact = x.ReactTradingPosts.Count(),
                     Phone = x.Phone,
                     PostDate = x.PostDate,
