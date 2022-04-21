@@ -75,7 +75,7 @@ namespace Repository.Repository
 
         public async Task<List<PostOfContestToEndContest>> GetPostOfContestForEndContest(int contest_id, bool trackChanges)
         {
-            var list_post = await FindByCondition(x => x.ContestId == contest_id, trackChanges)
+            var list_post = await FindByCondition(x => x.ContestId == contest_id && x.Status == 1, trackChanges)
                 .ToListAsync();
 
             var result = list_post.Select(x => new PostOfContestToEndContest
@@ -102,7 +102,7 @@ namespace Repository.Repository
             var result = new List<TopSubmission>();
             foreach(var id in ids)
             {
-                var data = await FindByCondition(x => x.Id == id, trackchanges)
+                var data = await FindByCondition(x => x.Id == id && x.Status == 1, trackchanges)
                     .Include(x => x.Account)
                     .Select(x => new TopSubmission
                     {
@@ -139,7 +139,7 @@ namespace Repository.Repository
 
         public async Task<Pagination<PostOfContestManaged>> GetPostByContestId(int contest_id, PagingParameters paging, bool trackChanges)
         {
-            var post = await FindByCondition(x => x.ContestId == contest_id, trackChanges)
+            var post = await FindByCondition(x => x.ContestId == contest_id && x.Status == 0, trackChanges)
                 .OrderByDescending(x => x.DateCreate)
                 .Skip((paging.PageNumber-1)*paging.PageSize)
                 .Take(paging.PageSize)
