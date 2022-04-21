@@ -95,5 +95,12 @@ namespace Repository.Repository
 
             return result;
         }
+
+        public async Task<List<int>> GetPrizeInContestHasReward(int contest_id, bool trackChanges)
+        {
+            var prizeids = await FindByCondition(x => x.ContestId == contest_id, trackChanges).Select(x => x.PrizeId).ToListAsync();
+
+            return prizeids;
+        }
     }
 }

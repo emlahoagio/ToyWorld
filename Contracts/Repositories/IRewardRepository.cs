@@ -15,5 +15,6 @@ namespace Contracts.Repositories
         Task Delete(int account_id, int contest_id, bool trackChanges);
         Task<Pagination<ContestManaged>> CheckRewardOfContest(Pagination<ContestManaged> contests, bool trackChanges);
         Task<List<int>> GetIdOfPostHasReward(int contest_id, bool trackChanges);
+        Task<List<int>> GetPrizeInContestHasReward(int contest_id, bool trackChanges);
     }
 }

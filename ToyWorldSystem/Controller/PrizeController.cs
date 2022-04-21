@@ -63,12 +63,15 @@ namespace ToyWorldSystem.Controller
         /// Get list prize for add to contest and proposal
         /// </summary>
         /// <param name="paging"></param>
+        /// <param name="contest_id"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("PrizeForEnd")]
-        public async Task<IActionResult> GetPrizeListForEndContest([FromQuery] PagingParameters paging)
+        [Route("PrizeForEnd/{contest_id}")]
+        public async Task<IActionResult> GetPrizeListForEndContest(int contest_id, [FromQuery] PagingParameters paging)
         {
-            var pagignationPrize_no_image = await _repository.Prize.GetPrizeForEnd(paging, trackChanges: false);
+            var prizeHasReward = await _repository.Reward.GetPrizeInContestHasReward(contest_id, trackChanges: false);
+
+            var pagignationPrize_no_image = await _repository.PrizeContest.GetPrizeForEndContest(prizeHasReward, contest_id, trackChanges: false);
 
             var pagignationPrize = await _repository.Image.GetImageForPrizeList(pagignationPrize_no_image, trackChanges: false);
 

@@ -84,32 +84,5 @@ namespace Repository.Repository
             Update(prize);
         }
 
-        public async Task<Pagination<PrizeOfContest>> GetPrizeForEnd(PagingParameters paging, bool trackChanges)
-        {
-            var prizes = await FindByCondition(x => x.IsDisabled == false && x.Rewards != null, trackChanges)
-                .Include(x => x.Rewards)
-                .ToListAsync();
-
-            var count = prizes.Count;
-
-            var result = new Pagination<PrizeOfContest>
-            {
-                Count = count,
-                Data = prizes
-                .Skip((paging.PageNumber - 1) * paging.PageSize)
-                .Take(paging.PageSize)
-                .Select(x => new PrizeOfContest
-                {
-                    Description = x.Description,
-                    Id = x.Id,
-                    Name = x.Name,
-                    Value = x.Value
-                }).ToList(),
-                PageNumber = paging.PageNumber,
-                PageSize = paging.PageSize
-            };
-
-            return result;
-        }
     }
 }

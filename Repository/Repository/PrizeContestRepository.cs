@@ -43,19 +43,27 @@ namespace Repository.Repository
             return result;
         }
 
-        public async Task<List<Prize>> GetPrizeForEndContest(int contest_id, bool trackChanges)
+        public async Task<Pagination<PrizeOfContest>> GetPrizeForEndContest(List<int> prizeHasReward, int contest_id, bool trackChanges)
         {
             var prizesContest = await FindByCondition(x => x.ContestId == contest_id, trackChanges)
                 .Include(x => x.Prize)
                 .ToListAsync();
 
-            var result = prizesContest.Select(x => new Prize
+            var result = prizesContest.Where(x => !prizeHasReward.Contains(x.PrizeId)).Select(x => new PrizeOfContest
             {
                 Id = x.Prize.Id,
-                Value = x.Prize.Value
+                Value = x.Prize.Value,
+                Description = x.Prize.Description,
+                Name = x.Prize.Name
             }).OrderByDescending(y => y.Value).ToList();
 
-            return result;
+            return new Pagination<PrizeOfContest>
+            {
+                Count = result.Count,
+                Data = result,
+                PageNumber = 1,
+                PageSize = result.Count
+            };
         }
 
         public async Task<Pagination<ContestInGroup>> GetPrizeForContest(Pagination<ContestInGroup> param)

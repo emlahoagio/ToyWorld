@@ -45,9 +45,12 @@ namespace Repository.Repository
 
             foreach(var id in submissionsId)
             {
-                var sumOfStar = await FindByCondition(x => x.PostOfContestId == id && !idHasRewards.Contains(x.PostOfContestId), trackChanges)
-                    .Select(x => x.NumOfStar).SumAsync();
-                posts.Add(new PostOnTop { Id = id, SumOfStar = sumOfStar });
+                if (!idHasRewards.Contains(id))
+                {
+                    var sumOfStar = await FindByCondition(x => x.PostOfContestId == id, trackChanges)
+                        .Select(x => x.NumOfStar).SumAsync();
+                    posts.Add(new PostOnTop { Id = id, SumOfStar = sumOfStar });
+                }
             }
 
             posts.OrderByDescending(x => x.SumOfStar);
