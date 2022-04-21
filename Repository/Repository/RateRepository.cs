@@ -138,10 +138,13 @@ namespace Repository.Repository
             var result = new List<TopSubmission>();
             foreach(var post in posts)
             {
-                post.AverageStar = await FindByCondition(x => x.PostOfContestId == post.Id, trackChanges)
-                    .Select(x => x.NumOfStar).AverageAsync();
-                post.SumOfStar = await FindByCondition(x => x.PostOfContestId == post.Id, trackChanges)
-                    .Select(x => x.NumOfStar).SumAsync();
+                var rates = await FindByCondition(x => x.PostOfContestId == post.Id, trackChanges)
+                    .Select(x => x.NumOfStar).ToListAsync();
+                if (rates.Count != 0)
+                {
+                    post.AverageStar = rates.Average();
+                    post.SumOfStar = rates.Sum();
+                }
                 result.Add(post);
             }
 

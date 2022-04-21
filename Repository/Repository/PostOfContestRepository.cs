@@ -90,7 +90,7 @@ namespace Repository.Repository
 
         public async Task<List<int>> GetIdOfPost(int contest_id, bool trackChanges)
         {
-            var idList = await FindByCondition(X => X.ContestId == contest_id, trackChanges)
+            var idList = await FindByCondition(X => X.ContestId == contest_id && X.Status == 1, trackChanges)
                 .Select(x => x.Id)
                 .ToListAsync();
 
