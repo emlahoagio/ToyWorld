@@ -43,6 +43,7 @@ namespace ToyWorldSystem.Controller
         }
 
         [HttpDelete]
+        [Route("{proposalId}")]
         public async Task<IActionResult> DeleteProposal(int proposalId)
         {
             _repository.Proposal.DeleteProposal(proposalId);
