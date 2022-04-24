@@ -1,10 +1,6 @@
 ﻿using Contracts;
-using Entities.DataTransferObject;
-using Entities.Models;
 using Entities.RequestFeatures;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace ToyWorldSystem.Controller
@@ -44,9 +40,13 @@ namespace ToyWorldSystem.Controller
         [Route("readed")]
         public async Task<IActionResult> Update(int id)
         {
-            await _repositoryManager.Notification.ChangeNotificationStatus(id);
-            await _repositoryManager.SaveAsync();
-            return Ok("Success");
+            var result = await _repositoryManager.Notification.ChangeNotificationStatus(id);
+            if (result == 1)
+            {
+                await _repositoryManager.SaveAsync();
+                return Ok("Success");
+            }
+            else return Ok("This notification doesn't exist!");
         }
         #endregion
 

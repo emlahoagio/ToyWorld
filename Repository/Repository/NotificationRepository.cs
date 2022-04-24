@@ -15,10 +15,16 @@ namespace Repository.Repository
         {
 
         }
-        public async Task ChangeNotificationStatus(int id)
+        public async Task<int> ChangeNotificationStatus(int id)
         {
             var noti = await FindByCondition(x => x.Id == id, true).FirstOrDefaultAsync();
-            noti.IsReaded = true; //false read not yet, true read already.
+            if (noti != null)
+            {
+                noti.IsReaded = true; //false read not yet, true read already.
+                return 1;
+            }
+            else return 0;
+
         }
 
         public void CreateNotification(CreateNotificationModel model)
@@ -41,7 +47,7 @@ namespace Repository.Repository
         {
             var notifications = await FindByCondition(x => x.ContestId == contest_id, trackChanges).ToListAsync();
 
-            foreach(var notification in notifications)
+            foreach (var notification in notifications)
             {
                 Delete(notification);
             }
@@ -51,9 +57,9 @@ namespace Repository.Repository
         {
             var notifications = await FindByCondition(x => x.PostId == post_id, trackChanges).ToListAsync();
 
-            if(notifications.Count != 0)
+            if (notifications.Count != 0)
             {
-                foreach(var notification in notifications)
+                foreach (var notification in notifications)
                 {
                     Delete(notification);
                 }
