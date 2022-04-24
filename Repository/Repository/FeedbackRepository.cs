@@ -21,9 +21,9 @@ namespace Repository.Repository
         {
             var feedbacks = await FindByCondition(x => x.PostId == post_id, trackChanges).ToListAsync();
 
-            if(feedbacks.Count != 0)
+            if (feedbacks.Count != 0)
             {
-                foreach(var feedback in feedbacks)
+                foreach (var feedback in feedbacks)
                 {
                     Delete(feedback);
                 }
@@ -43,14 +43,93 @@ namespace Repository.Repository
             }
         }
 
+        public async Task<Pagination<RepliedFeedback>> GetFeedbackByContent(int content, PagingParameters paging, bool trackChanges)
+        {
+            var query = new List<Feedback>();
+            int count = 0;
+
+            switch (content)
+            {
+                case 0:
+                    {
+                        query = await FindByCondition(x => x.AccountId != null, trackChanges)
+                            .OrderByDescending(x => x.Id)
+                            .Skip((paging.PageNumber - 1) * paging.PageSize)
+                            .Take(paging.PageSize)
+                            .Include(x => x.Sender)
+                            .Include(x => x.AccountReply)
+                            .ToListAsync();
+                        count = await FindByCondition(x => x.AccountId != null, trackChanges).CountAsync();
+                    }
+                    break;
+                case 1:
+                    {
+                        query = await FindByCondition(x => x.TradingPostId != null, trackChanges)
+                            .OrderByDescending(x => x.Id)
+                            .Skip((paging.PageNumber - 1) * paging.PageSize)
+                            .Take(paging.PageSize)
+                            .Include(x => x.Sender)
+                            .Include(x => x.AccountReply)
+                            .ToListAsync();
+                        count = await FindByCondition(x => x.TradingPostId != null, trackChanges).CountAsync();
+                    }
+                    break;
+                case 2:
+                    {
+                        query = await FindByCondition(x => x.PostId != null, trackChanges)
+                            .OrderByDescending(x => x.Id)
+                            .Skip((paging.PageNumber - 1) * paging.PageSize)
+                            .Take(paging.PageSize)
+                            .Include(x => x.Sender)
+                            .Include(x => x.AccountReply)
+                            .ToListAsync();
+                        count = await FindByCondition(x => x.PostId != null, trackChanges).CountAsync();
+                    }
+                    break;
+                case 3:
+                    {
+                        query = await FindByCondition(x => x.PostOfContestId != null, trackChanges)
+                            .OrderByDescending(x => x.Id)
+                            .Skip((paging.PageNumber - 1) * paging.PageSize)
+                            .Take(paging.PageSize)
+                            .Include(x => x.Sender)
+                            .Include(x => x.AccountReply)
+                            .ToListAsync();
+                        count = await FindByCondition(x => x.PostOfContestId != null, trackChanges).CountAsync();
+                    }
+                    break;
+                default: return null;
+            }
+
+            var result = new Pagination<RepliedFeedback>
+            {
+                Count = count,
+                Data = query.Select(x => new RepliedFeedback
+                {
+                    Content = x.Content,
+                    Id = x.Id,
+                    SenderAvatar = x.Sender.Avatar,
+                    SenderId = x.SenderId,
+                    SenderName = x.Sender.Name,
+                    SendDate = x.SendDate,
+                    FeedbackAbout = x.TradingPostId != null ? "trading" : x.AccountId != null ? "account" : x.PostId != null ? "post" : "post_of_contest",
+                    IdForDetail = x.TradingPostId != null ? x.TradingPostId : x.AccountId != null ? x.AccountId : x.PostId != null ? x.PostId : x.PostOfContestId,
+                    ReplierAvatar = x.AccountReply != null ? x.AccountReply.Avatar : "",
+                    ReplierId = x.AccountReplyId,
+                    ReplyContent = x.ReplyContent,
+                    ReplierName = x.AccountReply != null ? x.AccountReply.Name : ""
+                }).ToList(),
+                PageNumber = paging.PageNumber,
+                PageSize = paging.PageSize
+            };
+
+            return result;
+        }
+
         public async Task<Pagination<NotReplyFeedback>> GetFeedbacksNotReply(PagingParameters paging, bool trackChanges)
         {
             var feedback = await FindByCondition(x => x.ReplyDate == null, trackChanges)
-                .Include(x => x.PostOfCotest)
                 .Include(x => x.Sender)
-                .Include(x => x.TradingPost)
-                .Include(x => x.Post)
-                .Include(x => x.Account)
                 .OrderByDescending(x => x.SendDate)
                 .ToListAsync();
 
@@ -66,8 +145,8 @@ namespace Repository.Repository
                 SenderId = x.SenderId,
                 SenderName = x.Sender.Name,
                 SendDate = x.SendDate,
-                FeedbackAbout = x.TradingPost != null ? "trading" : x.Account != null ? "account" : x.Post != null ? "post" : "post_of_contest",
-                IdForDetail = x.TradingPost != null ? x.TradingPostId : x.Account != null ? x.AccountId : x.Post != null ? x.PostId : x.PostOfContestId
+                FeedbackAbout = x.TradingPostId != null ? "trading" : x.AccountId != null ? "account" : x.PostId != null ? "post" : "post_of_contest",
+                IdForDetail = x.TradingPostId != null ? x.TradingPostId : x.AccountId != null ? x.AccountId : x.PostId != null ? x.PostId : x.PostOfContestId
             });
 
             var result = new Pagination<NotReplyFeedback>
@@ -83,11 +162,7 @@ namespace Repository.Repository
         public async Task<Pagination<RepliedFeedback>> GetRepliedFeedback(PagingParameters paging, bool trackChanges)
         {
             var feedback = await FindByCondition(x => x.ReplyDate != null, trackChanges)
-                .Include(x => x.PostOfCotest)
                 .Include(x => x.Sender)
-                .Include(x => x.TradingPost)
-                .Include(x => x.Post)
-                .Include(x => x.Account)
                 .Include(x => x.AccountReply)
                 .OrderByDescending(x => x.SendDate)
                 .ToListAsync();
@@ -104,8 +179,8 @@ namespace Repository.Repository
                 SenderId = x.SenderId,
                 SenderName = x.Sender.Name,
                 SendDate = x.SendDate,
-                FeedbackAbout = x.TradingPost != null ? "trading" : x.Account != null ? "account" : x.Post != null ? "post" : "post_of_contest",
-                IdForDetail = x.TradingPost != null ? x.TradingPostId : x.Account != null ? x.AccountId : x.Post != null ? x.PostId : x.PostOfContestId,
+                FeedbackAbout = x.TradingPostId != null ? "trading" : x.AccountId != null ? "account" : x.PostId != null ? "post" : "post_of_contest",
+                IdForDetail = x.TradingPostId != null ? x.TradingPostId : x.AccountId != null ? x.AccountId : x.PostId != null ? x.PostId : x.PostOfContestId,
                 ReplierAvatar = x.AccountReply.Avatar,
                 ReplierId = x.AccountReplyId,
                 ReplyContent = x.ReplyContent,

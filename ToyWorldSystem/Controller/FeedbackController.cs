@@ -65,6 +65,25 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
+        #region Get feed back by content
+        /// <summary>
+        /// Get feedback by content
+        /// </summary>
+        /// <param name="content">0: account, 1: trading, 2: post, 3: post of contest</param>
+        /// <param name="paging"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("content/{content}")]
+        public async Task<IActionResult> GetFeedbackByContent(int content, [FromQuery]PagingParameters paging)
+        {
+            var feedbacks = await _repository.Feedback.GetFeedbackByContent(content, paging, trackChanges: false);
+
+            if (feedbacks == null) throw new ErrorDetails(System.Net.HttpStatusCode.NotFound, "No feedback with this content");
+
+            return Ok(feedbacks);
+        }
+        #endregion
+
         #region Reply feedback
         /// <summary>
         /// Reply feedback, Update reply of feedback (Role: Manager)

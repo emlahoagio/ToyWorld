@@ -16,5 +16,6 @@ namespace Contracts.Repositories
         Task ReplyFeedback(int feedback_id, int replier_id, string reply_content, bool trackChanges);
         Task DeleteByPostId(int post_id, bool trackChanges);
         Task DeleteByPostOfContestId(int id, bool trackChanges);
+        Task<Pagination<RepliedFeedback>> GetFeedbackByContent(int content, PagingParameters paging, bool trackChanges);
     }
 }
