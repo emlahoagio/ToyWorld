@@ -89,7 +89,7 @@ namespace Repository.Repository
                 //.Include(x => x.Contest)
                 .OrderByDescending(x => x.CreateTime)
                 .ToListAsync();
-
+            var unReads = await FindByCondition(x => x.AccountId == accountId && x.IsReaded == false, false).ToListAsync();
             var subNoti = notifies.Skip((paging.PageNumber - 1) * paging.PageSize)
                 .Take(paging.PageSize);
 
@@ -97,7 +97,8 @@ namespace Repository.Repository
             {
                 Data = subNoti,
                 PageNumber = paging.PageNumber,
-                PageSize = paging.PageSize
+                PageSize = paging.PageSize,
+                Count = unReads.Count(),
             };
             return result;
         }
