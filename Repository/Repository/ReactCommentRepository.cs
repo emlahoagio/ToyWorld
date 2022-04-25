@@ -20,6 +20,16 @@ namespace Repository.Repository
 
         public void DeleteReact(ReactComment reactComment) => Delete(reactComment);
 
+        public async Task DeleteReact(int comment_id, bool trackChanges)
+        {
+            var reacts = await FindByCondition(x => x.CommentId == comment_id, trackChanges).ToListAsync();
+
+            foreach(var react in reacts)
+            {
+                Delete(react);
+            }
+        }
+
         public async Task<List<AccountReact>> GetAccountReactComment(int comment_id, bool trackChanges)
         {
             var reactsComment = await FindByCondition(x => x.CommentId == comment_id, trackChanges)

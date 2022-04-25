@@ -198,6 +198,8 @@ namespace ToyWorldSystem.Controller
             if (comment.AccountId != account_id && comment.Post.AccountId != account_id)
                 throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "You're not owner to remove");
 
+            await _repositoryManager.ReactComment.DeleteReact(comment_id, trackChanges: true);
+
             _repositoryManager.Comment.DeleteComment(comment);
             await _repositoryManager.SaveAsync();
 
