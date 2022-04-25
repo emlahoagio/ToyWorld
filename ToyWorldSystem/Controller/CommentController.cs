@@ -106,6 +106,7 @@ namespace ToyWorldSystem.Controller
         [Route("reacts/{comment_id}")]
         public async Task<IActionResult> ReactComment(int comment_id)
         {
+            bool isLiked = false;
             var comment = await _repositoryManager.Comment.GetCommentReactById(comment_id, trackChanges: false);
 
             var accountId = _userAccessor.GetAccountId();
@@ -132,6 +133,7 @@ namespace ToyWorldSystem.Controller
                 //react
                 _repositoryManager.ReactComment.CreateReact(
                     new Entities.Models.ReactComment { AccountId = accountId, CommentId = comment_id });
+                isLiked = true;
                 //CREATE COMMENT
                 var noti = new CreateNotificationModel
                 {
@@ -144,7 +146,13 @@ namespace ToyWorldSystem.Controller
 
             await _repositoryManager.SaveAsync();
 
-            return Ok(new { message = "Save changes success" });
+            int numOfReact = await _repositoryManager.ReactComment.GetNumOfReact(comment_id, trackChanges: false);
+
+            return Ok(new {
+                NumOfReact = numOfReact,
+                message = "Save changes success",
+                IsLiked = isLiked
+            });
         }
         #endregion
 

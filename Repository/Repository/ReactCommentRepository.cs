@@ -37,5 +37,12 @@ namespace Repository.Repository
 
             return result;
         }
+
+        public async Task<int> GetNumOfReact(int comment_id, bool trackChanges)
+        {
+            var reacts = await FindByCondition(x => x.CommentId == comment_id, trackChanges).CountAsync();
+
+            return reacts;
+        }
     }
 }

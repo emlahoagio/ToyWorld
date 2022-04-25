@@ -261,7 +261,9 @@ namespace ToyWorldSystem.Controller
                     Avatar = firebaseProfile.Avatar,
                     Status = true,
                     Biography = "Not Updated",
-                    Gender = "Not Updated"
+                    Gender = "Not Updated",
+                    Role = 2,
+                    Phone = "",
                 };
                 _repository.Account.Create(new_account);
                 await _repository.SaveAsync();

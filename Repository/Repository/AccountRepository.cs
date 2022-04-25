@@ -39,6 +39,7 @@ namespace Repository
 
             if (account == null) return null;
 
+
             var result = new AccountReturnAfterLogin
             {
                 AccountId = account.Id,

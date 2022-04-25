@@ -12,5 +12,6 @@ namespace Contracts.Repositories
         void CreateReact(ReactComment reactComment);
         void DeleteReact(ReactComment reactComment);
         Task<List<AccountReact>> GetAccountReactComment(int comment_id, bool trackChanges);
+        Task<int> GetNumOfReact(int comment_id, bool trackChanges);
     }
 }
