@@ -408,6 +408,21 @@ namespace ToyWorldSystem.Controller
         }
         #endregion
 
+        #region Search trading post
+        /// <summary>
+        /// Get list trading post for fe filter
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("find")]
+        public async Task<IActionResult> GetTradingForSearch()
+        {
+            var tradings = await _repositoryManager.TradingPost.GetAllTrading(trackChanges: false);
+
+            return Ok(tradings);
+        }
+        #endregion
+
         #region Create trading post
         /// <summary>
         /// Create new trading post (Role: Manager, Member)

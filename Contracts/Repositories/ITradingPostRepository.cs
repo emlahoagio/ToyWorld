@@ -24,5 +24,6 @@ namespace Contracts.Repositories
         Task<Pagination<TradingPostInList>> GetTradingByGroup(int account_id, List<int> groupids, PagingParameters paging, bool trackChanges);
         Task<int> GetIdOfCreatedTrading(DateTime createTime, bool trackChanges);
         Task<Pagination<TradingPostInList>> GetTradingPostOfAccount(int current_account_id, PagingParameters paging, bool trackChanges, int account_id2);
+        Task<List<TradingForSearch>> GetAllTrading(bool trackChanges);
     }
 }

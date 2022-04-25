@@ -380,5 +380,21 @@ namespace Repository.Repository
 
             return result;
         }
+
+        public async Task<List<TradingForSearch>> GetAllTrading(bool trackChanges)
+        {
+            var tradings = await FindByCondition(x => x.IsDeleted == false, trackChanges)
+                .OrderByDescending(x => x.Id)
+                .Take(200)
+                .Select(x => new TradingForSearch
+                {
+                    Id = x.Id,
+                    Content = x.Content,
+                    Title = x.Title
+                })
+                .ToListAsync();
+
+            return tradings;
+        }
     }
 }
