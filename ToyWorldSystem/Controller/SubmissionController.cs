@@ -96,6 +96,7 @@ namespace ToyWorldSystem.Controller
         [Route("{post_of_contest_id}/{approve_or_deny}")]
         public async Task<IActionResult> ApproveOrDenyPost(int approve_or_deny, int post_of_contest_id)
         {
+            CreateNotificationModel createNoti;
             var account = await _repository.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
             if (account.Role != 1)
                 throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to update");
@@ -107,10 +108,24 @@ namespace ToyWorldSystem.Controller
             if (approve_or_deny == 1)
             {
                 _repository.PostOfContest.Approve(post);
+
+                createNoti = new CreateNotificationModel
+                {
+                    AccountId = post.AccountId,
+                    Content = "Your submission in the contest: " + post.Contest.Title + "is accepted",
+                    PostOfContestId = post.Id
+                };
             }
             else if (approve_or_deny == 0)
             {
                 _repository.PostOfContest.Deny(post);
+
+                createNoti = new CreateNotificationModel
+                {
+                    AccountId = post.AccountId,
+                    Content = "Your submission in the contest: " + post.Contest.Title + "is denied",
+                    PostOfContestId = post.Id
+                };
             }
             else throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Invalid status to change");
 

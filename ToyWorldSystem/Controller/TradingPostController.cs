@@ -75,6 +75,8 @@ namespace ToyWorldSystem.Controller
 
             result = await _repositoryManager.Comment.GetNumOfCommentForTradingPostList(result, trackChanges: false);
 
+            result = await _repositoryManager.ReactTradingPost.GetIsReactedReactTrading(result, account_id, trackChanges: false);
+
             return Ok(result);
         }
         #endregion
