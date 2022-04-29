@@ -1,17 +1,11 @@
 ﻿using Contracts;
 using Contracts.Services;
-using Entities.DataTransferObject;
 using Entities.Models;
 using Entities.RequestFeatures;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Repository.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace ToyWorldSystem.Controller

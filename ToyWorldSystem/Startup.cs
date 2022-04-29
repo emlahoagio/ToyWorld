@@ -1,5 +1,3 @@
-using CorePush.Apple;
-using CorePush.Google;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;

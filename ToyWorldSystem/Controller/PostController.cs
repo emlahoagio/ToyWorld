@@ -1,5 +1,4 @@
 ﻿using Contracts;
-using Entities.DataTransferObject;
 using Entities.ErrorModel;
 using Entities.Models;
 using Entities.RequestFeatures;
