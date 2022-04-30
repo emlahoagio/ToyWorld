@@ -32,7 +32,7 @@ namespace Repository.Repository
             var noti = new Notification
             {
                 Content = model.Content,
-                CreateTime = DateTime.Now,
+                CreateTime = DateTime.UtcNow.AddHours(7),
                 IsReaded = false,
                 AccountId = model.AccountId,
                 ContestId = model.ContestId,
