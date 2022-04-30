@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using Entities.DataTransferObject;
 using Entities.ErrorModel;
 using Entities.Models;
 using Entities.RequestFeatures;
@@ -80,6 +81,13 @@ namespace ToyWorldSystem.Controller
             var posts = await _repository.PostOfContest.GetPostOfContestById(idsPostInTop, trackchanges: false);
             posts = await _repository.Rate.GetRateForPostOfContest(posts, trackChanges: false);
             posts = await _repository.Image.GetImageForPostOfContest(posts, trackChanges: false);
+
+            posts.Sort(delegate (TopSubmission x, TopSubmission y)
+            {
+                if (x.AverageStar == x.AverageStar) return 0;
+                if (x.AverageStar > y.AverageStar) return 1;
+                else return -1;
+            });
 
             return Ok(posts);
         }
