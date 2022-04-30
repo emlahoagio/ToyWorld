@@ -102,6 +102,7 @@ namespace Repository.Repository
             {
                 var data = await FindByCondition(x => x.Id == id && x.Status == 1, trackchanges)
                     .Include(x => x.Account)
+                    .Include(x => x.Contest)
                     .Select(x => new TopSubmission
                     {
                         Id = x.Id,

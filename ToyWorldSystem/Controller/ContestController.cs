@@ -439,6 +439,8 @@ namespace ToyWorldSystem.Controller
             if (account.Role != 1 && post.AccountId != post.AccountId)
                 throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Don't have permission to delete");
 
+            if (post.Contest.Status == 4) throw new ErrorDetails(System.Net.HttpStatusCode.BadRequest, "Contest is end, can't remove");
+
             //delete rate
             await _repositoryManager.Rate.DeleteRateOfPost(post, trackChanges: true);
 
