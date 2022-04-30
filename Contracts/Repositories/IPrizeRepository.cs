@@ -13,5 +13,6 @@ namespace Contracts.Repositories
         Task UpdatePrize(EditPrizeParameters param, int prize_id, bool trackChanges);
         Task<PrizeReturn> GetUpdatePrize(int prize_id, bool trackChanges);
         Task DisablePrize(int prize_id, bool trackChanges);
+        Task<Prize> GetPrizeById(int prizeId, bool trackChanges);
     }
 }

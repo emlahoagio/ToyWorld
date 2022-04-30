@@ -159,6 +159,17 @@ namespace ToyWorldSystem.Controller
             };
 
             _repository.Reward.Create(newReward);
+
+            Prize prize = await _repository.Prize.GetPrizeById(reward.PrizeId, trackChanges: false);
+
+            CreateNotificationModel model = new CreateNotificationModel
+            {
+                AccountId = post.AccountId,
+                ContestId = post.ContestId,
+                Content = "You've win the prize: " + prize.Name + "In the contest you joined"
+            };
+            _repository.Notification.CreateNotification(model);
+
             await _repository.SaveAsync();
 
             return Ok("Save changes success");

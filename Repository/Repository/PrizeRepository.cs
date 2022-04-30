@@ -81,5 +81,9 @@ namespace Repository.Repository
             Update(prize);
         }
 
+        public async Task<Prize> GetPrizeById(int prizeId, bool trackChanges)
+        {
+            return await FindByCondition(x => x.Id == prizeId, trackChanges).FirstOrDefaultAsync();
+        }
     }
 }
