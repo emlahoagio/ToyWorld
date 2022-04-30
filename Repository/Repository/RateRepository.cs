@@ -119,7 +119,7 @@ namespace Repository.Repository
                         OwnerId = x.AccountId.Value,
                         OwnerName = x.Account.Name
                     }).ToList();
-                    post.AverageStar = rates.Select(x => x.NumOfStar).Average();
+                    post.AverageStar = rates.Select(x => x.NumOfStar).Count();
                     post.IsRated = rates.Where(x => x.AccountId.Value == account_id).Count() != 0;
                 }else
                 {
