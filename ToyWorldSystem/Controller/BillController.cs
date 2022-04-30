@@ -1,5 +1,6 @@
 ﻿using Contracts;
 using Entities.ErrorModel;
+using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -152,6 +153,9 @@ namespace ToyWorldSystem.Controller
         public async Task<IActionResult> CreateBill(NewBillParameters newBill)
         {
             var current_userId = _userAccessor.GetAccountId();
+
+            TradingPost trading = await _repository.TradingPost.GetTradingPostById(newBill.TradingPostId, trackChanges: false);
+            if (trading.Status != 0) throw new ErrorDetails(HttpStatusCode.BadRequest, "Can't create bill");
 
             var findTime = DateTime.UtcNow.AddHours(-7);
 
