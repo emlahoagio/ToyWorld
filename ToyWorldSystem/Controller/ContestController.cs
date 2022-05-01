@@ -320,6 +320,13 @@ namespace ToyWorldSystem.Controller
                 result.Add(reward);
             }
 
+            result.Sort(delegate (RewardReturn x, RewardReturn y)
+            {
+                if (x.Prizes.Value == y.Prizes.Value) return 0;
+                else if (x.Prizes.Value > y.Prizes.Value) return -1;
+                else return 1;
+            });
+
             return Ok(result);
         }
         #endregion
