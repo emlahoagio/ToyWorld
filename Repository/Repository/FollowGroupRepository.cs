@@ -34,7 +34,12 @@ namespace Repository.Repository
                 .Include(x => x.Group)
                 .ToListAsync();
 
-            account.WishLists = followedGroup.Select(x => new WishList { Id = x.Group.Id, Name = x.Group.Name }).ToList();
+            account.WishLists = followedGroup.Select(x => new WishList 
+            {
+                Id = x.Group.Id,
+                Name = x.Group.Name, 
+                CoverImg = x.Group.CoverImage 
+            }).ToList();
 
             return account;
         }
