@@ -67,7 +67,7 @@ namespace Repository.Repository
                 Description = prize.Description,
                 Id = prize.Id,
                 Name = prize.Name,
-                Value = double.Parse(prize.Value)
+                Value = prize.Value
             };
 
             return result;

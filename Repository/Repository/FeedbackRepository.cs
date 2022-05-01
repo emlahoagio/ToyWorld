@@ -42,6 +42,11 @@ namespace Repository.Repository
             }
         }
 
+        public async Task<Feedback> GetById(int feedback_id, bool trackChanges)
+        {
+            return await FindByCondition(x => x.Id == feedback_id, trackChanges).FirstOrDefaultAsync();
+        }
+
         public async Task<Pagination<RepliedFeedback>> GetFeedbackByContent(int content, PagingParameters paging, bool trackChanges)
         {
             var query = new List<Feedback>();

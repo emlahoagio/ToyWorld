@@ -1,5 +1,6 @@
 ﻿using Contracts;
 using Entities.ErrorModel;
+using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -98,7 +99,15 @@ namespace ToyWorldSystem.Controller
 
             await _repository.Feedback.ReplyFeedback(feedback_id, current_account.Id, replyContent, trackChanges: false);
 
+            Feedback feedback = await _repository.Feedback.GetById(feedback_id, trackChanges: false);
+
             //Push notification (To sender of feedback)
+            CreateNotificationModel noti = new CreateNotificationModel
+            {
+                AccountId = feedback.SenderId,
+                Content = "Your feedback is replied with message: " + replyContent
+            };
+            _repository.Notification.CreateNotification(noti);
 
             await _repository.SaveAsync();
 
