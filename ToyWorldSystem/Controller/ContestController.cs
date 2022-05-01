@@ -322,8 +322,8 @@ namespace ToyWorldSystem.Controller
 
             result.Sort(delegate (RewardReturn x, RewardReturn y)
             {
-                if (x.Prizes.Value == y.Prizes.Value) return 0;
-                else if (x.Prizes.Value > y.Prizes.Value) return -1;
+                if (double.Parse(x.Prizes.Value) == double.Parse(y.Prizes.Value)) return 0;
+                else if (double.Parse(x.Prizes.Value) > double.Parse(y.Prizes.Value)) return -1;
                 else return 1;
             });
 
