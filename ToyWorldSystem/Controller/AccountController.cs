@@ -593,6 +593,8 @@ namespace ToyWorldSystem.Controller
         [Route("new_password")]
         public async Task<IActionResult> UpdateNewPassword(string new_password)
         {
+            if (new_password.Length < 6 && new_password.Length > 256) throw new ErrorDetails(HttpStatusCode.BadRequest, "Invalid password");
+
             var current_account = await _repository.Account.GetAccountById(_userAccessor.GetAccountId(), trackChanges: false);
 
             _repository.Account.UpdateNewPassword(current_account, new_password);
