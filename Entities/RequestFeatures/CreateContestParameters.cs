@@ -28,7 +28,6 @@ namespace Entities.RequestFeatures
         public DateTime? StartDate { get; set; }
         [Required]
         public DateTime? EndDate { get; set; }
-        [Required]
         public string TypeName { get; set; }
     }
 }
