@@ -124,7 +124,9 @@ namespace Repository.Repository
 
         public async Task<PostOfContest> GetPostOfContestById(int post_of_contest_id, bool trackchanges)
         {
-            var result = await FindByCondition(x => x.Id == post_of_contest_id, trackchanges).FirstOrDefaultAsync();
+            var result = await FindByCondition(x => x.Id == post_of_contest_id, trackchanges)
+                .Include(x => x.Contest)
+                .FirstOrDefaultAsync();
 
             return result;
         }
